@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
-import { storageService } from '../utils/storageService';
+// Zde je opravený import, který nyní hledá soubor localStorage.ts
+import { getFromStorage, saveToStorage } from '../utils/localStorage';
 
-export function usePersistentState<T>(key: string, defaultValue: T) {
-  // Inicializace dat při startu
+/**
+ * Hook pro správu stavu, který se automaticky ukládá do localStorage.
+ * @param key Unikátní klíč, pod kterým se data uloží
+ * @param initialValue Výchozí hodnota, pokud v úložišti nic není
+ */
+export function usePersistentState<T>(key: string, initialValue: T) {
   const [state, setState] = useState<T>(() => {
-    const saved = storageService.getItem<T>(key);
-    return saved !== null ? saved : defaultValue;
+    return getFromStorage<T>(key, initialValue);
   });
 
-  // Uložení při každé změně stavu
   useEffect(() => {
-    storageService.setItem(key, state);
+    saveToStorage(key, state);
   }, [key, state]);
 
-  const isFallback = storageService.getIsFallbackActive();
-
-  return [state, setState, isFallback] as const;
+  return [state, setState] as const;
 }

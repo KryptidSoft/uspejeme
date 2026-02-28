@@ -1,51 +1,56 @@
-import { safeDivide } from './mathHelpers';
+import { safeNumber } from './mathHelpers';
 
-export interface ROIData {
+export interface ROIInputs {
   investment: number;
   initialCosts: number;
-  monthlyBenefit: number;
-  risk: number;
-  discountRate: number;
+  monthlyCashflow: number; // Musí být monthlyCashflow
+  discountRate: number;    // Zde budeme očekávat celé číslo (např. 8)
+  months: number;
 }
 
-export const calculateROI = (data: ROIData) => {
-  const { investment, initialCosts, monthlyBenefit, risk, discountRate } = data;
+export const calculateROI = (data: ROIInputs) => {
+  const investment = safeNumber(data.investment);
+  const initialCosts = safeNumber(data.initialCosts);
+  const monthlyCashflow = safeNumber(data.monthlyCashflow);
+  // Dělíme stem pouze TADY, v komponentě už ne.
+  const annualDiscountRate = safeNumber(data.discountRate) / 100;
+  const targetMonths = safeNumber(data.months) || 12;
 
-  const totalInitial = investment + initialCosts;
-  const annualDiscount = discountRate / 100;
-  const monthlyDiscount = annualDiscount / 12;
-
-  // Riziková úprava měsíčního přínosu
-  const adjustedMonthly = monthlyBenefit * (1 - risk / 100);
-
-  // NPV – horizont 5 let (60 měsíců)
-  let npv = -totalInitial;
-
-  for (let t = 1; t <= 60; t++) {
-    npv += adjustedMonthly / Math.pow(1 + monthlyDiscount, t);
-  }
-
-  const roiPercent = totalInitial > 0 ? (npv / totalInitial) * 100 : 0;
-
-  // Diskontovaná návratnost
-  let cumulativeValue = -totalInitial;
+  const totalInitialInvestment = investment + initialCosts;
+  const monthlyDiscountRate = annualDiscountRate / 12;
+  
+  let npv = -totalInitialInvestment;
+  let runningCashFlow = -totalInitialInvestment;
+  let simplePaybackMonths: number | null = null;
   let discountedPaybackMonths: number | null = null;
 
-  for (let t = 1; t <= 240; t++) {
-    cumulativeValue += adjustedMonthly / Math.pow(1 + monthlyDiscount, t);
-    if (cumulativeValue >= 0) {
-      discountedPaybackMonths = t;
-      break;
+  for (let month = 1; month <= targetMonths; month++) {
+    const discountFactor = Math.pow(1 + monthlyDiscountRate, month);
+    const discountedBenefit = monthlyCashflow / discountFactor;
+    
+    npv += discountedBenefit;
+
+    // Prostá návratnost
+    if (simplePaybackMonths === null) {
+      runningCashFlow += monthlyCashflow;
+      if (runningCashFlow >= 0) simplePaybackMonths = month;
+    }
+
+    // Diskontovaná návratnost
+    if (discountedPaybackMonths === null && npv >= 0) {
+      discountedPaybackMonths = month;
     }
   }
 
-  const simplePaybackMonths =
-    adjustedMonthly > 0 ? totalInitial / adjustedMonthly : Infinity;
+  const roiPercent = totalInitialInvestment > 0 
+    ? (npv / totalInitialInvestment) * 100 
+    : 0;
 
   return {
-    npv,
-    roiPercent,
+    npv: Math.round(npv),
+    roiPercent: Math.round(roiPercent * 100) / 100,
     simplePaybackMonths,
-    discountedPaybackMonths
+    discountedPaybackMonths,
+    totalInvestment: totalInitialInvestment
   };
 };

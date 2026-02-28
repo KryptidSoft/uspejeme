@@ -1,5 +1,8 @@
-import { safeDivide } from './mathHelpers';
+import { safeNumber } from './mathHelpers';
 
+/**
+ * Definice rozhraní pro vstupy kalkulačky hodinové sazby.
+ */
 export interface HourlyInputs {
   grossIncome: number;
   billableHours: number;
@@ -12,16 +15,26 @@ export interface HourlyInputs {
   };
 }
 
-export const calculateHourlyRate = (inputs: HourlyInputs) => {
-  const totalCosts = inputs.costs.taxes + inputs.costs.overhead + inputs.costs.material + inputs.costs.reserves;
-  const totalNeeded = inputs.grossIncome + totalCosts;
-  const totalHours = inputs.billableHours + inputs.nonBillableHours;
+/**
+ * Výpočet hodinové sazby tak, aby pokryla náklady i požadovaný zisk.
+ */
+export const calculateHourlyRate = (data: HourlyInputs) => {
+  const taxes = safeNumber(data.costs.taxes);
+  const overhead = safeNumber(data.costs.overhead);
+  const material = safeNumber(data.costs.material);
+  const reserves = safeNumber(data.costs.reserves);
+  
+  const totalCosts = taxes + overhead + material + reserves;
+  const targetGross = safeNumber(data.grossIncome);
+  const totalRequired = targetGross + totalCosts;
+  
+  const billableHours = safeNumber(data.billableHours);
+  // Sazba = (Požadovaný čistý příjem + náklady) / fakturovatelné hodiny
+  const rate = billableHours > 0 ? totalRequired / billableHours : 0;
 
   return {
+    rate: Math.round(rate),
     totalCosts,
-    totalHours,
-    billableRate: safeDivide(totalNeeded, inputs.billableHours),
-    effectiveRate: safeDivide(totalNeeded, totalHours),
-    utilization: safeDivide(inputs.billableHours, totalHours) * 100
+    totalRequired
   };
 };
