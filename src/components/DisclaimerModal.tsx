@@ -31,10 +31,11 @@ export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({
         padding: "20px",
       }}
     >
+      {/* Kliknutí na GlassCard nezavře modal */}
       <GlassCard
         className="fade-in"
         style={{ maxWidth: "600px", width: "100%", margin: "auto" }}
-        onClick={(e) => e.stopPropagation()} // zabrání zavření při kliknutí uvnitř
+        onClick={() => {}}
       >
         <h2>Právní upozornění</h2>
 

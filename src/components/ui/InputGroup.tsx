@@ -1,46 +1,51 @@
 import React from 'react';
-import { HelpCircle } from 'lucide-react'; // Přidej tento import
+import { Info } from 'lucide-react';
 
 interface InputGroupProps {
   label: string;
-  value: number | string;
+  value: string | number;
   onChange: (val: string) => void;
-  type?: 'number' | 'range' | 'text';
-  min?: number;
-  max?: number;
-  step?: number;
-  tooltip?: string;
+  type?: string;
   unit?: string;
+  tooltip?: string;
+  step?: number;
+  min?: number; // PŘIDÁNO
+  max?: number; // PŘIDÁNO
 }
 
-export const InputGroup: React.FC<InputGroupProps> = ({ 
-  label, value, onChange, type = 'number', min, max, step, tooltip, unit 
+export const InputGroup: React.FC<InputGroupProps> = ({
+  label,
+  value,
+  onChange,
+  type = "number",
+  unit,
+  tooltip,
+  step,
+  min, // PŘIDÁNO
+  max  // PŘIDÁNO
 }) => {
   return (
     <div className="input-group">
       <div className="label-wrapper">
         <label>
-          {label} {unit && <span className="unit-label">({unit})</span>}
+          {label}
+          {tooltip && (
+            <span className="tooltip-container">
+              <Info size={14} className="tooltip-trigger-icon" />
+              <span className="tooltip-box">{tooltip}</span>
+            </span>
+          )}
         </label>
-        
-        {tooltip && (
-          <div className="tooltip-container">
-            <HelpCircle size={14} className="tooltip-trigger-icon" />
-            <div className="tooltip-box">
-              {tooltip}
-            </div>
-          </div>
-        )}
+        {unit && <span className="unit-badge">{unit}</span>}
       </div>
-      
-      <input 
-        type={type} 
-        value={value} 
+      <input
+        type={type}
+        value={value}
         onChange={(e) => onChange(e.target.value)}
-        min={min}
-        max={max}
+        className="text-input"
         step={step}
-        className={type === 'range' ? 'range-input' : 'text-input'}
+        min={min} // PŘIDÁNO
+        max={max} // PŘIDÁNO
       />
     </div>
   );

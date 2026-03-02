@@ -26,8 +26,8 @@ export const ArticleSection: React.FC = () => {
 
   return (
     <div className="articles-grid">
-      {articles.map(article => (
-        <GlassCard key={article.id} className="clickable" onClick={() => setSelectedArticle(article)}>
+      {articles.map((article, index) => (
+        <GlassCard key={article.id} onClick={() => setSelectedArticle(article)} style={{ animationDelay: `${index * 0.05}s` }} className="fade-in">
           <div className="article-card-content">
             <BookOpen size={20} className="accent-text" />
             <span className="category-tag">{article.category}</span>
@@ -40,18 +40,6 @@ export const ArticleSection: React.FC = () => {
           </div>
         </GlassCard>
       ))}
-      <style>{`
-        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-        .article-card-content h3 { margin: 0.5rem 0; font-size: 1.2rem; }
-        .article-card-content p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
-        .category-tag { font-size: 0.7rem; text-transform: uppercase; color: var(--accent); font-weight: bold; }
-        .article-footer { display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.8rem; color: var(--text-dim); }
-        .read-more { color: var(--accent); font-weight: bold; }
-        
-        .article-meta { display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; color: var(--text-dim); font-size: 0.9rem; }
-        .category-badge { background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; text-transform: capitalize; }
-        .article-body { line-height: 1.8; color: var(--text-main); }
-      `}</style>
     </div>
   );
 };
