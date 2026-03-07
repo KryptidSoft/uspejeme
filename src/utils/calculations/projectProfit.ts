@@ -1,4 +1,5 @@
 // utils/calculations/projectProfit.ts
+import { safeNumber } from './mathHelpers';
 
 export interface ProjectInput {
   name: string;
@@ -11,7 +12,7 @@ export interface ProjectInput {
   prepHours: number;
   workHours: number;
   adminHours: number;
-  riskFactor: number; // 0–1
+  riskFactor: number;
 }
 
 export interface ProjectResult extends ProjectInput {
@@ -26,13 +27,24 @@ export const calculateProjectProfit = (
   hourlyRate: number
 ): ProjectResult[] => {
   return projects.map((p) => {
-    const totalHours = p.prepHours + p.workHours + p.adminHours;
-    const netProfit =
-      p.price - 
-      (p.materialCosts + p.softwareCosts + p.energyCosts + p.otherCosts) - 
-      hourlyRate * totalHours;
-    const adjustedProfit = netProfit * (1 - p.riskFactor);
-    const roiPerHour = totalHours ? adjustedProfit / totalHours : 0;
+    const totalHours = safeNumber(p.prepHours) + safeNumber(p.workHours) + safeNumber(p.adminHours);
+    
+    // Náklady na tvůj čas
+    const timeCost = safeNumber(hourlyRate) * totalHours;
+    
+    // Přímé náklady
+    const directCosts = 
+      safeNumber(p.materialCosts) + 
+      safeNumber(p.softwareCosts) + 
+      safeNumber(p.energyCosts) + 
+      safeNumber(p.otherCosts);
+
+    const netProfit = safeNumber(p.price) - directCosts - timeCost;
+    
+    // Riziko snižuje čistý zisk (př. 0.1 = 10% dolů)
+    const adjustedProfit = netProfit * (1 - safeNumber(p.riskFactor));
+    const roiPerHour = totalHours > 0 ? adjustedProfit / totalHours : 0;
+
     return { ...p, totalHours, netProfit, adjustedProfit, roiPerHour };
   });
 };

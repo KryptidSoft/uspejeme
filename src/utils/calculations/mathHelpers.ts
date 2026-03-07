@@ -35,6 +35,13 @@ export const formatPercent = (value: number): string => {
 /**
  * Zaokrouhlí číslo na daný počet desetiných míst.
  */
+export const getProfitColor = (value: number, opacity: number = 1): string => {
+  return value >= 0 
+    ? `rgba(59, 130, 246, ${opacity})` 
+    : `rgba(239, 68, 68, ${opacity})`;
+};
+
+// Tohle se může hodit jinde:
 export const roundTo = (value: number, decimals: number): number => {
   const factor = Math.pow(10, decimals);
   return Math.round(value * factor) / factor;

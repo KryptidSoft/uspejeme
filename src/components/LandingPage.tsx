@@ -1,6 +1,10 @@
-import React from 'react';
-import { Target, ShieldAlert, PiggyBank, ArrowRight, Zap, LineChart, HelpCircle, Quote, Lightbulb } from 'lucide-react';
+import React, { useState } from 'react';
+import { Target, ShieldAlert, PiggyBank, ArrowRight, Zap, LineChart, HelpCircle, Quote, Lightbulb, Calendar, FileText, Activity, TrendingUp, QrCode, Circle } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
+import { DeadlineWidget } from './DeadlineWidget';
+import { ArticleSection, articles } from './ArticleSection';
+
+type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse' | 'platec_dph';
 
 interface LandingPageProps {
   onNavigate: (view: string) => void;
@@ -9,7 +13,7 @@ interface LandingPageProps {
 // Exportujeme i testimonials, pokud byste je chtěli použít jinde
 export const testimonials = [
   {
-    name: "Petr Šedý",
+    name: "Petr Šeda",
     role: "Full-stack Developer",
     text: "Díky kalkulačce hodinové sazby jsem zjistil, že jsem roky pracoval pod cenou. Tohle by měl mít každý freelancer v záložkách."
   },
@@ -20,7 +24,41 @@ export const testimonials = [
   }
 ];
 
+const TOOLS_REGISTRY = [
+  { id: 'planner', label: 'Plánovač prosperity', icon: Target },
+  // Tady říkáme: "Faktury" jsou hlavní, ale patří k nim i 'qr', 'dues' a 'invoice'
+  { id: 'faktury', label: 'Faktury & Platby', icon: FileText, subIds: ['qr', 'dues', 'invoice'] },
+  { id: 'stability', label: 'Audit stability', icon: Activity, subIds: ['reserves', 'rizika'] },
+  { id: 'roi', label: 'Investice & ROI', icon: TrendingUp, subIds: ['gold', 'projects'] },
+  { id: 'energy', label: 'Hlídač energií', icon: Zap },
+  { id: 'calendar', label: 'Kalendář 2026', icon: Calendar },
+  { id: 'articles', label: 'Strategie & Články', icon: FileText },
+  { id: 'slot8', label: 'Připravujeme...', icon: Circle, disabled: true },
+  { id: 'slot9', label: 'Připravujeme...', icon: Circle, disabled: true },
+];
+
+const StatTeplomer = ({ label, aktualni, cil, jednotka, barva }: any) => {
+  const procenta = Math.min(Math.round((aktualni / cil) * 100), 100);
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
+        <span style={{ color: 'var(--text-dim)' }}>{label}</span>
+        <span style={{ fontWeight: 'bold' }}>{aktualni.toLocaleString()} / {cil.toLocaleString()} {jednotka}</span>
+      </div>
+      <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+        <div style={{ 
+          width: `${procenta}%`, 
+          height: '100%', 
+          background: barva, 
+          transition: 'width 1s ease-out' 
+        }} />
+      </div>
+    </div>
+  );
+};
+
 export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+	const [userType, setUserType] = useState<BusinessType>('osvc_pausal'); // Tento řádek vložte zde
   return (
     <div className="fade-in">
       {/* HERO SEKCE */}
@@ -51,6 +89,101 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           Zjistěte, kolik si říct za práci a jak se nenechat zaskočit výpadky.
         </p>
       </section>
+{/* 2. DASHBOARD: ČLÁNKY (3) A TERMÍNY (4) */}
+<section style={{ maxWidth: '1100px', margin: '0 auto 40px', padding: '0 20px' }}>
+  <div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+    gap: '30px', // Snížená mezera mezi sloupci
+    alignItems: 'start' 
+  }}>
+    
+    {/* LEVÁ STRANA: ČLÁNKY */}
+    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0' }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '10px', 
+        height: '32px', 
+        marginBottom: '15px' 
+      }}>
+        <Lightbulb size={20} color="var(--primary)" />
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', margin: 0 }}>Nejnovější strategie</h3>
+      </div>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}> {/* Fixní těsná mezera */}
+        {articles && articles.slice(0, 3).map(article => (
+          <GlassCard 
+            key={article.id}
+            className="hover-card" 
+            style={{ padding: '15px', cursor: 'pointer', margin: '0' }}
+            onClick={() => onNavigate('clanky', article.id)}
+          >
+            <div style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 'bold', marginBottom: '4px' }}>
+              {article.category.toUpperCase()}
+            </div>
+            <h4 style={{ fontSize: '0.95rem', margin: '0 0 5px 0', lineHeight: '1.2' }}>{article.title}</h4>
+            <p style={{ 
+              fontSize: '0.8rem', 
+              color: 'var(--text-dim)', 
+              margin: 0, 
+              lineHeight: '1.4',
+              display: '-webkit-box',
+              WebkitLineClamp: '2',
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}>
+              {article.excerpt}
+            </p>
+          </GlassCard>
+        ))}
+        
+        <button 
+          onClick={() => onNavigate('clanky')}
+          style={{ background: 'none', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.8rem', textAlign: 'left', fontWeight: 'bold', padding: '10px 0' }}
+        >
+          Všechny články a návody →
+        </button>
+      </div>
+    </div>
+
+    {/* PRAVÁ STRANA: HLÍDAČ TERMÍNŮ */}
+    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0' }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '10px', 
+        height: '32px', 
+        marginBottom: '15px' 
+      }}>
+        <Calendar size={20} color="var(--primary)" />
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', margin: 0 }}>Hlídač termínů 2026</h3>
+      </div>
+      
+      {/* DeadlineWidget voláme přímo bez dalších obalů, které by dělaly mezery */}
+      <DeadlineWidget userType={userType} />
+      
+      <button 
+        onClick={() => onNavigate('kalendar')}
+        style={{ 
+          padding: '12px', 
+          textAlign: 'center', 
+          borderRadius: '12px', 
+          border: '1px dashed rgba(255,255,255,0.1)', 
+          cursor: 'pointer',
+          fontSize: '0.85rem',
+          color: 'var(--text-dim)',
+          background: 'rgba(255,255,255,0.02)',
+          width: '100%',
+          marginTop: '15px'
+        }}
+      >
+        Kompletní daňový kalendář 2026 →
+      </button>
+    </div>
+
+  </div>
+</section>
 
       {/* HLAVNÍ ROZCESTNÍK - Tři pilíře */}
       <div style={{ 

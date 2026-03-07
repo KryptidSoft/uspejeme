@@ -9,11 +9,22 @@ import {
   Target, 
   Zap, 
   FileText,
-  MousePointer2 
+  MousePointer2,
+  BookOpen,
+  CheckCircle,
+  Shield
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { calculateStability } from '../../utils/calculations/stability';
+
+// 1. Texty pro nápovědu (Tooltips)
+const HELP_TEXTS = {
+  reserves: "Kolik měsíců přežijete bez příjmů? Počítejte s nájmem, jídlem i splátkami.",
+  sustainability: "Kolik % vašich příjmů tvoří stálí klienti nebo paušály (ne jednorázovky)?",
+  workload: "100 % = standardní pracovní týden. Nad 100 % už pracujete po večerech a o víkendem.",
+  roi: "Jak dobře jste zaplaceni za svůj čas? Skalární ROI znamená, že vyděláváte, i když nespíte."
+};
 
 const STAGE_DATA = {
   reserves: [
@@ -98,94 +109,173 @@ export const StabilityCalculator: React.FC = () => {
   }, [results.score]);
 
   return (
-    <GlassCard className="fade-in" style={{ padding: '30px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '25px' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-            <Activity size={32} color="#84cc16" strokeWidth={2.5} />
-            <h2 style={{ margin: 0, fontSize: '1.8rem' }}>Diagnostika stability 2026</h2>
-          </div>
-          <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', lineHeight: '1.4', maxWidth: '650px' }}>
-            <MousePointer2 size={14} style={{ display: 'inline', marginRight: '5px' }} /> 
-            Nastavte všechny čtyři parametry vlevo posouváním zprava doleva. Vpravo se okamžitě přepočítá váš <strong>Index stability</strong>.
-          </p>
-        </div>
-        <button onClick={() => window.print()} className="no-print" style={{ 
-          background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', cursor: 'pointer', padding: '10px 20px', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' 
-        }}>
-          <FileText size={18} /> EXPORT PDF
-        </button>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+      
+      {/* --- NOVÝ UVODNÍ TEXT (SEO & KONTEXT) --- */}
+      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+        <h1 style={{ color: 'white', fontSize: '2.2rem', marginBottom: '10px' }}>Jak neprůstřelné je vaše podnikání?</h1>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
+          Tato <strong>kalkulačka stability</strong> slouží jako hloubkový průvodce vaším finančním zdravím. 
+          Zjistěte, zda budujete pevnou tvrz, nebo jen domeček z karet, který sfoukne první krize.
+        </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'grid', gap: '25px' }}>
-            {Object.keys(STAGE_DATA).map((key) => {
-                const k = key as keyof typeof STAGE_DATA;
-                const stateKey = key === 'reserves' ? 'reservesMonths' : 
-                                 key === 'sustainability' ? 'incomeSustainability' :
-                                 key === 'roi' ? 'roiEfficiency' : 'workload';
-                const currentVal = (inputs as any)[stateKey];
-                const info = getInfo(currentVal, k);
+      <GlassCard style={{ padding: '30px' }}>
+        <style>{`
+          .help-icon { position: relative; display: inline-flex; cursor: help; align-items: center; }
+          .help-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+            background: #1f2937; color: white; padding: 10px; border-radius: 8px;
+            font-size: 0.75rem; width: 180px; z-index: 100; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            line-height: 1.3; font-weight: normal; text-transform: none;
+          }
+        `}</style>
 
-                return (
-                    <div key={key}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                            <span style={{ fontSize: '0.75rem', fontWeight: '800', opacity: 0.8, textTransform: 'uppercase', color: info.color }}>
-                              {key === 'reserves' ? '📅 Rezerva' : key === 'sustainability' ? '🔗 Udržitelnost' : key === 'roi' ? '💰 ROI' : '⏳ Zátěž'}
-                            </span>
-                            <div style={{ textAlign: 'right' }}>
-                              <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'white', marginRight: '8px' }}>{currentVal}</span>
-                              <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: info.color }}>({info.label})</span>
-                            </div>
-                        </div>
-                        <InputGroup
-                            unit={key === 'reserves' ? "m." : "%"} 
-                            type="range" 
-                            min={0} 
-                            max={key === 'reserves' ? 12 : (key === 'workload' ? 150 : 100)} 
-                            step={key === 'reserves' ? 1 : 10}
-                            value={currentVal}
-                            onChange={(v) => setInputs({...inputs, [stateKey]: parseFloat(v)})}
-                            style={{ accentColor: info.color }}
-                        />
-                        <div style={{ marginTop: '10px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', display: 'flex', gap: '10px', lineHeight: '1.4' }}>
-                            <Info size={16} style={{ flexShrink: 0, color: info.color }} />
-                            {info.text}
-                        </div>
-                    </div>
-                );
-            })}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '25px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <Activity size={32} color="#84cc16" strokeWidth={2.5} />
+              <h2 style={{ margin: 0, fontSize: '1.8rem' }}>Diagnostika stability 2026</h2>
+            </div>
+            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', lineHeight: '1.4', maxWidth: '650px' }}>
+              <MousePointer2 size={14} style={{ display: 'inline', marginRight: '5px' }} /> 
+              Nastavte parametry posouváním jezdců a zjistěte svůj index odolnosti.
+            </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ background: 'rgba(0,0,0,0.2)', padding: '40px 30px', borderRadius: '24px', border: '1px solid var(--border)', textAlign: 'center', position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle at center, ${getScoreColor(results.score)}15 0%, transparent 70%)`, pointerEvents: 'none' }} />
-            <div style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', letterSpacing: '3px' }}>INDEX STABILITY</div>
-            <div style={{ fontSize: '5.5rem', fontWeight: '900', color: 'white', lineHeight: 1, margin: '10px 0', textShadow: `0 0 30px ${getScoreColor(results.score)}44` }}>
-                {results.score}<span style={{ fontSize: '1.5rem', opacity: 0.3 }}>%</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'grid', gap: '25px' }}>
+              {(Object.keys(STAGE_DATA) as Array<keyof typeof STAGE_DATA>).map((key) => {
+                  const stateKey = key === 'reserves' ? 'reservesMonths' : 
+                                   key === 'sustainability' ? 'incomeSustainability' :
+                                   key === 'roi' ? 'roiEfficiency' : 'workload';
+                  const currentVal = (inputs as any)[stateKey];
+                  const info = getInfo(currentVal, key);
+
+                  return (
+                      <div key={key}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', alignItems: 'center' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '0.75rem', fontWeight: '800', opacity: 0.8, textTransform: 'uppercase', color: info.color }}>
+                                  {key === 'reserves' ? '📅 Rezerva' : key === 'sustainability' ? '🔗 Udržitelnost' : key === 'roi' ? '💰 ROI' : '⏳ Zátěž'}
+                                </span>
+                                <span className="help-icon" data-tooltip={HELP_TEXTS[key]}>
+                                  <Info size={14} style={{ opacity: 0.5 }} />
+                                </span>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'white', marginRight: '8px' }}>{currentVal}</span>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: info.color }}>({info.label})</span>
+                              </div>
+                          </div>
+                          <InputGroup
+                              unit={key === 'reserves' ? "m." : "%"} 
+                              type="range" 
+                              min={0} 
+                              max={key === 'reserves' ? 12 : (key === 'workload' ? 150 : 100)} 
+                              step={key === 'reserves' ? 1 : 10}
+                              value={currentVal}
+                              onChange={(v) => setInputs({...inputs, [stateKey]: parseFloat(v)})}
+                              style={{ accentColor: info.color }}
+                          />
+                          <div style={{ marginTop: '10px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', display: 'flex', gap: '10px', lineHeight: '1.4' }}>
+                              <Info size={16} style={{ flexShrink: 0, color: info.color }} />
+                              {info.text}
+                          </div>
+                      </div>
+                  );
+              })}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                {verdict.icon}
-                <h3 style={{ margin: 0, fontSize: '2rem', fontWeight: '800' }}>{verdict.title}</h3>
-            </div>
-            <p style={{ color: getScoreColor(results.score), fontWeight: 'bold', marginTop: '10px' }}>{verdict.comparison}</p>
           </div>
 
-          <GlassCard style={{ padding: '25px', background: 'rgba(255,255,255,0.03)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <Target size={24} color="#84cc16" />
-                <h4 style={{ margin: 0 }}>Doporučení pro růst</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '40px 30px', borderRadius: '24px', border: '1px solid var(--border)', textAlign: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle at center, ${getScoreColor(results.score)}15 0%, transparent 70%)`, pointerEvents: 'none' }} />
+              <div style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', letterSpacing: '3px' }}>INDEX STABILITY</div>
+              <div style={{ fontSize: '5.5rem', fontWeight: '900', color: 'white', lineHeight: 1, margin: '10px 0', textShadow: `0 0 30px ${getScoreColor(results.score)}44` }}>
+                  {results.score}<span style={{ fontSize: '1.5rem', opacity: 0.3 }}>%</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                  {verdict.icon}
+                  <h3 style={{ margin: 0, fontSize: '2rem', fontWeight: '800' }}>{verdict.title}</h3>
+              </div>
+              <p style={{ color: getScoreColor(results.score), fontWeight: 'bold', marginTop: '10px' }}>{verdict.comparison}</p>
             </div>
-            <p style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--text-dim)', marginBottom: '15px' }}>{verdict.action}</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', border: '1px dotted var(--border)' }}>
-                <Zap size={24} color="#fbbf24" />
-                <p style={{ fontSize: '0.9rem', fontWeight: 'bold', margin: 0 }}>{verdict.nextStep}</p>
-            </div>
-          </GlassCard>
+
+            <GlassCard style={{ padding: '25px', background: 'rgba(255,255,255,0.03)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                  <Target size={24} color="#84cc16" />
+                  <h4 style={{ margin: 0 }}>Doporučení pro růst</h4>
+              </div>
+              <p style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--text-dim)', marginBottom: '15px' }}>{verdict.action}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', border: '1px dotted var(--border)' }}>
+                  <Zap size={24} color="#fbbf24" />
+                  <p style={{ fontSize: '0.9rem', fontWeight: 'bold', margin: 0 }}>{verdict.nextStep}</p>
+              </div>
+            </GlassCard>
+          </div>
         </div>
+      </GlassCard>
+
+      {/* --- NOVÁ SEKCE: EDUKATIVNÍ ČLÁNEK --- */}
+      <div className="no-print">
+        <GlassCard style={{ padding: '30px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '25px' }}>
+            <BookOpen size={28} color="var(--primary)" />
+            <h2 style={{ margin: 0 }}>4 pilíře stability: Jak přežít v roce 2026?</h2>
+          </div>
+
+          <div style={{ color: 'var(--text-dim)', lineHeight: '1.8', fontSize: '1rem' }}>
+            <p>
+              Stabilita v podnikání není statický stav, ale dynamická rovnováha. Tento nástroj měří vaši 
+              odolnost na základě čtyř klíčových metrik, které určují, zda vaše svoboda na volné noze vydrží.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', margin: '30px 0' }}>
+              <div style={{ padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '15px', border: '1px solid rgba(132, 204, 22, 0.2)' }}>
+                <h4 style={{ color: 'white', marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Shield size={18} color="#84cc16" /> Finanční polštář
+                </h4>
+                <p style={{ fontSize: '0.85rem', margin: 0 }}>
+                  Zlatý standard je <strong>6 měsíců</strong>. To vám dává odvahu říkat "ne" toxickým klientům.
+                </p>
+              </div>
+              <div style={{ padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '15px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                <h4 style={{ color: 'white', marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Activity size={18} color="var(--primary)" /> Udržitelnost
+                </h4>
+                <p style={{ fontSize: '0.85rem', margin: 0 }}>
+                  Závislost na jednom klientovi je hazard. Cílete na mix paušálů a diverzifikovaného portfolia.
+                </p>
+              </div>
+            </div>
+
+            <h3 style={{ color: 'white', marginTop: '30px' }}>Proč sledovat Zátěž (Workload)?</h3>
+            <p>
+              Mnoho OSVČ končí na vyhoření právě proto, že dlouhodobě jedou nad 100 %. Pokud váš systém 
+              vyžaduje 60 hodin týdně, abyste se uživili, nejste stabilní – jste v pasti. Skutečná stabilita 
+              přichází ve chvíli, kdy systém generuje zisk při zátěži kolem 70–80 %, což dává prostor pro inovace.
+            </p>
+
+            <div style={{ marginTop: '25px', padding: '20px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '15px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+              <h4 style={{ color: '#ef4444', marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AlertCircle size={18} /> Varovné signály
+              </h4>
+              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.9rem' }}>
+                <li>ROI pod 40 %: Prodáváte svůj čas příliš levně.</li>
+                <li>Rezerva pod 3 měsíce: Jste jednu nemoc od bankrotu.</li>
+                <li>Paušální příjmy pod 30 %: Každý měsíc začínáte od nuly.</li>
+              </ul>
+            </div>
+          </div>
+        </GlassCard>
       </div>
-    </GlassCard>
+    </div>
   );
 };
+
+export default StabilityCalculator;

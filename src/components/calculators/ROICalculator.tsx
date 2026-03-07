@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { TrendingUp, Share2, StickyNote, FileText, Info, Lightbulb, AlertCircle } from 'lucide-react';
+import { TrendingUp, Share2, StickyNote, FileText, Info, Lightbulb, BookOpen, Target, HelpCircle, AlertTriangle, CheckCircle } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { calculateROI } from "../../utils/calculations/roi";
@@ -58,7 +58,16 @@ export const ROICalculator: React.FC = () => {
   }, [investment, initialCosts, monthlyBenefit, discountRate, months]);
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+      
+      {/* 1. HLAVNÍ PRODEJNÍ TEXT (SEO) */}
+      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+        <h1 style={{ color: 'white', fontSize: '2.2rem', marginBottom: '10px' }}>Chcete znát skutečnou návratnost investice?</h1>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
+          Tato kalkulačka ROI slouží jako váš <strong>hloubkový průvodce</strong>. Pokud chcete znát reálnou návratnost svých peněz bez příkras, použijte náš nástroj. Ukáže vám čísla, která rozhodnou o vašem dalším kroku.
+        </p>
+      </div>
+
       <GlassCard>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -77,7 +86,6 @@ export const ROICalculator: React.FC = () => {
         </div>
 
         <div className="calculator-grid">
-          {/* LEVÁ STRANA: TEXT NAHOŘE + VSTUPY */}
           <div className="inputs-section">
             <div style={{ marginBottom: '20px', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', borderLeft: '3px solid var(--primary)' }}>
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.5' }}>
@@ -98,7 +106,6 @@ export const ROICalculator: React.FC = () => {
             </div>
           </div>
 
-          {/* PRAVÁ STRANA: VÝSLEDKY + RADY DOLE */}
           <div className="results-section">
             <div style={{ background: 'rgba(0,0,0,0.2)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -112,7 +119,6 @@ export const ROICalculator: React.FC = () => {
                 <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{(result?.roiPercent ?? 0).toFixed(2)} %</span>
               </div>
 
-              {/* DOPORUČENÍ POD VÝSLEDKY */}
               <div style={{ marginTop: '15px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', textAlign: 'left', border: '1px dashed var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent)' }}>
                   <Lightbulb size={18} />
@@ -139,21 +145,68 @@ export const ROICalculator: React.FC = () => {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Např. Rizika projektu, zdroje dat, předpokládaný růst trhu..."
-          className="notes-textarea"
           style={{ 
-            width: '100%', 
-            minHeight: '120px', 
-            background: 'rgba(0,0,0,0.1)', 
-            border: '1px solid var(--border)', 
-            borderRadius: '12px', 
-            color: 'white', 
-            padding: '15px', 
-            fontSize: '0.9rem',
-            resize: 'vertical',
-            outline: 'none'
+            width: '100%', minHeight: '120px', background: 'rgba(0,0,0,0.1)', border: '1px solid var(--border)',
+            borderRadius: '12px', color: 'white', padding: '15px', fontSize: '0.9rem', resize: 'vertical', outline: 'none'
           }}
         />
       </GlassCard>
+
+      {/* 2. HLOUBKOVÝ ČLÁNEK (Ponecháno pod kalkulačkou pro SEO a čtenáře) */}
+      <div className="no-print">
+        <GlassCard>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <BookOpen size={24} color="var(--primary)" />
+            <h2 style={{ margin: 0 }}>Hloubkový průvodce analýzou návratnosti</h2>
+          </div>
+          
+          <div style={{ color: 'var(--text-dim)', lineHeight: '1.7', fontSize: '1rem' }}>
+            <p>
+              Výpočet <strong>ROI (Return on Investment)</strong> není jen o matematice, je to o pochopení budoucnosti vašeho podnikání. 
+              Mnoho projektů vypadá na papíře skvěle, ale realita je často složitější.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', margin: '30px 0' }}>
+              <div style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '15px', borderLeft: '4px solid var(--success)' }}>
+                <h4 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 0 }}>
+                  <Target size={18} color="var(--success)" /> Kdy investovat?
+                </h4>
+                <p style={{ fontSize: '0.85rem', margin: 0 }}>
+                  Pokud je ROI nad 20 % a NPV kladné i při konzervativní diskontní sazbě (12 %), projekt má silné základy. 
+                </p>
+              </div>
+
+              <div style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '15px', borderLeft: '4px solid var(--primary)' }}>
+                <h4 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '8px', marginTop: 0 }}>
+                  <HelpCircle size={18} color="var(--primary)" /> Proč používat NPV?
+                </h4>
+                <p style={{ fontSize: '0.85rem', margin: 0 }}>
+                  Peníze ztrácejí hodnotu v čase. NPV vám řekne, zda zisk za dva roky má pro vás dnes dostatečnou hodnotu.
+                </p>
+              </div>
+            </div>
+
+            <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <AlertTriangle size={20} color="#fbbf24" /> Na co si dát pozor
+            </h3>
+            
+            <ul style={{ listStyle: 'none', padding: 0, marginTop: '15px' }}>
+              {[
+                { t: "Vlastní práce", d: "Nezapomeňte započítat čas, který projektu věnujete vy sami." },
+                { t: "Skryté náklady", d: "Daně, pojištění a drobné provozní výdaje dokážou ROI srazit o desítky procent." },
+                { t: "Časový horizont", d: "Sledujte projekt dostatečně dlouho, abyste viděli reálnou návratnost." }
+              ].map((item, idx) => (
+                <li key={idx} style={{ marginBottom: '15px', display: 'flex', alignItems: 'start', gap: '12px' }}>
+                  <CheckCircle size={18} color="var(--primary)" style={{ flexShrink: 0, marginTop: '3px' }} />
+                  <div>
+                    <strong style={{ color: 'white' }}>{item.t}:</strong> <span style={{ fontSize: '0.9rem' }}>{item.d}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </GlassCard>
+      </div>
       
       <div className="print-only" style={{ display: 'none', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '20px' }}>
         Vygenerováno aplikací Rozhodni.cz | {new Date().toLocaleDateString('cs-CZ')}

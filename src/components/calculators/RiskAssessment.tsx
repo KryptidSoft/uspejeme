@@ -1,5 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { ShieldAlert, ShieldCheck, AlertTriangle, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { 
+  ShieldAlert, 
+  ShieldCheck, 
+  AlertTriangle, 
+  Lightbulb, 
+  CheckCircle2, 
+  Lock, 
+  Zap, 
+  Users, 
+  FileText, 
+  HeartPulse,
+  Scale,
+  BookOpen
+} from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 
 export const RiskAssessment: React.FC = () => {
@@ -23,86 +36,161 @@ export const RiskAssessment: React.FC = () => {
   }, [risks]);
 
   const getStatus = (s: number) => {
-    if (s >= 80) return { color: 'var(--success)', label: 'V bezpečí', icon: <ShieldCheck size={48} /> };
-    if (s >= 50) return { color: '#eab308', label: 'Mírné riziko', icon: <AlertTriangle size={48} /> };
-    return { color: 'var(--danger)', label: 'Vysoké riziko', icon: <ShieldAlert size={48} /> };
+    if (s >= 80) return { color: '#10b981', label: 'V bezpečí', icon: <ShieldCheck size={64} /> };
+    if (s >= 50) return { color: '#eab308', label: 'Mírné riziko', icon: <AlertTriangle size={64} /> };
+    return { color: '#ef4444', label: 'Vysoké riziko', icon: <ShieldAlert size={64} /> };
   };
 
   const status = getStatus(score);
 
   return (
-    <div className="fade-in">
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+      
+      {/* --- STRATEGICKÝ ÚVOD --- */}
+      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+        <h1 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '15px', fontWeight: '800' }}>Audit podnikatelské odolnosti</h1>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.7' }}>
+          Úspěšné podnikání není o tom, že se nic nepokazí. Je o tom, <strong>kolik ran dokážete ustát</strong>, aniž byste museli skončit. 
+          Otestujte stabilitu svých procesů a zjistěte, kde máte slabiny dřív, než je odhalí trh.
+        </p>
+      </div>
+
       <GlassCard>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '25px' }}>
-          <ShieldAlert size={28} color="var(--primary)" />
-          <h2 style={{ margin: 0 }}>Analýza podnikatelských rizik</h2>
+          <Scale size={28} color="var(--primary)" />
+          <h2 style={{ margin: 0 }}>Stav vašich "vrátek"</h2>
         </div>
 
-        {/* Úvodní text */}
-        <div style={{ marginBottom: '25px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', borderLeft: '3px solid var(--primary)' }}>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.5' }}>
-            Kde má vaše podnikání otevřená vrátka? Tato analýza neřeší daně, ale <strong>stabilitu vašich procesů</strong>. Odpovězte upřímně a zjistěte, jak moc by vás rozhodil výpadek jednoho klienta nebo nečekaná nemoc.
+        <div style={{ marginBottom: '30px', padding: '15px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px', borderLeft: '4px solid var(--primary)' }}>
+          <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text)', lineHeight: '1.5' }}>
+            💡 <strong>Instrukce:</strong> Odpovídejte podle aktuální reality, ne podle toho, jak byste chtěli, aby to vypadalo. 
+            Jen pravda vám pomůže postavit neprůstřelné podnikání.
           </p>
         </div>
 
-        <div className="calculator-grid">
-          {/* Otázky */}
+        <div className="calculator-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+          {/* Levá strana: Vstupy */}
           <div className="inputs-section">
-            <div style={{ marginBottom: '25px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <label style={{ fontSize: '0.9rem' }}>Příjem od největšího klienta</label>
-                <strong style={{ color: risks.singleClient > 50 ? 'var(--danger)' : 'var(--text)' }}>{risks.singleClient} %</strong>
+            <div style={{ marginBottom: '30px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <label style={{ fontSize: '1rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <Users size={18} color="var(--primary)" /> Závislost na největším klientovi
+                </label>
+                <strong style={{ color: risks.singleClient > 50 ? '#ef4444' : 'white', fontSize: '1.1rem' }}>{risks.singleClient} % příjmů</strong>
               </div>
               <input 
                 type="range" min="0" max="100" value={risks.singleClient} 
                 onChange={(e) => setRisks({...risks, singleClient: parseInt(e.target.value)})}
-                style={{ width: '100%', accentColor: 'var(--primary)' }}
+                style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
               />
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '8px' }}>
+                Pokud tento klient odejde, o kolik procent vašich příjmů okamžitě přijdete?
+              </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                <input type="checkbox" checked={risks.hasContracts} onChange={(e) => setRisks({...risks, hasContracts: e.target.checked})} />
-                <span style={{ fontSize: '0.9rem' }}>Používám písemné smlouvy</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: risks.hasContracts ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: risks.hasContracts ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
+                <input type="checkbox" checked={risks.hasContracts} onChange={(e) => setRisks({...risks, hasContracts: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Písemné smlouvy</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Mám podepsané smlouvy na každý projekt.</div>
+                </div>
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                <input type="checkbox" checked={risks.hasDeposits} onChange={(e) => setRisks({...risks, hasDeposits: e.target.checked})} />
-                <span style={{ fontSize: '0.9rem' }}>Vybírám zálohy předem</span>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: risks.hasDeposits ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: risks.hasDeposits ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
+                <input type="checkbox" checked={risks.hasDeposits} onChange={(e) => setRisks({...risks, hasDeposits: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Zálohový systém</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Vybírám min. 30–50 % před zahájením práce.</div>
+                </div>
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border)' }}>
-                <input type="checkbox" checked={risks.hasBackup} onChange={(e) => setRisks({...risks, hasBackup: e.target.checked})} />
-                <span style={{ fontSize: '0.9rem' }}>Mám proces pro případ nemoci / záskok</span>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: risks.hasBackup ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: risks.hasBackup ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
+                <input type="checkbox" checked={risks.hasBackup} onChange={(e) => setRisks({...risks, hasBackup: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Krizový plán (Nemoc/Výpadek)</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Vím, na koho delegovat nebo jak komunikovat neschopnost.</div>
+                </div>
               </label>
             </div>
           </div>
 
-          {/* Výsledek */}
-          <div className="results-section" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ color: status.color, marginBottom: '15px', display: 'flex', justifyContent: 'center' }}>
+          {/* Pravá strana: Výsledek */}
+          <div className="results-section" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '30px', background: 'rgba(255,255,255,0.01)', borderRadius: '24px', border: '1px solid var(--border)' }}>
+            <div style={{ color: status.color, marginBottom: '20px', display: 'flex', justifyContent: 'center', filter: 'drop-shadow(0 0 15px ' + status.color + '44)' }}>
               {status.icon}
             </div>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold' }}>{score}%</div>
-            <div style={{ fontSize: '1.2rem', color: status.color, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <div style={{ fontSize: '4rem', fontWeight: '900', color: 'white' }}>{score}%</div>
+            <div style={{ fontSize: '1.4rem', color: status.color, fontWeight: '800', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '25px' }}>
               {status.label}
             </div>
 
-            {/* Doporučení */}
-            <div style={{ marginTop: '25px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px dashed var(--border)', textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent)' }}>
-                <Lightbulb size={18} />
-                <strong style={{ fontSize: '0.85rem' }}>Doporučený krok</strong>
+            <div style={{ textAlign: 'left', padding: '20px', borderRadius: '15px', background: 'rgba(255,255,255,0.03)', border: '1px dashed var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: 'var(--accent)' }}>
+                <Zap size={20} />
+                <strong style={{ fontSize: '0.9rem' }}>Strategické doporučení</strong>
               </div>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: 0, lineHeight: '1.4' }}>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', margin: 0, lineHeight: '1.6' }}>
                 {score >= 80 
-                  ? "Vaše podnikání stojí na pevných základech. Udržujte procesy a nezapomínejte smlouvy pravidelně aktualizovat." 
+                  ? "Váš systém je robustní. Jste v horních 5 % freelancerů, kteří mají své podnikání pod kontrolou. Pokračujte v diverzifikaci portfolia." 
                   : score >= 50 
-                  ? "Máte slabá místa. Největší pákou bude snížení závislosti na hlavním klientovi a zavedení zálohových plateb."
-                  : "Pozor, vaše podnikání je velmi křehké. Prioritně zaveďte písemné smlouvy a začněte hledat další zdroje příjmů."}
+                  ? "Máte postavené základy, ale stojíte na jedné silné noze. Snížení závislosti na hlavním klientovi pod 40 % by mělo být vaší prioritou pro příští kvartál."
+                  : "Vaše podnikání je v zóně extrémní křehkosti. Jakýkoliv náraz (nemoc, odchod klienta) může být likvidační. Prvním krokem musí být zavedení smluv a záloh."}
+              </p>
+            </div></div>
+        </div>
+      </GlassCard>
+
+      {/* --- HLOUBKOVÝ PRŮVODCE RIZIKY --- */}
+      <div className="no-print">
+        <GlassCard style={{ padding: '40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
+            <BookOpen size={32} color="var(--primary)" />
+            <h2 style={{ margin: 0 }}>Jak vybudovat neprůstřelné podnikání</h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+            <div>
+              <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
+                <Lock size={20} color="#3b82f6" /> Past zlaté klece
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.6' }}>
+                Mít jednoho velkého klienta, který platí skvěle a bere veškerý váš čas, je lákavé, ale extrémně nebezpečné. 
+                De jure jste freelancer, de facto jste zaměstnanec bez zaměstnaneckých výhod. Vždy si držte prostor pro alespoň 2–3 menší projekty.
+              </p>
+            </div>
+
+            <div>
+              <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
+                <FileText size={20} color="#10b981" /> Psychologie smluv a záloh
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.6' }}>
+                Smlouvy a zálohy nejsou jen právní ochrana. Jsou to <strong>filtry na špatné klienty</strong>. Klient, který odmítá podepsat 
+                jednoduchou objednávku nebo zaplatit zálohu, je téměř vždy klient, se kterým budou v budoucnu problémy při placení faktur.
+              </p>
+            </div>
+
+            <div>
+              <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
+                <HeartPulse size={20} color="#ef4444" /> Riziko "Single Point of Failure"
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.6' }}>
+                Pokud všechno ve vaší firmě závisí na vaší hlavě a rukou, máte problém. Co se stane, když vypadnete na měsíc? 
+                Budování sítě kontaktů (vzájemný záskok s jinými freelancery) je nejlevnější pojištění, které si můžete pořídit.
               </p>
             </div>
           </div>
-        </div>
-      </GlassCard>
+
+          <div style={{ marginTop: '35px', padding: '20px', background: 'rgba(59, 130, 246, 0.03)', borderRadius: '15px', border: '1px dashed var(--primary)', display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <Zap size={30} color="var(--primary)" />
+            <p style={{ margin: 0, fontSize: '1rem', color: 'white' }}>
+              <strong>Změnily se vaše náklady?</strong> Upravte je v strategii a tato analýza se okamžitě přizpůsobí.
+            </p>
+          </div>
+        </GlassCard>
+      </div>
     </div>
   );
 };
+
+export default RiskAssessment;

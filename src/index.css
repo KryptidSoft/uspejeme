@@ -62,12 +62,12 @@ main {
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 20px 0;
-  padding: 8px;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 4px;
   background: rgba(30, 41, 59, 0.7);
   backdrop-filter: blur(10px);
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   overflow-x: auto;
   scrollbar-width: none;
@@ -76,12 +76,12 @@ main {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 6px;
+  padding: 6px 16px;
   background: transparent;
   border: none;
   color: var(--text-dim);
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -359,5 +359,180 @@ select option {
   /* Roztáhne grid na celou šířku */
   .calculator-grid {
     display: block !important;
+  }
+}
+
+/* Layout Plánovače */
+.planner-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+.planner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* Sekce vstupů */
+.sections-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.section-label {
+  font-size: 1rem;
+  color: var(--primary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hero karta s hodinovkou */
+.hero-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  padding: 32px;
+  border-radius: 24px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.5);
+  margin-bottom: 24px;
+}
+
+.hero-value {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 12px 0;
+  letter-spacing: -1px;
+}
+
+.hero-badge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  display: inline-block;
+}
+
+/* Tisková pravidla */
+@media print {
+  body { background: white; color: black; }
+  .no-print { display: none !important; }
+  .planner-grid { grid-template-columns: 1fr; }
+  .GlassCard { border: 1px solid #eee; box-shadow: none; }
+  .hero-card { background: #f0f4ff; color: #1d4ed8; box-shadow: none; border: 2px solid #1d4ed8; }
+  .planner-container { padding: 0; }
+}
+
+/* Select styling */
+.select-wrapper label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+select {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+/* Tlačítka */
+.btn-connect {
+  width: 100%;
+  padding: 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.2s;
+}
+
+.btn-connect:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+.hover-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px); /* Karta se lehce nadzvedne */
+  border-color: var(--primary) !important; /* Okraj se rozsvítí modře */
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+@media print {
+  /* Zabraní roztržení řádku tabulky mezi dvě stránky */
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Zabraní tomu, aby nadpis tabulky zůstal sám na konci stránky */
+  thead {
+    display: table-header-group;
+  }
+
+  /* Pokud je faktura příliš dlouhá, zajistí, aby patička nebyla uprostřed textu */
+  .print-only {
+    position: running(footer);
+  }
+}
+
+/* --- DOPLNĚK PRO SESKUPENÉ MENU --- */
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+
+.nav-separator {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 8px;
+}
+
+/* Na mobilu se menu poskládá pod sebe */
+@media (max-width: 768px) {
+  .main-nav {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .nav-group {
+    background: none;
+    border: none;
+    padding: 0;
   }
 }

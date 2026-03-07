@@ -1,12 +1,20 @@
 import React, { useState, useMemo, useEffect } from 'react'; 
-import { Target, Save, AlertCircle, Share2, FileText, Lightbulb, TrendingUp } from 'lucide-react';
+import { 
+  Target, Save, AlertCircle, Share2, FileText, Lightbulb, 
+  TrendingUp, Check, Zap, BookOpen, ShieldCheck, PieChart, 
+  Clock, DollarSign 
+} from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { formatCZK } from '../../utils/calculations/mathHelpers';
+import { useBusinessData } from '../../hooks/useBusinessData';
 
 export const ProsperityPlanner: React.FC = () => {
+  const { data: globalData, updateData } = useBusinessData();
+  const [saved, setSaved] = useState(false);
+
   const [data, setData] = useState({
-    monthlyExpenses: 40000,
+    monthlyExpenses: globalData.monthlyExpenses || 40000,
     desiredSavings: 15000,
     billableHours: 100,
     safetyBufferMonths: 6,
@@ -17,20 +25,20 @@ export const ProsperityPlanner: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has('exp') || params.has('sav')) {
+    if (params.has('exp')) {
       setData({
-        monthlyExpenses: Number(params.get('exp')) || data.monthlyExpenses,
-        desiredSavings: Number(params.get('sav')) || data.desiredSavings,
-        billableHours: Number(params.get('hrs')) || data.billableHours,
-        safetyBufferMonths: Number(params.get('buf')) || data.safetyBufferMonths,
-        taxMode: params.get('tax') || data.taxMode,
-        customTaxRate: Number(params.get('rate')) || data.customTaxRate,
-        pausalAmount: Number(params.get('pamt')) || data.pausalAmount,
+        monthlyExpenses: Number(params.get('exp')),
+        desiredSavings: Number(params.get('sav')),
+        billableHours: Number(params.get('hrs')),
+        safetyBufferMonths: Number(params.get('buf')),
+        taxMode: params.get('tax') || 'pausal_dan',
+        customTaxRate: Number(params.get('rate')) || 25,
+        pausalAmount: Number(params.get('pamt')) || 8916,
       });
     } else {
-      const saved = localStorage.getItem('last_planner_data');
-      if (saved) {
-        try { setData(JSON.parse(saved)); } catch (e) { console.error("Chyba načítání", e); }
+      const savedLocal = localStorage.getItem('last_planner_data');
+      if (savedLocal) {
+        try { setData(JSON.parse(savedLocal)); } catch (e) { console.error(e); }
       }
     }
   }, []);
@@ -54,53 +62,51 @@ export const ProsperityPlanner: React.FC = () => {
     const hourlyRate = Math.ceil(grossNeeded / data.billableHours);
     const totalReserveGoal = data.monthlyExpenses * data.safetyBufferMonths;
     
-    return { hourlyRate, grossNeeded, totalReserveGoal, taxNote };
+    return { hourlyRate, grossNeeded, totalReserveGoal, taxNote, netNeeded };
   }, [data]);
 
   const handleSave = () => {
     localStorage.setItem('last_planner_data', JSON.stringify(data));
-    alert("Strategie uložena do prohlížeče.");
-  };
-
-  const handleShare = () => {
-    const params = new URLSearchParams({
-      exp: data.monthlyExpenses.toString(),
-      sav: data.desiredSavings.toString(),
-      hrs: data.billableHours.toString(),
-      buf: data.safetyBufferMonths.toString(),
-      tax: data.taxMode,
-      pamt: data.pausalAmount.toString()
+    updateData({
+      hourlyRate: analysis.hourlyRate,
+      monthlyExpenses: data.monthlyExpenses,
+      desiredNetIncome: analysis.netNeeded,
+      taxReservePercent: data.customTaxRate
     });
-    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    navigator.clipboard.writeText(shareUrl).then(() => alert("Odkaz na strategii zkopírován!"));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   };
-
-  const handlePrint = () => window.print();
 
   return (
-    <div className="fade-in">
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1100px', margin: '0 auto' }}>
+      
+      {/* --- ÚVODNÍ SEKCE: STRATEGICKÝ KONTEXT --- */}
+      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+        <h1 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '15px', fontWeight: '800' }}>Plánovač finanční prosperity</h1>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', maxWidth: '850px', margin: '0 auto', lineHeight: '1.7' }}>
+          Většina freelancerů dělá chybu, že svou hodinovou sazbu "střílí od boku". <strong>Tento plánovač to mění.</strong> 
+          Spojuje vaše životní náklady, daně a ambice do jedné vítězné strategie. Zjistěte, kolik musíte reálně fakturovat, abyste ne jen přežívali, ale skutečně rostli.
+        </p>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '25px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
           <GlassCard>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Target size={32} color="var(--primary)" />
-                <h2 style={{ margin: 0 }}>Plánovač prosperity</h2>
+                <h2 style={{ margin: 0 }}>Vstupní parametry</h2>
               </div>
               <div className="no-print" style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={handlePrint} className="nav-item" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', padding: '8px 15px', color: '#10b981' }}>
-                  <FileText size={14} /> PDF
-                </button>
-                <button onClick={handleShare} className="nav-item" style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', padding: '8px 15px' }}>
-                  <Share2 size={14} /> SDÍLET
+                <button onClick={() => window.print()} className="nav-item" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', padding: '8px 15px', color: '#10b981' }}>
+                  <FileText size={14} /> TISK REPORTU
                 </button>
               </div>
             </div>
 
-            {/* TEXT NAHOŘE VLEVO */}
             <div style={{ marginBottom: '25px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', borderLeft: '3px solid var(--primary)' }}>
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.5' }}>
-                Kolik musíte vydělávat, aby váš život fungoval a rostl? Plánovač prosperity spojuje vaše náklady, daně i fakturovatelné hodiny do jednoho čísla. <strong>Už žádné střílení od boku</strong> – zjistěte svou skutečnou nutnou hodinovku.
+                💡 <strong>Data se propisují:</strong> Jakmile si zde nastavíte svou cílovou strategii a uložíte ji, ostatní kalkulačky na webu budou automaticky pracovat s těmito hodnotami.
               </p>
             </div>
 
@@ -109,10 +115,31 @@ export const ProsperityPlanner: React.FC = () => {
                 <h3 style={{ fontSize: '1rem', color: 'var(--accent)', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <TrendingUp size={18} /> Životní standard
                 </h3>
-                <InputGroup label="Měsíční náklady" unit="Kč" value={data.monthlyExpenses} onChange={(v) => setData({...data, monthlyExpenses: Number(v)})} tooltip="Nájem, jídlo, režie, pojištění..." />
-                <InputGroup label="Měsíční spoření" unit="Kč" value={data.desiredSavings} onChange={(v) => setData({...data, desiredSavings: Number(v)})} tooltip="Kolik chcete měsíčně odložit na investice a rezervu." />
+                <InputGroup 
+                  label="Měsíční náklady" 
+                  unit="Kč" 
+                  value={data.monthlyExpenses} 
+                  onChange={(v) => setData({...data, monthlyExpenses: Number(v)})}
+                  tooltip="Součet všech vašich soukromých výdajů (nájem, jídlo, energie, služby). Je to základní meta, kterou musíte každý měsíc pokrýt."
+                />
+                <InputGroup 
+                  label="Měsíční spoření" 
+                  unit="Kč" 
+                  value={data.desiredSavings} 
+                  onChange={(v) => setData({...data, desiredSavings: Number(v)})}
+                  tooltip="Částka, kterou si chcete odložit stranou jako čistý zisk pro investice nebo budoucí nákupy."
+                />
                 <div className="no-print">
-                  <InputGroup label={`Rezerva: ${data.safetyBufferMonths} měs.`} unit="měs" type="range" min={1} max={12} value={data.safetyBufferMonths} onChange={(v) => setData({...data, safetyBufferMonths: Number(v)})} />
+                  <InputGroup 
+                    label={`Rezerva: ${data.safetyBufferMonths} měs.`} 
+                    unit="měs" 
+                    type="range" 
+                    min={1} 
+                    max={12} 
+                    value={data.safetyBufferMonths} 
+                    onChange={(v) => setData({...data, safetyBufferMonths: Number(v)})}
+                    tooltip="Kolik měsíců chcete přežít bez příjmů v případě výpadku zakázek. Doporučujeme 6 měsíců."
+                  />
                 </div>
               </section>
 
@@ -127,15 +154,52 @@ export const ProsperityPlanner: React.FC = () => {
                 >
                   <option value="pausal_dan">Paušální daň (1. pásmo)</option>
                   <option value="vydaje_60">Výdajový paušál (60%)</option>
-                  <option value="realne_vydaje">Skutečné výdaje / Jiné</option>
+                  <option value="realne_vydaje">Vlastní odhad % zdanění</option>
                 </select>
 
-                {data.taxMode === 'pausal_dan' && (
-                  <InputGroup label="Měsíční paušál" unit="Kč" value={data.pausalAmount} onChange={(v) => setData({...data, pausalAmount: Number(v)})} />
+                {data.taxMode === 'pausal_dan' ? (
+                  <InputGroup 
+                    label="Měsíční paušál" 
+                    unit="Kč" 
+                    value={data.pausalAmount} 
+                    onChange={(v) => setData({...data, pausalAmount: Number(v)})}
+                    tooltip="Aktuální výše měsíční platby paušální daně. Obsahuje daň i sociální a zdravotní pojištění."
+                  />
+                ) : (
+                  <InputGroup 
+                    label="Odhad daní + odvodů" 
+                    unit="%" 
+                    value={data.customTaxRate} 
+                    onChange={(v) => setData({...data, customTaxRate: Number(v)})}
+                    tooltip="Váš odhad celkového procentuálního zatížení (daň + odvody). Obvykle se pohybuje kolem 25 %."
+                  />
                 )}
 
-                <InputGroup label="Fakturovatelné hodiny" unit="h/měs" value={data.billableHours} onChange={(v) => setData({...data, billableHours: Number(v)})} tooltip="Reálný počet hodin, které měsíčně vyúčtujete klientům (ne čas strávený administrativou)." />
+                <InputGroup 
+                  label="Fakturovatelné hodiny" 
+                  unit="h/měs" 
+                  value={data.billableHours} 
+                  onChange={(v) => setData({...data, billableHours: Number(v)})}
+                  tooltip="Počet hodin, které měsíčně reálně vyfakturujete klientům (bez času na administrativu a marketing)."
+                />
               </section>
+            </div>
+          </GlassCard>
+
+          <GlassCard style={{ border: '1px solid rgba(59, 130, 246, 0.3)', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255,255,255,0.01) 100%)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+              <Zap size={20} color="var(--primary)" />
+              <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Strategický výklad výsledků</h3>
+            </div>
+            <div style={{ lineHeight: '1.6', color: 'var(--text-dim)', fontSize: '0.95rem' }}>
+              {analysis.hourlyRate < 800 ? (
+                <p>Vaše sazba <strong>{formatCZK(analysis.hourlyRate)}</strong> je v zóně „přežití“. Pokrýváte sice náklady, ale nevytváříte si polštář pro budoucnost. Doporučujeme cílit na postupný růst k hranici 1 000 Kč.</p>
+              ) : (
+                <p>Sazba <strong>{formatCZK(analysis.hourlyRate)}</strong> je zdravým základem. Umožňuje vám tvořit rezervy a mít podnikání pod kontrolou bez neustálého stresu.</p>
+              )}
+              <p style={{ fontSize: '0.85rem', marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '10px' }}>
+                💡 <strong>Tip:</strong> Při této sazbě musíte denně vyfakturovat v průměru <strong>{formatCZK(analysis.grossNeeded / 21)}</strong> (při 21 pracovních dnech).
+              </p>
             </div>
           </GlassCard>
         </div>
@@ -157,24 +221,71 @@ export const ProsperityPlanner: React.FC = () => {
                  <span style={{ color: 'var(--text-dim)' }}>Cílová rezerva:</span>
                  <span style={{ fontWeight: 'bold' }}>{formatCZK(analysis.totalReserveGoal)}</span>
                </div>
-               
-               {/* RADY A DOPORUČENÍ VLEVO DOLE V PANELU */}
-               <div style={{ marginTop: '10px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', border: '1px dashed var(--border)' }}>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent)' }}>
-                   <Lightbulb size={18} />
-                   <strong style={{ fontSize: '0.85rem' }}>Akční doporučení</strong>
-                 </div>
-                 <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', margin: 0, lineHeight: '1.4' }}>
-                   Pokud vaše současná sazba neodpovídá této hodnotě, <strong>upravte ceny u klientů</strong> hned příští měsíc. Počítejte s tím, že fakturovatelné hodiny musí být reálné – podcenění času na administrativu je nejčastější chyba.
-                 </p>
-               </div>
 
-               <button onClick={handleSave} className="calculate-btn no-print" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}>
-                 <Save size={18} /> Uložit strategii
+               <button 
+                onClick={handleSave} 
+                className="calculate-btn no-print" 
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px', background: saved ? '#10b981' : '' }}
+               >
+                 {saved ? <><Check size={18} /> Propojeno se systémem</> : <><Save size={18} /> ULOŽIT STRATEGII</>}
                </button>
              </div>
           </GlassCard>
         </div>
+      </div>
+
+      {/* --- NOVÁ SEKCE: HLOUBKOVÝ PRŮVODCE PROSPERITOU --- */}
+      <div className="no-print">
+        <GlassCard style={{ padding: '40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
+            <BookOpen size={32} color="var(--primary)" />
+            <h2 style={{ margin: 0 }}>Hloubkový průvodce finančním plánováním</h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', color: 'var(--text-dim)', lineHeight: '1.8' }}>
+            <div>
+              <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
+                <ShieldCheck size={20} color="#10b981" /> Proč 6 měsíců rezerva?
+              </h3>
+              <p>
+                Finanční polštář není jen pro případ krize. Je to vaše <strong>"ne-peníze"</strong>. Když víte, že máte pokryté náklady na půl roku dopředu, 
+                změní se vaše energie při vyjednávání s klienty. Přestáváte brát zakázky ze zoufalství a začínáte si vybírat ty, které vás baví a dávají smysl.
+              </p>
+            </div>
+
+            <div>
+              <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
+                <Clock size={20} color="var(--primary)" /> Fakturovatelné hodiny vs. čas
+              </h3>
+              <p>
+                Pracovní měsíc má cca 160 hodin. Jako freelancer ale nikdy nevyfakturujete 160 hodin. Musíte počítat s administrativou, 
+                vzděláváním a obchodem. Realistický odhad pro zdravé podnikání je <strong>80–110 fakturovatelných hodin</strong> měsíčně.
+              </p>
+            </div>
+
+            <div>
+              <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
+                <DollarSign size={20} color="#fbbf24" /> Past nízké hodinovky
+              </h3>
+              <p>
+                Pokud vaše hodinovka jen těsně pokrývá náklady, jste v pasti. Jakákoliv neplánovaná oprava auta nebo delší nemoc 
+                vás pošle do červených čísel. Skutečná prosperita začíná tam, kde vaše sazba obsahuje i <strong>investici do vašeho rozvoje</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '40px', padding: '25px', background: 'rgba(59, 130, 246, 0.03)', borderRadius: '20px', border: '1px dashed var(--primary)' }}>
+            <h4 style={{ color: 'white', marginTop: 0 }}>🚀 Jak s těmito daty pracovat dál?</h4>
+            <p style={{ margin: 0, fontSize: '0.95rem' }}>
+              Jakmile získáte svou cílovou hodinovku, použijte ji jako benchmark. Pokud vám vyjde 1 200 Kč, ale vy fakturujete 800 Kč, 
+              máte před sebou jasný úkol: buď zvýšit hodnotu své práce, nebo optimalizovat náklady. Tento plánovač je váš <strong>finanční kompas</strong>.
+            </p>
+          </div>
+        </GlassCard>
+      </div>
+
+      <div className="print-only" style={{ display: 'none', textAlign: 'center', fontSize: '0.8rem', opacity: 0.5, marginTop: '20px' }}>
+        Vygenerováno aplikací Rozhodni.cz | {new Date().toLocaleDateString('cs-CZ')}
       </div>
     </div>
   );

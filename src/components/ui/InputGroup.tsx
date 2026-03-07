@@ -9,8 +9,8 @@ interface InputGroupProps {
   unit?: string;
   tooltip?: string;
   step?: number;
-  min?: number; // PŘIDÁNO
-  max?: number; // PŘIDÁNO
+  min?: number;
+  max?: number;
 }
 
 export const InputGroup: React.FC<InputGroupProps> = ({
@@ -21,31 +21,43 @@ export const InputGroup: React.FC<InputGroupProps> = ({
   unit,
   tooltip,
   step,
-  min, // PŘIDÁNO
-  max  // PŘIDÁNO
+  min,
+  max
 }) => {
+  // Zajistíme, že hodnota nebude null nebo undefined pro input
+  const inputValue = value ?? "";
+
   return (
-    <div className="input-group">
-      <div className="label-wrapper">
-        <label>
+    <div className="input-group" style={{ marginBottom: '15px' }}>
+      <div className="label-wrapper" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem', fontWeight: 500 }}>
           {label}
           {tooltip && (
-            <span className="tooltip-container">
-              <Info size={14} className="tooltip-trigger-icon" />
+            <span className="tooltip-container" style={{ position: 'relative', display: 'inline-block', cursor: 'help' }}>
+              <Info size={14} style={{ opacity: 0.6 }} />
               <span className="tooltip-box">{tooltip}</span>
             </span>
           )}
         </label>
-        {unit && <span className="unit-badge">{unit}</span>}
+        {unit && <span className="unit-badge" style={{ fontSize: '0.75rem', opacity: 0.7 }}>{unit}</span>}
       </div>
       <input
         type={type}
-        value={value}
+        value={inputValue}
         onChange={(e) => onChange(e.target.value)}
         className="text-input"
         step={step}
-        min={min} // PŘIDÁNO
-        max={max} // PŘIDÁNO
+        min={min}
+        max={max}
+        style={{
+          width: '100%',
+          padding: '10px',
+          borderRadius: '8px',
+          border: '1px solid var(--border)',
+          background: 'rgba(255, 255, 255, 0.05)',
+          color: 'white',
+          outline: 'none'
+        }}
       />
     </div>
   );
