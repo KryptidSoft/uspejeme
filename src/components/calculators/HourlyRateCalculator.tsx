@@ -17,31 +17,37 @@ import { calculateHourlyRate } from '../../utils/calculations/hourly';
 import { formatCZK } from '../../utils/calculations/mathHelpers';
 import { useBusinessData } from '../../hooks/useBusinessData';
 
+// ... předchozí kód (importy, useState)
+
 export const HourlyRateCalculator: React.FC = () => {
-  const { updateData } = useBusinessData();
-  
+  const { data: globalData, updateData } = useBusinessData();
   const [inputs, setInputs] = useState({
-    grossIncome: 60000,
+	  grossIncome: globalData.desiredNetIncome || 60000,
     billableHours: 100,
-    nonBillableHours: 40,
     vacationWeeks: 4,
     bufferDays: 10,
-    costs: { taxes: 12000, overhead: 5000, material: 0, reserves: 5000 }
+    costs: {
+      taxes: globalData.taxMode === 'pausal_dan' ? (globalData.pausalAmount || 8916) : 15000,
+      overhead: globalData.monthlyExpenses || 30000
+    }
   });
-
   const [results, setResults] = useState<any>(null);
 
-  const handleCalculate = () => {
-    const res = calculateHourlyRate(inputs);
-    setResults(res);
+  // SEM VLOŽÍTE TU NOVOU FUNKCI:
+const handleCalculate = () => {
+  // 'inputs' musí odpovídat rozhraní HourlyInputs, které máte v helperu
+  const res = calculateHourlyRate(inputs); 
+  setResults(res);
 
-    // SYNCHRONIZACE: Pošleme výsledky do globálního úložiště
-    updateData({
-      hourlyRate: res.rate,
-      monthlyExpenses: res.totalCosts,
-      desiredNetIncome: inputs.grossIncome
-    });
-  };
+  updateData({
+    hourlyRate: res.rate,
+    monthlyExpenses: inputs.costs.overhead + inputs.costs.taxes,
+    desiredNetIncome: inputs.grossIncome,
+    // Tyto hodnoty dashboard využije pro analýzu stability
+    vacationWeeks: inputs.vacationWeeks,
+    bufferDays: inputs.bufferDays
+  });
+};
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
@@ -138,7 +144,7 @@ export const HourlyRateCalculator: React.FC = () => {
                 <div style={{ fontSize: '4.5rem', fontWeight: '900', color: 'white', margin: '15px 0', textShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
                   {formatCZK(results.rate)}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
                   <p style={{ fontSize: '1rem', color: 'var(--text)', margin: 0 }}>
                     Měsíční obrat: <strong>{formatCZK(results.totalRequired)}</strong>
                   </p>

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
+import { RATES } from '../../utils/calculations/assets';
 
 type AssetKey = 'gold' | 'silver' | 'btc' | 'chf';
 
@@ -22,10 +23,10 @@ interface Asset {
 }
 
 const assets: Record<AssetKey, Asset> = {
-  gold:   { label: 'Zlato',    price: 3495,    unit: 'g',  color: '#eab308', desc: 'Tradiční uchovatel hodnoty v dobách nejistoty.' },
-  silver: { label: 'Stříbro',  price: 58,      unit: 'g',  color: '#94a3b8', desc: 'Industriální kov s vysokým potenciálem.' },
-  btc:    { label: 'Bitcoin',  price: 1425408, unit: 'BTC', color: '#f97316', desc: 'Digitální zlato a ochrana proti inflaci.' },
-  chf:    { label: 'Švýcarský Frank', price: 27.01,   unit: 'CHF', color: '#D52B1E', desc: 'Symbol stability a bezpečný přístav fiat měn.' }
+  gold:   { label: 'Zlato', price: RATES.GOLD_G, unit: 'g', color: '#eab308', desc: 'Tradiční uchovatel hodnoty v dobách nejistoty.' },
+  silver: { label: 'Stříbro', price: RATES.SILVER_G, unit: 'g', color: '#94a3b8', desc: 'Industriální kov s vysokým potenciálem.' },
+  btc:    { label: 'Bitcoin', price: RATES.BTC, unit: 'BTC', color: '#f97316', desc: 'Digitální zlato a ochrana proti inflaci.' },
+  chf:    { label: 'Švýcarský Frank', price: RATES.CHF, unit: 'CHF', color: '#D52B1E', desc: 'Symbol stability a bezpečný přístav fiat měn.' }
 };
 
 export const AssetsCalculator: React.FC = () => {

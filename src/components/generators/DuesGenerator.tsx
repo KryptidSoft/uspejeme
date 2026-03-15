@@ -73,7 +73,7 @@ export const DuesGenerator: React.FC = () => {
     <div className="fade-in" style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <h1 style={{ color: 'white', fontSize: '2.5rem', fontWeight: '900', marginBottom: '10px' }}>
-          Payment <span style={{ color: 'var(--primary)' }}>Guard</span>
+          Hlídač <span style={{ color: 'var(--primary)' }}>Plateb</span>
         </h1>
         <p style={{ color: 'var(--text-dim)' }}>Profesionální správa splatnosti a upomínek.</p>
       </div>

@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/rozhodni-cz/', // Změňte podle názvu vašeho repozitáře
+  base: '/', // nyní React Router najde všechny cesty
 })

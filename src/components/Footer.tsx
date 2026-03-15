@@ -7,7 +7,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onShowDisclaimer }) => {
-  const lastUpdate = "02/2026";
+  const lastUpdate = "03/2026";
 
   const handleReset = () => {
     if (window.confirm("Opravdu chcete smazat všechna uložená data? Tato akce je nevratná.")) {
@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({ onShowDisclaimer }) => {
       </div>
 
       <p className="copy">
-        © 2026 Uspejeme.cz | Verze 1.1.0 – Navigátor pro moderní OSVČ
+        © 2026 Uspejeme.cz | Verze 1.1.0 – Vytvořeno pro komunitu svobodných profesionálů.
       </p>
     </footer>
   );

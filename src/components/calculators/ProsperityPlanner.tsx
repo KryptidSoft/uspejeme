@@ -8,6 +8,7 @@ import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { formatCZK } from '../../utils/calculations/mathHelpers';
 import { useBusinessData } from '../../hooks/useBusinessData';
+import { calculateGrossFromNet } from '../../utils/calculations/businessLogic';
 
 export const ProsperityPlanner: React.FC = () => {
   const { data: globalData, updateData } = useBusinessData();
@@ -43,39 +44,71 @@ export const ProsperityPlanner: React.FC = () => {
     }
   }, []);
 
-  const analysis = useMemo(() => {
-    const netNeeded = data.monthlyExpenses + data.desiredSavings;
-    let grossNeeded = 0;
-    let taxNote = "";
+const analysis = useMemo(() => {
+  // 1. Příprava čísel
+  const monthlyExpenses = Number(data.monthlyExpenses || 0);
+  const desiredSavings = Number(data.desiredSavings || 0);
+  const billableHours = Number(data.billableHours || 1);
+  const safetyBufferMonths = Number(data.safetyBufferMonths || 0);
+  const customTaxRate = Number(data.customTaxRate || 0);
+  const pausalAmount = Number(data.pausalAmount || 8916);
 
-    if (data.taxMode === 'pausal_dan') {
-      grossNeeded = netNeeded + (data.pausalAmount || 0);
-      taxNote = `Včetně paušálu ${formatCZK(data.pausalAmount || 0)}`;
-    } else if (data.taxMode === 'vydaje_60') {
-      grossNeeded = netNeeded / 0.78;
-      taxNote = "Odhad odvodů při 60% paušálu";
-    } else {
-      grossNeeded = netNeeded / (1 - data.customTaxRate / 100);
-      taxNote = "Dle vašeho odhadu zdanění";
-    }
+  // 2. Výpočet
+  const netNeeded = monthlyExpenses + desiredSavings;
+  const grossNeeded = calculateGrossFromNet(
+    netNeeded, 
+    data.taxMode, 
+    customTaxRate, 
+    pausalAmount
+  );
 
-    const hourlyRate = Math.ceil(grossNeeded / data.billableHours);
-    const totalReserveGoal = data.monthlyExpenses * data.safetyBufferMonths;
-    
-    return { hourlyRate, grossNeeded, totalReserveGoal, taxNote, netNeeded };
-  }, [data]);
+  // 3. Textová poznámka
+  const taxNote = data.taxMode === 'pausal_dan' 
+    ? `Včetně paušálu ${formatCZK(pausalAmount)}` 
+    : data.taxMode === 'vydaje_60' 
+      ? "Odhad odvodů při 60% paušálu" 
+      : "Dle vašeho odhadu zdanění";
 
-  const handleSave = () => {
-    localStorage.setItem('last_planner_data', JSON.stringify(data));
-    updateData({
-      hourlyRate: analysis.hourlyRate,
-      monthlyExpenses: data.monthlyExpenses,
-      desiredNetIncome: analysis.netNeeded,
-      taxReservePercent: data.customTaxRate
-    });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const hourlyRate = Math.ceil(grossNeeded / billableHours);
+  const totalReserveGoal = monthlyExpenses * safetyBufferMonths;
+
+  // 4. VRÁCENÍ VÝSLEDKŮ (Tohle v kódu chybělo)
+  return { 
+    hourlyRate, 
+    grossNeeded, 
+    totalReserveGoal, 
+    taxNote, 
+    netNeeded 
   };
+}, [data]); // Ukončení useMemo
+
+const handleSave = () => {
+  localStorage.setItem('last_planner_data', JSON.stringify(data));
+  updateData({
+    hourlyRate: analysis.hourlyRate,
+    monthlyExpenses: Number(data.monthlyExpenses),
+    desiredNetIncome: analysis.netNeeded,
+    taxReservePercent: Number(data.customTaxRate),
+	taxMode: data.taxMode as any, // PŘIDÁNO: propisujeme i režim daní
+	reserves: analysis.totalReserveGoal // PŘIDÁNO: propisujeme vypočítanou cílovou rezervu
+  });
+  setSaved(true);
+  setTimeout(() => setSaved(false), 2000);
+};
+
+const handleShare = () => {
+  const params = new URLSearchParams({
+    exp: data.monthlyExpenses.toString(),
+    sav: data.desiredSavings.toString(),
+    hrs: data.billableHours.toString(),
+    buf: data.safetyBufferMonths.toString(),
+    tax: data.taxMode,
+    rate: data.customTaxRate.toString(),
+    pamt: data.pausalAmount.toString(),
+  });
+  const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+  navigator.clipboard.writeText(shareUrl).then(() => alert("Odkaz zkopírován!"));
+};
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1100px', margin: '0 auto' }}>
@@ -149,7 +182,7 @@ export const ProsperityPlanner: React.FC = () => {
                 </h3>
                 <select 
                   value={data.taxMode} 
-                  onChange={(e) => setData({...data, taxMode: e.target.value})}
+                  onChange={(e) => setData({...data, taxMode: e.target.value as any})}
                   style={{ width: '100%', padding: '12px', background: '#1e293b', color: 'white', borderRadius: '8px', border: '1px solid var(--border)', marginBottom: '20px', outline: 'none' }}
                 >
                   <option value="pausal_dan">Paušální daň (1. pásmo)</option>

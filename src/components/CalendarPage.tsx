@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { ALL_DEADLINES } from '../data/deadlines';
 import { GlassCard } from './ui/GlassCard';
-import { ArrowLeft, Calendar as CalendarIcon, Filter } from 'lucide-react';
+import { ArrowLeft, ChevronRight, CheckCircle2, Clock, Calendar as CalendarIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse';
 
-export const CalendarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+export const CalendarPage: React.FC = () => {
   const [activeYear, setActiveYear] = useState(2026);
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<BusinessType | 'all'>('all');
   
+  const today = new Date();
   const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'];
   const days = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
 
@@ -26,16 +29,15 @@ export const CalendarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="fade-in" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       
       {/* HEADER & FILTRY */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
         <button 
-          onClick={onBack} 
-          style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', padding: '12px 20px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          onClick={() => navigate('/')} 
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          <ArrowLeft size={18} /> Zpět
+          <ArrowLeft size={18} /> Zpět na přehled
         </button>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-          {/* Volba roku */}
           <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '14px', padding: '4px' }}>
             {[2026, 2027].map(y => (
               <button 
@@ -48,14 +50,8 @@ export const CalendarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             ))}
           </div>
 
-          {/* Přepínátko druhů živnosti */}
           <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
-            {[
-              { id: 'all', label: 'Vše' },
-              { id: 'osvc_pausal', label: 'Paušál' },
-              { id: 'osvc_hlavni', label: 'OSVČ' },
-              { id: 'sro', label: 'Firmy' }
-            ].map(f => (
+            {[{ id: 'all', label: 'Vše' }, { id: 'osvc_pausal', label: 'Paušál' }, { id: 'osvc_hlavni', label: 'OSVČ' }, { id: 'sro', label: 'Firmy' }].map(f => (
               <button 
                 key={f.id} 
                 onClick={() => setFilter(f.id as any)} 
@@ -70,47 +66,97 @@ export const CalendarPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       </div>
 
       {/* KALENDÁŘ - MŘÍŽKA MĚSÍCŮ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '25px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '30px' }}>
         {months.map((monthName, monthIdx) => {
           const items = ALL_DEADLINES.filter(d => {
             const dDate = new Date(d.date);
-            const yearMatch = dDate.getFullYear() === activeYear;
-            const monthMatch = dDate.getMonth() === monthIdx;
-            const typeMatch = filter === 'all' || d.for.includes(filter as any) || d.for.includes('vse');
-            return yearMatch && monthMatch && typeMatch;
+            return dDate.getFullYear() === activeYear && dDate.getMonth() === monthIdx && (filter === 'all' || d.for.includes(filter as any) || d.for.includes('vse'));
           }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
           if (items.length === 0) return null;
 
           return (
-            <div key={monthName} style={{ animation: `slideUp 0.4s ease-out` }}>
-              <h3 style={{ marginBottom: '15px', color: '#888', fontSize: '1.1rem', borderLeft: '3px solid #f59e0b', paddingLeft: '10px' }}>{monthName}</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {items.map(item => {
-                  const s = getTypeStyle(item.type);
-                  const dDate = new Date(item.date);
-                  const dayName = days[dDate.getDay()];
-                  const isWeekend = dDate.getDay() === 0 || dDate.getDay() === 6;
+            <div key={monthName} className="month-section">
+              <h3 style={{ marginBottom: '15px', color: '#fff', fontSize: '1.2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <CalendarIcon size={18} color="#f59e0b" /> {monthName}
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+{items.map(item => {
+  const s = getTypeStyle(item.type);
+  const dDate = new Date(item.date);
+  const isPast = dDate.getTime() < new Date().setHours(0,0,0,0);
+  const isToday = dDate.toDateString() === new Date().toDateString();
 
-                  return (
-                    <GlassCard key={item.id} style={{ padding: '15px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '1.3rem', fontWeight: '900', color: '#fff' }}>{dDate.getDate()}.</span>
-                          <span style={{ fontSize: '0.7rem', color: isWeekend ? '#ef4444' : '#888', fontWeight: 'bold' }}>{dayName}</span>
-                        </div>
-                        <span style={{ fontSize: '0.6rem', color: s.color, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</span>
-                      </div>
-                      <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginTop: '5px', color: '#eee' }}>{item.title}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '3px', lineHeight: '1.4' }}>{item.description}</div>
-                    </GlassCard>
-                  );
-                })}
+  return (
+    <GlassCard 
+      key={item.id} 
+      style={{ 
+        padding: '16px', 
+        // Pokud je v minulosti, linka je jemně zelená (symbol klidu), jinak barva kategorie
+        borderLeft: isToday ? '4px solid #f59e0b' : `3px solid ${isPast ? 'rgba(16, 185, 129, 0.4)' : s.color + '66'}`,
+        transition: 'all 0.3s ease',
+        background: isToday ? 'rgba(245, 158, 11, 0.05)' : 'rgba(255, 255, 255, 0.02)'
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Datum a ikona pro minulost */}
+          <div style={{ position: 'relative' }}>
+            <span style={{ fontSize: '1.4rem', fontWeight: '900', color: isPast ? '#666' : (isToday ? '#f59e0b' : '#fff') }}>
+              {dDate.getDate()}.
+            </span>
+            {isPast && (
+              <CheckCircle2 size={12} color="#10b981" style={{ position: 'absolute', top: -5, right: -8 }} />
+            )}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '0.7rem', color: '#888', fontWeight: 'bold', textTransform: 'uppercase' }}>{days[dDate.getDay()]}</span>
+            {isToday && <span style={{ fontSize: '0.6rem', color: '#f59e0b', fontWeight: '900', letterSpacing: '1px' }}>DNES</span>}
+          </div>
+        </div>
+        
+        {/* KATEGORIE - Čistý text bez ohraničení, v minulosti zešedne */}
+        <span style={{ 
+          fontSize: '0.65rem', 
+          color: isPast ? '#555' : s.color, 
+          fontWeight: 'bold', 
+          textTransform: 'uppercase', 
+          letterSpacing: '0.05em' 
+        }}>
+          {isPast ? 'Splněno' : s.label}
+        </span>
+      </div>
+
+      <div style={{ 
+        fontWeight: 'bold', 
+        fontSize: '0.95rem', 
+        marginTop: '6px',
+        color: isPast ? '#777' : '#eee',
+        textDecoration: isPast ? 'line-through' : 'none', // Jemné přeškrtnutí pro pocit hotového úkolu
+        textDecorationColor: 'rgba(16, 185, 129, 0.3)'
+      }}>
+        {item.title}
+      </div>
+      
+      {!isPast && (
+        <p style={{ fontSize: '0.8rem', color: '#888', marginTop: '4px', lineHeight: '1.5', margin: 0 }}>
+          {item.description}
+        </p>
+      )}
+    </GlassCard>
+  );
+})}
               </div>
             </div>
           );
         })}
       </div>
+
+      <style>{`
+        .month-section { animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
     </div>
   );
 };

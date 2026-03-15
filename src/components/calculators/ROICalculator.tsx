@@ -3,6 +3,7 @@ import { TrendingUp, Share2, StickyNote, FileText, Info, Lightbulb, BookOpen, Ta
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { calculateROI } from "../../utils/calculations/roi";
+import { useBusinessData } from "../../hooks/useBusinessData";
 
 export const ROICalculator: React.FC = () => {
   const [investment, setInvestment] = useState<number>(100000);
@@ -11,6 +12,7 @@ export const ROICalculator: React.FC = () => {
   const [discountRate, setDiscountRate] = useState<number>(8);
   const [months, setMonths] = useState<number>(12);
   const [notes, setNotes] = useState<string>("");
+  const { updateData } = useBusinessData();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -56,6 +58,12 @@ export const ROICalculator: React.FC = () => {
       return { npv: 0, roiPercent: 0, discountedPaybackMonths: null };
     }
   }, [investment, initialCosts, monthlyBenefit, discountRate, months]);
+  
+  useEffect(() => {
+  if (result) {
+    updateData({ roi: result.roiPercent ?? 0 });
+  }
+}, [result?.roiPercent]);
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>

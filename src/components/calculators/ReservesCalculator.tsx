@@ -22,7 +22,7 @@ import { Doughnut } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const ReservesCalculator: React.FC = () => {
-  const { data } = useBusinessData(); 
+  const { data, updateData } = useBusinessData(); 
   
   const [inputs, setInputs] = useState({
     monthlyExpenses: data.monthlyExpenses || 40000,
@@ -40,14 +40,25 @@ export const ReservesCalculator: React.FC = () => {
   }, [data.monthlyExpenses]);
 
   // Automatický první výpočet a aktualizace při změně vstupů
+  
   useEffect(() => {
-    handleCalculate();
-  }, [inputs]);
+  if (results) {
+    updateData({
+      reservesMonths: results.currentMonths ?? 0,
+      reservesTarget: results.totalTarget ?? 0
+    });
+  }
+}, [results]);
 
   const handleCalculate = () => {
     const res = calculateReserves(inputs);
     setResults(res);
   };
+  
+    useEffect(() => {
+    handleCalculate();
+  }, [inputs]);
+  
 
   const handleShare = () => {
     const baseUrl = window.location.origin + window.location.pathname;
@@ -108,13 +119,17 @@ export const ReservesCalculator: React.FC = () => {
                <strong>Synchronizováno:</strong> Měsíční náklady <strong>{formatCZK(data.monthlyExpenses)}</strong> se automaticky propisují z vaší strategie.
             </div>
 
-            <InputGroup 
-              label="Měsíční výdaje (osobní + business)" 
-              unit="Kč" 
-              value={inputs.monthlyExpenses} 
-              onChange={(val) => setInputs({...inputs, monthlyExpenses: parseFloat(val) || 0})} 
-              tooltip="Vše, co musíte měsíčně zaplatit: nájem, jídlo, SW, daně, pojištění. Pokud jste si nastavili hodinovku, tato data už máte správně."
-            />
+<InputGroup 
+  label="Měsíční výdaje (osobní + business)" 
+  unit="Kč" 
+  value={inputs.monthlyExpenses} 
+  onChange={(val) => {
+    const numVal = parseFloat(val) || 0;
+    setInputs({ ...inputs, monthlyExpenses: numVal });
+    updateData({ monthlyExpenses: numVal });
+  }} 
+  tooltip="Vše, co musíte měsíčně zaplatit: nájem, jídlo, SW, daně, pojištění. Pokud jste si nastavili hodinovku, tato data už máte správně."
+/>
             <InputGroup 
               label={`Cílový klid: ${inputs.targetMonths} měsíců`} 
               unit="měs" 

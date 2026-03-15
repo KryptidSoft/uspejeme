@@ -17,9 +17,6 @@ export interface HourlyInputs {
   };
 }
 
-/**
- * Výpočet hodinové sazby se započtením výpadků příjmu (dovolená/nemoc).
- */
 export const calculateHourlyRate = (data: HourlyInputs) => {
   const taxes = safeNumber(data.costs.taxes);
   const overhead = safeNumber(data.costs.overhead);
@@ -28,31 +25,23 @@ export const calculateHourlyRate = (data: HourlyInputs) => {
   
   const totalCosts = taxes + overhead + material + reserves;
   const targetGross = safeNumber(data.grossIncome);
-  
-  // Celková měsíční potřeba peněz (příjem + náklady)
   const monthlyNeed = targetGross + totalCosts;
 
-  // LOGIKA DOVOLENÉ:
-  // 1. Spočítáme, kolik týdnů v roce reálně pracujeme
   const workWeeksPerYear = 52 - safeNumber(data.vacationWeeks);
-  
-  // 2. Přepočítáme to na pracovní dny a odečteme rezervu na nemoc/studium
   const workDaysPerYear = (workWeeksPerYear * 5) - safeNumber(data.bufferDays);
-  
-  // 3. Zjistíme průměrný počet reálně odpracovaných dní v měsíci
   const realWorkDaysPerMonth = workDaysPerYear / 12;
   
-  // 4. Standardní měsíc (bez dovolené) má cca 21 pracovních dní.
   const availabilityMultiplier = 21 / (realWorkDaysPerMonth > 0 ? realWorkDaysPerMonth : 1);
-
   const billableHours = safeNumber(data.billableHours);
   
-  // Finální výpočet: (Měsíční potřeba / hodiny) * navýšení o dovolenou
-  const rate = billableHours > 0 ? (monthlyNeed / billableHours) * availabilityMultiplier : 0;
+  // Výpočet čisté sazby
+  const rawRate = billableHours > 0 ? (monthlyNeed / billableHours) * availabilityMultiplier : 0;
 
   return {
-    rate: Math.ceil(rate),
+    // VYLEPŠENÍ: Zaokrouhlení nahoru na nejbližší desítku (např. 843 -> 850)
+    rate: Math.ceil(rawRate / 10) * 10, 
     totalCosts,
+    // Potřebný obrat včetně "vydělání si na dovolenou"
     totalRequired: Math.ceil(monthlyNeed * availabilityMultiplier),
     realWorkDays: realWorkDaysPerMonth.toFixed(1)
   };

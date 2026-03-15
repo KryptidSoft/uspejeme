@@ -14,26 +14,29 @@ import {
   BookOpen
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
+import { useBusinessData } from '../../hooks/useBusinessData';
 
 export const RiskAssessment: React.FC = () => {
+  const { data, updateData } = useBusinessData();
+  
+  // Checkboxy potřebují vlastní paměť, protože nejsou v globálním Contextu
   const [risks, setRisks] = useState({
-    singleClient: 50, // % příjmů od největšího klienta
     hasContracts: false,
     hasDeposits: false,
     hasBackup: false,
-    diversification: 20 // % diverzifikace
+    diversification: 20
   });
 
   const score = useMemo(() => {
     let total = 100;
-    if (risks.singleClient > 70) total -= 30;
-    if (risks.singleClient > 40 && risks.singleClient <= 70) total -= 15;
+    if (data.topClientShare > 70) total -= 30;
+    if (data.topClientShare > 40 && data.topClientShare <= 70) total -= 15;
     if (!risks.hasContracts) total -= 25;
     if (!risks.hasDeposits) total -= 15;
     if (!risks.hasBackup) total -= 20;
     if (risks.diversification < 30) total -= 10;
     return Math.max(0, total);
-  }, [risks]);
+  }, [data.topClientShare, risks]);
 
   const getStatus = (s: number) => {
     if (s >= 80) return { color: '#10b981', label: 'V bezpečí', icon: <ShieldCheck size={64} /> };
@@ -76,13 +79,16 @@ export const RiskAssessment: React.FC = () => {
                 <label style={{ fontSize: '1rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
                    <Users size={18} color="var(--primary)" /> Závislost na největším klientovi
                 </label>
-                <strong style={{ color: risks.singleClient > 50 ? '#ef4444' : 'white', fontSize: '1.1rem' }}>{risks.singleClient} % příjmů</strong>
+                <strong style={{ color: data.topClientShare > 50 ? '#ef4444' : 'white', fontSize: '1.1rem' }}>{data.topClientShare} % příjmů</strong>
               </div>
               <input 
-                type="range" min="0" max="100" value={risks.singleClient} 
-                onChange={(e) => setRisks({...risks, singleClient: parseInt(e.target.value)})}
-                style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
-              />
+  type="range" 
+  min="0" 
+  max="100" 
+  value={data.topClientShare} 
+  onChange={(e) => updateData({ topClientShare: parseInt(e.target.value) })}
+  style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
+/>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '8px' }}>
                 Pokud tento klient odejde, o kolik procent vašich příjmů okamžitě přijdete?
               </p>

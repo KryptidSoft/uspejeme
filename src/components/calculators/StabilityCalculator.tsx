@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Activity, 
   ShieldCheck, 
@@ -17,6 +17,7 @@ import {
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { calculateStability } from '../../utils/calculations/stability';
+import { useBusinessData } from '../../hooks/useBusinessData';
 
 // 1. Texty pro nápovědu (Tooltips)
 const HELP_TEXTS = {
@@ -65,8 +66,16 @@ export const StabilityCalculator: React.FC = () => {
     roiEfficiency: 60,
     expenseStability: 90
   });
+  
+  const { updateData } = useBusinessData();
 
   const results = useMemo(() => calculateStability(inputs), [inputs]);
+  
+  useEffect(() => {
+  if (results) {
+    updateData({ stability: results.score ?? 0 });
+  }
+}, [results?.score]);
 
   const getInfo = (val: number, key: keyof typeof STAGE_DATA) => {
     const stages = STAGE_DATA[key];
