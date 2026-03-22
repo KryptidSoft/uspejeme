@@ -66,7 +66,7 @@ export const ROICalculator: React.FC = () => {
 }, [result?.roiPercent]);
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container">
       
       {/* 1. HLAVNÍ PRODEJNÍ TEXT (SEO) */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
@@ -76,24 +76,24 @@ export const ROICalculator: React.FC = () => {
         </p>
       </div>
 
-      <GlassCard>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+<GlassCard>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '25px', flexWrap: 'wrap', gap: '15px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <TrendingUp size={28} color="var(--primary)" />
             <h2 style={{ margin: 0 }}>ROI Kalkulačka</h2>
           </div>
           
-          <div className="no-print" style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={handlePrint} className="nav-item" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', padding: '8px 15px', color: '#10b981' }}>
-              <FileText size={14} /> EXPORT PDF
+          <div className="no-print" style={{ display: 'flex', gap: '10px', width: '100%', justifyContent: 'flex-end', flex: '1 1 auto' }}>
+            <button onClick={handlePrint} className="nav-item" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', padding: '8px 12px', color: '#10b981', whiteSpace: 'nowrap' }}>
+              <FileText size={14} /> EXPORT
             </button>
-            <button onClick={handleShare} className="nav-item" style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', padding: '8px 15px' }}>
-              <Share2 size={14} /> SDÍLET ANALÝZU
+            <button onClick={handleShare} className="nav-item" style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', padding: '8px 12px', color: 'var(--primary)', whiteSpace: 'nowrap' }}>
+              <Share2 size={14} /> SDÍLET
             </button>
           </div>
         </div>
 
-        <div className="calculator-grid">
+        <div className="calculator-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', alignItems: 'start' }}>
           <div className="inputs-section">
             <div style={{ marginBottom: '20px', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', borderLeft: '3px solid var(--primary)' }}>
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: '1.5' }}>
@@ -101,30 +101,32 @@ export const ROICalculator: React.FC = () => {
               </p>
             </div>
 
-            <div className="input-grid">
-              <InputGroup label="Investice" unit="Kč" value={investment} onChange={v => setInvestment(Number(v))} />
-              <InputGroup label="Počáteční náklady" unit="Kč" value={initialCosts} onChange={v => setInitialCosts(Number(v))} />
-            </div>
-            <div className="input-grid">
-              <InputGroup label="Měsíční přínos" unit="Kč" value={monthlyBenefit} onChange={v => setMonthlyBenefit(Number(v))} />
-              <InputGroup label="Diskontní sazba" unit="%" value={discountRate} onChange={v => setDiscountRate(Number(v))} />
-            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
+                <InputGroup label="Investice" unit="Kč" value={investment} onChange={v => setInvestment(Number(v))} />
+                <InputGroup label="Počáteční náklady" unit="Kč" value={initialCosts} onChange={v => setInitialCosts(Number(v))} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
+                <InputGroup label="Měsíční přínos" unit="Kč" value={monthlyBenefit} onChange={v => setMonthlyBenefit(Number(v))} />
+                <InputGroup label="Diskontní sazba" unit="%" value={discountRate} onChange={v => setDiscountRate(Number(v))} />
+              </div>
             <div className="no-print" style={{ marginTop: '10px' }}>
               <InputGroup label={`Doba sledování: ${months} měsíců`} type="range" min={1} max={60} value={months} onChange={v => setMonths(Number(v))} />
             </div>
           </div>
+		</div>
 
-          <div className="results-section">
-            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--text-dim)' }}>Čistá hodnota (NPV):</span>
-                <span style={{ fontWeight: 'bold', color: (result?.npv ?? 0) >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+<div className="results-section" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Čistá hodnota (NPV):</span>
+                <span style={{ fontWeight: '800', fontSize: 'clamp(1rem, 4vw, 1.2rem)', color: (result?.npv ?? 0) >= 0 ? '#10b981' : '#ef4444', textAlign: 'right' }}>
                   {Math.round(result?.npv ?? 0).toLocaleString()} Kč
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--text-dim)' }}>Návratnost (ROI):</span>
-                <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{(result?.roiPercent ?? 0).toFixed(2)} %</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', borderBottom: '1px solid var(--border)', gap: '10px' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Návratnost (ROI):</span>
+                <span style={{ fontWeight: '800', fontSize: 'clamp(1.4rem, 6vw, 1.8rem)', color: 'white' }}>{(result?.roiPercent ?? 0).toFixed(1)} %</span>
               </div>
 
               <div style={{ marginTop: '15px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', textAlign: 'left', border: '1px dashed var(--border)' }}>

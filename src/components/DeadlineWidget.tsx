@@ -27,10 +27,8 @@ export const DeadlineWidget: React.FC<DeadlineWidgetProps> = ({ userType, limit 
 
 const upcoming = ALL_DEADLINES
   .filter(d => {
-    // Pokud je vybráno "Vše", pustíme dál úplně každý termín
-    if (userType === 'all') return true;
-    
-    // Jinak filtrujeme podle typu uživatele nebo termínů pro "vse"chny
+    // Akceptujeme 'all' i 'vse' jako zobrazení všeho
+    if (userType === 'all' || userType === 'vse') return true;
     return d.for.includes(userType) || d.for.includes('vse');
   })
   .filter(d => new Date(d.date).getTime() >= today.getTime())

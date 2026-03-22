@@ -6,18 +6,25 @@ import { Calendar, FileWarning, Copy, Download, Clock, ShieldAlert, BellRing, Ch
 type Tone = 'friendly' | 'formal' | 'urgent';
 
 export const DuesGenerator: React.FC = () => {
-  const [invoice, setInvoice] = useState({
+const [invoice, setInvoice] = useState(() => {
+  // Zkusíme načíst uložené jméno z paměti
+  const savedName = localStorage.getItem('dues_your_name');
+  
+  return {
     date: new Date().toISOString().split('T')[0],
     dueDays: 14,
     client: '',
     amount: '',
     id: '',
-    yourName: '', // Pole pro tvůj podpis
-  });
+    yourName: savedName || '', // Načte se uložené jméno
+  };
+});
   const [tone, setTone] = useState<Tone>('friendly');
   const today = new Date().toLocaleDateString('cs-CZ');
   const [copied, setCopied] = useState(false);
-
+React.useEffect(() => {
+    localStorage.setItem('dues_your_name', invoice.yourName);
+  }, [invoice.yourName]);
   const dueDate = new Date(invoice.date);
   dueDate.setDate(dueDate.getDate() + Number(invoice.dueDays));
 
@@ -37,7 +44,7 @@ export const DuesGenerator: React.FC = () => {
       case 'formal':
         return `${header}Upomínka k úhradě faktury č. ${idStr}. Vážený kliente (${clientStr}), evidujeme neuhrazenou platbu ve výši ${amountStr} Kč se splatností dne ${dateStr}. Prosíme o sjednání nápravy obratem.${signature}`;
       case 'urgent':
-        return `${header}DŮRAZNÁ VÝZVA. Žádáme o okamžitou úhradu faktury č. ${idStr} (${amountStr} Kč). Pokud nebude částka připsána na účet do 3 pracovních dnů, budeme nuceni postoupit věc k právnímu vymáhání.${signature}`;
+        return `${header}DŮRAZNÁ VÝZVA. Žádáme o okamžitou úhradu faktury č. ${idStr} (${amountStr} Kč). Upozorňujeme, že dle nařízení vlády č. 351/2013 Sb. nám u této obchodní transakce v prodlení vznikl nárok na paušální náhradu nákladů spojených s uplatněním pohledávky ve výši 1 200 Kč za každou fakturu. Pokud nebude částka připsána do 3 pracovních dnů, budeme nuceni tuto náhradu společně s úroky z prodlení začít vymáhat právní cestou.${signature}`;
       default: return '';
     }
   };

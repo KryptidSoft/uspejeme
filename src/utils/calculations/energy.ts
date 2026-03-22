@@ -15,8 +15,8 @@ export const calculateEnergy = (data: any) => {
 
   // Spotřeba a náklady
   const consumedUnits = currentReadingValue - lastReadingValue;
-  const avgUnitsPerDay = consumedUnits / daysPassed;
-  const costToDate = consumedUnits * pricePerUnit;
+  const monthsPassed = daysPassed / 30.42; // Průměrný měsíc
+  const costToDate = (consumedUnits * pricePerUnit) + (monthsPassed * data.fixedMonthlyFee);
 
   // Zálohy (tady byla ta chyba - chyběla definice nebo byl překlep)
   const monthlyRate = monthlyDeposit;
@@ -25,7 +25,7 @@ export const calculateEnergy = (data: any) => {
 
   // Predikce na rok (365 dní)
   const predictedYearlyUnits = avgUnitsPerDay * 365;
-  const predictedYearlyCost = predictedYearlyUnits * pricePerUnit;
+  const predictedYearlyCost = (predictedYearlyUnits * pricePerUnit) + (12 * data.fixedMonthlyFee);
   const totalYearlyDeposits = monthlyDeposit * 12;
 
   // Bilance

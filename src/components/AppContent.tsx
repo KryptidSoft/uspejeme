@@ -18,6 +18,14 @@ import { DuesGenerator } from './generators/DuesGenerator';
 import { EliteInvoice } from './generators/EliteInvoice';
 import { MiniCard } from './MiniCard';
 import { InflationCalculator } from "./calculators/InflationCalculator";
+import { PrivacyPolicy } from './PrivacyPolicy';
+import { TermsOfService } from './TermsOfService';
+import { Sitemap } from './Sitemap'; // Předpokládám, že ho máš v /components/
+import { AboutUs } from './AboutUs'; // Přidat
+import { Contact } from './Contact'; // Přidat
+import { SafeBuyCalculator } from './calculators/SafeBuyCalculator';
+import { ScrollToTop } from './ScrollToTop'; // Import hooku
+import { NotFound } from './NotFound'; // Import fallbacku
 import { 
   FileText, Activity, Zap, ShieldAlert, Briefcase, Coins, QrCode, FileWarning, Target, 
   TrendingUp, TrendingDown, PiggyBank 
@@ -26,7 +34,7 @@ import {
 // --- ROZCESTNÍKY (Musí být definovány mimo hlavní komponentu) ---
 
 const FakturyNav = () => (
-  <div style={{ padding: '20px' }}>
+  <div className="nav-container">
     <h2>Faktury & platby</h2>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '15px' }}>
       <MiniCard title="Faktura" desc="Vytvořit novou" icon={FileText} to="/faktury/invoice" />
@@ -37,7 +45,7 @@ const FakturyNav = () => (
 );
 
 const AuditNav = () => (
-  <div style={{ padding: '20px' }}>
+  <div className="nav-container">
     <h2>Audit stability</h2>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '15px' }}>
       <MiniCard title="Index stability" desc="Celková diagnostika" icon={Activity} to="/audit/stability" />
@@ -49,7 +57,7 @@ const AuditNav = () => (
 );
 
 const StrategieNav = () => (
-  <div style={{ padding: '20px' }}>
+  <div className="nav-container">
     <h2>Strategie & růst</h2>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '15px' }}>
       <MiniCard title="Plánovač" desc="Kalkulačka prosperity" icon={Target} to="/planner" />
@@ -60,12 +68,13 @@ const StrategieNav = () => (
 );
 
 const InvesticeNav = () => (
-  <div style={{ padding: '20px' }}>
+  <div className="nav-container">
     <h2>Investice & ROI</h2>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '15px' }}>
       <MiniCard title="Návratnost" desc="Kalkulačka ROI" icon={TrendingUp} to="/investice/roi_calc" />
       <MiniCard title="Inflace" desc="Znehodnocení úspor" icon={TrendingDown} to="/investice/inflation" />
       <MiniCard title="Aktiva" desc="Zlato a drahé kovy" icon={Coins} to="/investice/gold" />
+	  <MiniCard title="Nákupy" desc="Dobrá investice" icon={Coins} to="/safe-buy" />
     </div>
   </div>
 );
@@ -93,6 +102,9 @@ export const AppContent = () => {
   };
 
   return (
+  <>
+      {/* KLÍČOVÁ ZMĚNA: ScrollToTop musí být uvnitř Routeru, ale vně Routes */}
+      <ScrollToTop />
     <Routes>
       <Route path="/" element={<LandingPage onNavigate={handleNavigate} />} />
       <Route path="/dashboard" element={<Dashboard />} />
@@ -120,12 +132,26 @@ export const AppContent = () => {
       <Route path="/investice/roi_calc" element={<ROICalculator />} />
       <Route path="/investice/inflation" element={<InflationCalculator />} />
       <Route path="/investice/gold" element={<AssetsCalculator />} />
+	  <Route path="/safe-buy" element={<SafeBuyCalculator />} />
 
       {/* Ostatní */}
       <Route path="/energy" element={<EnergyCalculator />} />
       <Route path="/calendar" element={<CalendarPage userType="vse" />} />
       <Route path="/articles" element={<ArticleSection />} />
       <Route path="/articles/:id" element={<ArticleSection />} />
+	  
+{/* --- Footer & Info --- */}
+      <Route path="/about" element={<AboutUs />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
+<Route path="/sitemap" element={<Sitemap />} />
+      
+      {/* Catch-all route musí být POSLEDNÍ uvnitř <Routes> */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
+  </> // <--- TADY CHYBĚLA TATO ZNAČKA
   );
 };
+
+export default AppContent;

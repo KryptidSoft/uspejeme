@@ -18,7 +18,7 @@ interface LandingPageProps {
 }
 
 const MAIN_STATS = [
-  { label: 'Podnikatelská komunita', value: '2.16 mil.', sub: 'OSVČ a malé firmy v ČR', change: +1.2, color: '#3b82f6' },
+  { label: 'Podnikatelská komunita', value: '2.16 mil.', sub: 'OSVČ a malé firmy', change: +1.2, color: '#3b82f6' },
   { label: 'Podíl na rozpočtu', value: '38.3 %', sub: 'klíčový pilíř ekonomiky', change: -0.2, color: '#10b981' },
   { label: 'Roční přínos státu', value: '148 mld.', sub: 'odvedeno na daních a pojistném', change: +4.5, color: '#f59e0b' }
 ];
@@ -42,10 +42,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="fade-in">
+    <div className="fade-in app-container" style={{ overflowX: 'hidden' }}>
       
       {/* 1. HERO SEKCE */}
-      <section style={{ textAlign: 'center', padding: '60px 20px 40px' }}>
+      <section style={{ textAlign: 'center', padding: '60px 0 40px' }}>
         <div style={{ 
           display: 'inline-flex', alignItems: 'center', gap: '8px', 
           background: 'rgba(59, 130, 246, 0.1)', padding: '8px 16px', 
@@ -68,7 +68,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
 {/* 2. STATISTIKY */}
 <section style={{ maxWidth: '1100px', margin: '0 auto 60px', padding: '0 20px' }}>
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+  <div className="smart-grid">
     {MAIN_STATS.map((stat, i) => (
       <GlassCard key={i} style={{ padding: '30px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: stat.color }} />
@@ -98,7 +98,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           <h2 style={{ fontSize: '1.6rem', marginBottom: '12px' }}>Váš finanční panel je připraven</h2>
           <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
             Aktuálně pracujete se sazbou <strong>{formatCZK(globalData.hourlyRate)}/h</strong>. 
-            Podívejte se na celkový přehled vašeho podnikání a stabilitu v reálném čase. Svůj panel můžete upravovat a sledovat...
+            Podívejte se na celkový přehled vašeho podnikání a stabilitu v reálném čase. Panel můžete průběžně upravovat a sledovat...
           </p>
         </>
       ) : (
@@ -120,18 +120,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px'
       }}
     >
-      {globalData.hourlyRate > 0 ? 'Otevřít můj panel' : 'Nastavit můj profil'} <ChevronRight size={18} />
+      {globalData.hourlyRate > 0 ? 'Zobrazit panel' : 'Nastavit profil'} <ChevronRight size={18} />
     </button>
   </GlassCard>
 </section>
 
 {/* 4. ČLÁNKY A TERMÍNY - KOMPAKTNÍ DASHBOARD VZHLED */}
-<section style={{ maxWidth: '1100px', margin: '0 auto 60px', padding: '0 20px' }}>
-  <div style={{ 
-    display: 'grid', 
-    gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', // Větší minimální šířka pro lepší čitelnost dat
-    gap: '24px' 
-  }}>
+<section style={{ marginBottom: '60px' }}>
+  <div className="calculator-grid">
     
 {/* LEVÝ PANEL: STRATEGIE (Vizuálně sjednoceno s pravým panelem) */}
 <GlassCard style={{ padding: '24px', display: 'flex', flexDirection: 'column', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
@@ -331,7 +327,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
     <div style={{ width: '60px', height: '4px', background: 'var(--primary)', margin: '0 auto', borderRadius: '2px' }} />
   </div>
 
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+  <div className="smart-grid">
     {testimonials.map((t, i) => (
       <GlassCard 
         key={i} 
@@ -403,7 +399,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
   }}>
     <Activity size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
     <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', margin: 0 }}>
-      <strong>Bezpečí především:</strong> Vaše citlivá data nikdy neopouštějí tento prohlížeč.
+      <strong>Bezpečí především:</strong> Vaše finanční výpočty a zadané hodnoty neopouštějí tento prohlížeč.
     </p>
   </div>
 </section>

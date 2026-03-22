@@ -22,6 +22,11 @@ export interface BusinessData {
   // Klientská diverzifikace & stabilita
   topClientShare: number;  // % příjmu od největšího klienta
   incomeStability: number; // 0–100
+  
+  // PŘIDEJTE TYTO TŘI ŘÁDKY:
+  hasContracts: boolean;
+  hasDeposits: boolean;
+  hasBackup: boolean;
 
   // Pokročilé metriky
   roi?: number;
@@ -73,7 +78,10 @@ const [data, setData] = usePersistentState<BusinessData>('uspejeme_global_data',
   healthMin: 3161,
   topClientShare: 0,
   incomeStability: 100,
-  taxReservePercent: 25
+  taxReservePercent: 25,
+  hasContracts: false,
+  hasDeposits: false,
+  hasBackup: false
 });
 
 useEffect(() => {

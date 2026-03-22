@@ -118,18 +118,18 @@ export const StabilityCalculator: React.FC = () => {
   }, [results.score]);
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container">
       
       {/* --- NOVÝ UVODNÍ TEXT (SEO & KONTEXT) --- */}
-      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-        <h1 style={{ color: 'white', fontSize: '2.2rem', marginBottom: '10px' }}>Jak neprůstřelné je vaše podnikání?</h1>
+      <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+  <h1 style={{ color: 'white', fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '800', marginBottom: '10px' }}>Jak neprůstřelné je vaše podnikání?</h1>
         <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
           Tato <strong>kalkulačka stability</strong> slouží jako hloubkový průvodce vaším finančním zdravím. 
           Zjistěte, zda budujete pevnou tvrz, nebo jen domeček z karet, který sfoukne první krize.
         </p>
       </div>
 
-      <GlassCard style={{ padding: '30px' }}>
+      <GlassCard style={{ padding: 'clamp(5px, 4vw, 30px)' }}>
         <style>{`
           .help-icon { position: relative; display: inline-flex; cursor: help; align-items: center; }
           .help-icon:hover::after {
@@ -155,8 +155,8 @@ export const StabilityCalculator: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px' }}>
-          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)' }}>
+        <div className="calculator-grid" style={{ gap: '25px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.02)', padding: 'clamp(10px, 2vw, 25px)', borderRadius: '16px', border: '1px solid var(--border)' }}>
             <div style={{ display: 'grid', gap: '25px' }}>
               {(Object.keys(STAGE_DATA) as Array<keyof typeof STAGE_DATA>).map((key) => {
                   const stateKey = key === 'reserves' ? 'reservesMonths' : 
@@ -202,7 +202,7 @@ export const StabilityCalculator: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '40px 30px', borderRadius: '24px', border: '1px solid var(--border)', textAlign: 'center', position: 'relative' }}>
+            <div style={{ background: 'rgba(0,0,0,0.2)', padding: 'clamp(20px, 5vw, 40px) 10px', borderRadius: '20px', border: '1px solid var(--border)', textAlign: 'center', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle at center, ${getScoreColor(results.score)}15 0%, transparent 70%)`, pointerEvents: 'none' }} />
               <div style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', letterSpacing: '3px' }}>INDEX STABILITY</div>
               <div style={{ fontSize: '5.5rem', fontWeight: '900', color: 'white', lineHeight: 1, margin: '10px 0', textShadow: `0 0 30px ${getScoreColor(results.score)}44` }}>
@@ -215,7 +215,7 @@ export const StabilityCalculator: React.FC = () => {
               <p style={{ color: getScoreColor(results.score), fontWeight: 'bold', marginTop: '10px' }}>{verdict.comparison}</p>
             </div>
 
-            <GlassCard style={{ padding: '25px', background: 'rgba(255,255,255,0.03)' }}>
+            <GlassCard style={{ padding: 'clamp(12px, 3vw, 20px)', background: 'rgba(255,255,255,0.03)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                   <Target size={24} color="#84cc16" />
                   <h4 style={{ margin: 0 }}>Doporučení pro růst</h4>
@@ -232,7 +232,7 @@ export const StabilityCalculator: React.FC = () => {
 
       {/* --- NOVÁ SEKCE: EDUKATIVNÍ ČLÁNEK --- */}
       <div className="no-print">
-        <GlassCard style={{ padding: '30px' }}>
+        <GlassCard style={{ padding: 'clamp(5px, 4vw, 30px)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '25px' }}>
             <BookOpen size={28} color="var(--primary)" />
             <h2 style={{ margin: 0 }}>4 pilíře stability: Jak přežít v roce 2026?</h2>

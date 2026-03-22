@@ -29,47 +29,56 @@ export const CalendarPage: React.FC<CalendarPageProps> = ({ userType }) => {
   };
 
   return (
-    <div className="fade-in" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="fade-in app-container">
       
-      {/* HEADER & FILTRY */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
-        <button 
-          onClick={() => navigate('/')} 
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
-          <ArrowLeft size={18} /> Zpět na přehled
-        </button>
+{/* HEADER & FILTRY - STICKY VERZE */}
+      <div style={{ 
+        zIndex: 100,
+		backgroundColor: 'transparent',
+        backdropFilter: 'blur(12px)',
+        padding: 0,
+        marginBottom: '20px',
+        borderBottom: 'none'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+          <button 
+            onClick={() => navigate('/')} 
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <ArrowLeft size={18} /> Zpět na přehled
+          </button>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '14px', padding: '4px' }}>
-            {[2026, 2027].map(y => (
-              <button 
-                key={y} 
-                onClick={() => setActiveYear(y)} 
-                style={{ padding: '8px 25px', borderRadius: '10px', border: 'none', background: activeYear === y ? '#f59e0b' : 'transparent', color: activeYear === y ? '#000' : '#fff', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
-              >
-                {y}
-              </button>
-            ))}
-          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '14px', padding: '4px' }}>
+              {[2026, 2027].map(y => (
+                <button 
+                  key={y} 
+                  onClick={() => setActiveYear(y)} 
+                  style={{ padding: '8px 25px', borderRadius: '10px', border: 'none', background: activeYear === y ? '#f59e0b' : 'transparent', color: activeYear === y ? '#000' : '#fff', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
+                >
+                  {y}
+                </button>
+              ))}
+            </div>
 
-          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
-            {[{ id: 'all', label: 'Vše' }, { id: 'osvc_pausal', label: 'Paušál' }, { id: 'osvc_hlavni', label: 'OSVČ' }, { id: 'sro', label: 'Firmy' }].map(f => (
-              <button 
-                key={f.id} 
-                onClick={() => setFilter(f.id as any)} 
-                style={{ padding: '6px 15px', borderRadius: '8px', border: 'none', background: filter === f.id ? 'rgba(255,255,255,0.1)' : 'transparent', color: filter === f.id ? '#f59e0b' : '#888', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                {f.label}
-              </button>
-            ))}
+            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              {[{ id: 'all', label: 'Vše' }, { id: 'osvc_pausal', label: 'Paušál' }, { id: 'osvc_hlavni', label: 'OSVČ' }, { id: 'sro', label: 'Firmy' }].map(f => (
+                <button 
+                  key={f.id} 
+                  onClick={() => setFilter(f.id as any)} 
+                  style={{ padding: '6px 15px', borderRadius: '8px', border: 'none', background: filter === f.id ? 'rgba(255,255,255,0.1)' : 'transparent', color: filter === f.id ? '#f59e0b' : '#888', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
+          <div style={{ width: '100px' }} className="hidden-mobile" />
         </div>
-        <div style={{ width: '100px' }} className="hidden-mobile" />
       </div>
 
       {/* KALENDÁŘ - MŘÍŽKA MĚSÍCŮ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '30px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '25px' }}>
         {months.map((monthName, monthIdx) => {
           const items = ALL_DEADLINES.filter(d => {
             const dDate = new Date(d.date);
@@ -120,7 +129,7 @@ className=""
           </div>
         </div>
         
-        {/* KATEGORIE - Čistý text bez ohraničení, v minulosti zešedne */}
+{/* KATEGORIE - Čistý text bez ohraničení, v minulosti zešedne */}
         <span style={{ 
           fontSize: '0.65rem', 
           color: isPast ? '#555' : s.color, 
@@ -137,7 +146,7 @@ className=""
         fontSize: '0.95rem', 
         marginTop: '6px',
         color: isPast ? '#777' : '#eee',
-        textDecoration: isPast ? 'line-through' : 'none', // Jemné přeškrtnutí pro pocit hotového úkolu
+        textDecoration: isPast ? 'line-through' : 'none', 
         textDecorationColor: 'rgba(16, 185, 129, 0.3)'
       }}>
         {item.title}
@@ -155,6 +164,23 @@ className=""
             </div>
           );
         })}
+      </div>
+
+      {/* INFORMATIVNÍ PATIČKA */}
+      <div style={{ 
+        marginTop: '60px', 
+        padding: '30px', 
+        borderTop: '1px solid rgba(255,255,255,0.1)', 
+        color: 'rgba(255,255,255,0.5)',
+        fontSize: '0.85rem',
+        lineHeight: '1.6',
+        textAlign: 'center'
+      }}>
+        <p style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <strong>Poznámka k termínům:</strong> Termíny mají informativní charakter. 
+          V případě, že konec lhůty připadá na sobotu, neděli nebo svátek, je podle českého daňového řádu 
+          posledním dnem lhůty nejbližší příští pracovní den. Doporučujeme však plnit povinnosti s předstihem.
+        </p>
       </div>
 
       <style>{`

@@ -104,18 +104,18 @@ export const ProsperityPlanner: React.FC = () => {
   };
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1100px', margin: '0 auto' }}>
+    <div className="fade-in app-container">
       
       {/* --- ÚVODNÍ SEKCE: STRATEGICKÝ KONTEXT --- */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
         <h1 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '15px', fontWeight: '800' }}>Plánovač finanční prosperity</h1>
         <p style={{ color: 'var(--text-dim)', fontSize: '1.2rem', maxWidth: '850px', margin: '0 auto', lineHeight: '1.7' }}>
-          Většina freelancerů dělá chybu, že svou hodinovou sazbu "střílí od boku". <strong>Tento plánovač to mění.</strong> 
+          Většina freelancerů dělá chybu, že svou hodinovou sazbu "střílí od boku". <strong>Tento plánovač to mění. </strong> 
           Spojuje vaše životní náklady, daně a ambice do jedné vítězné strategie. Zjistěte, kolik musíte reálně fakturovat, abyste ne jen přežívali, ale skutečně rostli.
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '25px' }}>
+      <div className="calculator-grid">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
           <GlassCard>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -136,7 +136,7 @@ export const ProsperityPlanner: React.FC = () => {
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+            <div className="smart-grid" style={{ gap: '20px' }}>
               <section>
                 <h3 style={{ fontSize: '1rem', color: 'var(--accent)', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <TrendingUp size={18} /> Životní standard
@@ -231,9 +231,9 @@ export const ProsperityPlanner: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%)', padding: '30px', borderRadius: '24px', textAlign: 'center', color: 'white', boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)' }}>
-            <span style={{ fontSize: '0.9rem', opacity: 0.9, textTransform: 'uppercase', letterSpacing: '1px' }}>Cílová hodinovka</span>
-            <div style={{ fontSize: '3.2rem', fontWeight: 'bold', margin: '10px 0' }}>{formatCZK(analysis.hourlyRate)}</div>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%)', padding: 'var(--card-padding)', borderRadius: '24px', textAlign: 'center', color: 'white', boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)' }}>
+  <span style={{ fontSize: '0.8rem', opacity: 0.9, textTransform: 'uppercase', letterSpacing: '1px' }}>Cílová hodinovka</span>
+  <div style={{ fontSize: 'clamp(2rem, 8vw, 3.2rem)', fontWeight: 'bold', margin: '10px 0' }}>{formatCZK(analysis.hourlyRate)}</div>
             <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>{analysis.taxNote}</div>
           </div>
 
@@ -253,7 +253,7 @@ export const ProsperityPlanner: React.FC = () => {
                 className="calculate-btn no-print" 
                 style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px', background: saved ? '#10b981' : '' }}
                >
-                 {saved ? <><Check size={18} /> Propojeno se systémem</> : <><Save size={18} /> ULOŽIT STRATEGII</>}
+                 {saved ? <><Check size={18} /> Propojeno se systémem</> : <><Save size={18} /> ULOŽIT DO MÉHO PANELU </>}
                </button>
              </div>
           </GlassCard>
@@ -262,13 +262,13 @@ export const ProsperityPlanner: React.FC = () => {
 
       {/* --- NOVÁ SEKCE: HLOUBKOVÝ PRŮVODCE PROSPERITOU --- */}
       <div className="no-print">
-        <GlassCard style={{ padding: '40px' }}>
+        <GlassCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
             <BookOpen size={32} color="var(--primary)" />
             <h2 style={{ margin: 0 }}>Hloubkový průvodce finančním plánováním</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', color: 'var(--text-dim)', lineHeight: '1.8' }}>
+          <div className="smart-grid" style={{ color: 'var(--text-dim)', lineHeight: '1.8' }}>
             <div>
               <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
                 <ShieldCheck size={20} color="#10b981" /> Proč 6 měsíců rezerva?

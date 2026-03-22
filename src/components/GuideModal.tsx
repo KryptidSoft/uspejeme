@@ -81,21 +81,56 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
             </div>
           </section>
 
-          <div style={{ 
-            background: 'rgba(251,191,36,0.1)', 
-            padding: '15px', 
-            borderRadius: '12px', 
-            border: '1px solid rgba(251,191,36,0.2)',
-            display: 'flex',
-            gap: '10px',
-            alignItems: 'center'
-          }}>
-            <Info size={20} color="#fbbf24" />
-            <p style={{ margin: 0, fontSize: '0.85rem' }}>
-              <strong>Tip:</strong> Celý dashboard je propojený. Každý pohyb sliderem okamžitě 
-              přepočítává vaše daně, čistý zisk i efektivní hodinovou sazbu.
-            </p>
-          </div>
+{/* --- oddělovač --- */}
+<div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '10px 0' }} />
+
+{/* --- NOVÁ SEKCE: Jak číst čísla --- */}
+<div style={{ marginTop: '10px' }}>
+  <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#fbbf24' }}>
+    Jak číst čísla v tabulkách?
+  </h3>
+
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+    
+    <div>
+      <h4 style={{ margin: '0 0 5px 0' }}>Ekonomické cíle</h4>
+      <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.8 }}>
+        <strong>Celkový příjem (Brutto):</strong> Kolik celkem vyfakturujete za měsíc. Je to číslo před odečtením daní a nákladů. <br />
+        <strong>Daňová povinnost:</strong> Kolik z příjmu odevzdáte státu na daních a odvodech. Tarif se mění automaticky. <br />
+        <strong>Měsíční náklady:</strong> Kolik vás stojí podnikání a život (nájem, software, služby, pojištění). <br />
+        <strong>Čistý měsíční přebytek (Netto):</strong> Váš čistý zisk po zaplacení všeho. Peníze ihned k dispozici.
+      </p>
+    </div>
+
+    <div>
+      <h4 style={{ margin: '0 0 5px 0' }}>Udržitelnost</h4>
+      <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.8 }}>
+        <strong>Efektivní hodinová sazba:</strong> Kolik reálně vyděláte za hodinu po odečtení všech nákladů a daní. <br />
+        <strong>Bod přežití:</strong> Minimální počet hodin, které musíte odpracovat k pokrytí všech nákladů. <br />
+        <strong>Závislost na hl. klientovi:</strong> Kolik procent vašeho měsíčního příjmu pochází od jednoho klienta. <br />
+        <strong>Bezpečná měs. investice:</strong> Kolik si můžete měsíčně dovolit investovat bez ohrožení své stability.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+{/* --- PŮVODNÍ TIP (přesunutý dolů) --- */}
+<div style={{ 
+  background: 'rgba(251,191,36,0.1)', 
+  padding: '15px', 
+  borderRadius: '12px', 
+  border: '1px solid rgba(251,191,36,0.2)',
+  display: 'flex',
+  gap: '10px',
+  alignItems: 'center'
+}}>
+  <Info size={20} color="#fbbf24" />
+  <p style={{ margin: 0, fontSize: '0.85rem' }}>
+    <strong>Tip:</strong> Celý panel je propojený. Každý pohyb sliderem okamžitě 
+    přepočítává vaše daně, čistý zisk i efektivní hodinovou sazbu.
+  </p>
+</div>
         </div>
 
         <div style={{ textAlign: "right", marginTop: "30px" }}>

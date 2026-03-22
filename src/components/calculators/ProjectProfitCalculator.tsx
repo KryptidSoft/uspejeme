@@ -84,6 +84,12 @@ export const ProjectProfitCalculator: React.FC = () => {
     setProjects(newProjects);
     if (expandedIndex === index) setExpandedIndex(null);
   };
+  
+  const handleChange = (index: number, field: keyof ProjectInput, value: any) => {
+    const newProjects = [...projects];
+    newProjects[index] = { ...newProjects[index], [field]: value };
+    setProjects(newProjects);
+  };
 
   const chartData = results ? {
     labels: results.map((r) => r.name || 'Projekt'),
@@ -100,7 +106,7 @@ export const ProjectProfitCalculator: React.FC = () => {
   } : null;
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
       
       {/* --- STRATEGICKÝ ÚVOD --- */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
@@ -172,10 +178,10 @@ export const ProjectProfitCalculator: React.FC = () => {
                     <InputGroup label="Časová rezerva (Riziko)" step={0.1} value={p.riskFactor} onChange={(val) => handleChange(index, 'riskFactor', parseFloat(val) || 0)} tooltip="0.1 = přičte 10 % času jako rezervu na vícepráce." />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginTop: '25px' }}>
+                  <div className="smart-grid" style={{ marginTop: '25px', gap: '20px' }}>
                     <div style={{ padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
                       <h4 style={{ margin: '0 0 15px 0', fontSize: '0.8rem', color: 'var(--primary)', textTransform: 'uppercase' }}>Časové náklady (hodiny)</h4>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '10px' }}>
                         <InputGroup label="Příprava" unit="h" value={p.prepHours} onChange={(val) => handleChange(index, 'prepHours', parseFloat(val) || 0)} />
                         <InputGroup label="Realizace" unit="h" value={p.workHours} onChange={(val) => handleChange(index, 'workHours', parseFloat(val) || 0)} />
                         <InputGroup label="Admin" unit="h" value={p.adminHours} onChange={(val) => handleChange(index, 'adminHours', parseFloat(val) || 0)} />
@@ -196,7 +202,7 @@ export const ProjectProfitCalculator: React.FC = () => {
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: '15px', marginTop: '30px' }}>
+        <div style={{ display: 'flex', gap: '15px', marginTop: '30px', flexWrap: 'wrap' }}>
           <button onClick={addProject} className="calculate-btn" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', flex: 1 }}>
             <Plus size={18} /> PŘIDAT DALŠÍ PROJEKT
           </button>
@@ -211,7 +217,7 @@ export const ProjectProfitCalculator: React.FC = () => {
               <h3 style={{ fontSize: '1.5rem', margin: '0 0 10px 0' }}>Srovnání reálného přínosu</h3>
               <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Sloupec pod nulou znamená, že na projektu reálně proděláváte svůj čas.</p>
             </div>
-            <div style={{ height: '400px', width: '100%', background: 'rgba(0,0,0,0.1)', padding: '20px', borderRadius: '20px' }}>
+            <div style={{ height: '400px', width: '100%', background: 'rgba(0,0,0,0.1)', padding: 'var(--card-padding)', borderRadius: '20px', overflowX: 'auto' }}>
               <Bar 
                 data={chartData} 
                 options={{
@@ -231,13 +237,13 @@ export const ProjectProfitCalculator: React.FC = () => {
 
       {/* --- EDUKATIVNÍ SEKCE: STRATEGIE ZAKÁZEK --- */}
       <div className="no-print">
-        <GlassCard style={{ padding: '40px' }}>
+        <GlassCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '35px' }}>
             <BookOpen size={32} color="var(--primary)" />
             <h2 style={{ margin: 0 }}>Jak číst výsledky?</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+          <div className="smart-grid">
             <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)' }}>
               <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Target size={22} color="#10b981" /> Bod nuly

@@ -60,7 +60,14 @@ export const ArticleSection: React.FC = () => {
 
   // SEZNAM ČLÁNKŮ
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '25px', padding: '20px' }}>
+  <div className="app-container" style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', 
+    gap: '25px',
+    paddingTop: '20px',    // Horní odsazení, aby to nebylo pod lištou
+    paddingBottom: '20px', // Spodní odsazení
+    alignItems: 'stretch' 
+  }}>
       {articles.map(article => (
         <GlassCard 
           key={article.id} 

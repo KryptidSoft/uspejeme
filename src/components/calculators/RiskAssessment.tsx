@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { 
   ShieldAlert, 
   ShieldCheck, 
@@ -19,24 +19,19 @@ import { useBusinessData } from '../../hooks/useBusinessData';
 export const RiskAssessment: React.FC = () => {
   const { data, updateData } = useBusinessData();
   
-  // Checkboxy potřebují vlastní paměť, protože nejsou v globálním Contextu
-  const [risks, setRisks] = useState({
-    hasContracts: false,
-    hasDeposits: false,
-    hasBackup: false,
-    diversification: 20
-  });
-
-  const score = useMemo(() => {
+const score = useMemo(() => {
     let total = 100;
     if (data.topClientShare > 70) total -= 30;
     if (data.topClientShare > 40 && data.topClientShare <= 70) total -= 15;
-    if (!risks.hasContracts) total -= 25;
-    if (!risks.hasDeposits) total -= 15;
-    if (!risks.hasBackup) total -= 20;
-    if (risks.diversification < 30) total -= 10;
+    
+    // Zde byla chyba - opraveno na data.xxx
+    if (!data.hasContracts) total -= 25;
+    if (!data.hasDeposits) total -= 15;
+    if (!data.hasBackup) total -= 20;
+    
+    // Smazali jsme řádek s diversification (není v global datech)
     return Math.max(0, total);
-  }, [data.topClientShare, risks]);
+  }, [data]); // Sledujeme celé globální data
 
   const getStatus = (s: number) => {
     if (s >= 80) return { color: '#10b981', label: 'V bezpečí', icon: <ShieldCheck size={64} /> };
@@ -47,7 +42,7 @@ export const RiskAssessment: React.FC = () => {
   const status = getStatus(score);
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container">
       
       {/* --- STRATEGICKÝ ÚVOD --- */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
@@ -71,7 +66,7 @@ export const RiskAssessment: React.FC = () => {
           </p>
         </div>
 
-        <div className="calculator-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+        <div className="calculator-grid" style={{ gap: '30px' }}>
           {/* Levá strana: Vstupy */}
           <div className="inputs-section">
             <div style={{ marginBottom: '30px' }}>
@@ -94,25 +89,25 @@ export const RiskAssessment: React.FC = () => {
               </p>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: risks.hasContracts ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: risks.hasContracts ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
-                <input type="checkbox" checked={risks.hasContracts} onChange={(e) => setRisks({...risks, hasContracts: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+<div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: data.hasContracts ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: data.hasContracts ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
+                <input type="checkbox" checked={data.hasContracts || false} onChange={(e) => updateData({ hasContracts: e.target.checked })} style={{ width: '18px', height: '18px' }} />
                 <div>
                   <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Písemné smlouvy</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Mám podepsané smlouvy na každý projekt.</div>
                 </div>
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: risks.hasDeposits ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: risks.hasDeposits ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
-                <input type="checkbox" checked={risks.hasDeposits} onChange={(e) => setRisks({...risks, hasDeposits: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: data.hasDeposits ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: data.hasDeposits ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
+                <input type="checkbox" checked={data.hasDeposits || false} onChange={(e) => updateData({ hasDeposits: e.target.checked })} style={{ width: '18px', height: '18px' }} />
                 <div>
                   <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Zálohový systém</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Vybírám min. 30–50 % před zahájením práce.</div>
                 </div>
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: risks.hasBackup ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: risks.hasBackup ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
-                <input type="checkbox" checked={risks.hasBackup} onChange={(e) => setRisks({...risks, hasBackup: e.target.checked})} style={{ width: '18px', height: '18px' }} />
+              <label style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', padding: '15px', background: data.hasBackup ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: data.hasBackup ? '1px solid #10b981' : '1px solid var(--border)', transition: 'all 0.2s' }}>
+                <input type="checkbox" checked={data.hasBackup || false} onChange={(e) => updateData({ hasBackup: e.target.checked })} style={{ width: '18px', height: '18px' }} />
                 <div>
                   <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Krizový plán (Nemoc/Výpadek)</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Vím, na koho delegovat nebo jak komunikovat neschopnost.</div>
@@ -122,7 +117,17 @@ export const RiskAssessment: React.FC = () => {
           </div>
 
           {/* Pravá strana: Výsledek */}
-          <div className="results-section" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '30px', background: 'rgba(255,255,255,0.01)', borderRadius: '24px', border: '1px solid var(--border)' }}>
+          <div className="results-section" style={{ 
+  textAlign: 'center', 
+  display: 'flex', 
+  flexDirection: 'column', 
+  justifyContent: 'center', 
+  padding: '30px', 
+  background: `${status.color}05`, // Velmi jemný nádech barvy statusu
+  borderRadius: '24px', 
+  border: `1px solid ${status.color}33`, // Průhledný okraj v barvě statusu
+  transition: 'all 0.5s ease'
+}}>
             <div style={{ color: status.color, marginBottom: '20px', display: 'flex', justifyContent: 'center', filter: 'drop-shadow(0 0 15px ' + status.color + '44)' }}>
               {status.icon}
             </div>
@@ -155,7 +160,7 @@ export const RiskAssessment: React.FC = () => {
             <h2 style={{ margin: 0 }}>Jak vybudovat neprůstřelné podnikání</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+          <div className="smart-grid">
             <div>
               <h3 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem' }}>
                 <Lock size={20} color="#3b82f6" /> Past zlaté klece

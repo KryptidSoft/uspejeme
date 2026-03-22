@@ -24,7 +24,8 @@ export const EnergyCalculator: React.FC = () => {
     currentReadingValue: 12850,
     lastReadingDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0],
     monthlyDeposit: 3500,
-    pricePerUnit: 6.5
+    pricePerUnit: 6.5,
+	fixedMonthlyFee: 250 // Průměrný paušál za jistič
   });
 
   const [gasInM3, setGasInM3] = useState(false);
@@ -93,7 +94,7 @@ export const EnergyCalculator: React.FC = () => {
   };
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '30px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container" style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
       
       {/* --- HLAVIČKA: Drsná realita --- */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
@@ -120,7 +121,7 @@ export const EnergyCalculator: React.FC = () => {
         <div className="calculator-grid">
           <div className="inputs-section">
             {/* Přepínač komodit */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }} className="no-print">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '8px', marginBottom: '20px' }} className="no-print">
               {profiles.map(p => (
                 <button 
                   key={p.id} 
@@ -146,6 +147,7 @@ export const EnergyCalculator: React.FC = () => {
               <InputGroup label="Datum posledního odečtu" type="date" value={inputs.lastReadingDate} onChange={(val) => handleValueChange('lastReadingDate', val)} />
               <InputGroup label="Vaše měsíční záloha" unit="Kč" value={inputs.monthlyDeposit} onChange={(val) => handleValueChange('monthlyDeposit', val)} />
               <InputGroup label="Celková cena za jednotku" unit={`Kč/${displayUnit}`} value={inputs.pricePerUnit} onChange={(val) => handleValueChange('pricePerUnit', val)} />
+			  <InputGroup label="Stálý měsíční plat (jistič/paušál)" unit="Kč/měs" value={inputs.fixedMonthlyFee} onChange={(val) => handleValueChange('fixedMonthlyFee', val)} />
             </div>
 
             <button className="calculate-btn no-print" onClick={handleCalculate} style={{ background: currentProfile.color, color: '#000', width: '100%', marginTop: '20px', cursor: 'pointer', fontWeight: 'bold', padding: '15px', borderRadius: '12px', border: 'none', fontSize: '1rem' }}>
@@ -154,7 +156,7 @@ export const EnergyCalculator: React.FC = () => {
           </div>
 
           <div className="results-section">
-            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '30px', borderRadius: '20px', border: '1px solid var(--border)', minHeight: '400px', display: 'flex', flexDirection: 'column', justifyContent: results ? 'flex-start' : 'center' }}>
+            <div style={{ background: 'rgba(0,0,0,0.2)', padding: 'var(--card-padding)', borderRadius: '20px', border: '1px solid var(--border)', minHeight: '300px', display: 'flex', flexDirection: 'column', justifyContent: results ? 'flex-start' : 'center' }}>
               {results ? (
                 <div className="fade-in" style={{ textAlign: 'left' }}>
                   <div style={{ textAlign: 'center', marginBottom: '25px' }}>
@@ -215,13 +217,13 @@ export const EnergyCalculator: React.FC = () => {
 
       {/* --- STRATEGICKÁ SEKCE: "Román o přežití" --- */}
       <div className="no-print">
-        <GlassCard style={{ padding: '40px' }}>
+        <GlassCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '35px' }}>
             <LineChart size={32} color="var(--primary)" />
             <h2 style={{ margin: 0 }}>Jak se vyhnout nedoplatku?</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+          <div className="smart-grid">
             <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)' }}>
               <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <ShieldCheck size={22} color="#10b981" /> Samoodečty jsou klíč

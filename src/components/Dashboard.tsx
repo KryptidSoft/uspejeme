@@ -12,8 +12,19 @@ import {
 import { useBusinessData } from '../hooks/useBusinessData';
 import { formatCZK } from '../utils/calculations/mathHelpers';
 import { calculateDashboardStats } from '../utils/calculations/businessLogic';
-
 import { GuideModal } from './GuideModal';
+import { exportToPDF } from '../utils/exportHelper';
+
+const useMounted = () => {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  return mounted;
+};
 
 // --- TYPY A POMOCNÉ KOMPONENTY ---
 
@@ -43,24 +54,29 @@ const MetricRow: React.FC<MetricRowProps> = ({ label, value, color, link }) => {
   );
 };
 
-// --- KOMPONENTA GRAFŮ ---
+interface DashboardChartsProps {
+  stats: any; // sem můžeš dát konkrétnější typ, pokud máš
+}
 
-const DashboardCharts = ({ stats }: { stats: any }) => {
-  // Data pro prstencový graf (Měsíční distribuce)
+export const DashboardCharts: React.FC<DashboardChartsProps> = ({ stats }) => {
+  const mounted = useMounted();
+
+  if (!mounted) return null;
+  // --- DATA PRO KOLÁČOVÝ GRAF ---
   const revenueData = [
     { name: 'Čistý zisk', value: stats.disposableNet, color: '#22c55e' },
     { name: 'Daně', value: stats.taxLiability, color: '#ef4444' },
     { name: 'Náklady', value: stats.exp, color: '#3b82f6' },
   ];
-  
+
   const totalRevenue = revenueData.reduce((sum, item) => sum + item.value, 0);
 
-const revenueDataWithPercent = revenueData.map(item => ({
-  ...item,
-  percent: totalRevenue > 0 ? ((item.value / totalRevenue) * 100).toFixed(1) : "0"
-}));
+  const revenueDataWithPercent = revenueData.map(item => ({
+    ...item,
+    percent: totalRevenue > 0 ? ((item.value / totalRevenue) * 100).toFixed(1) : '0'
+  }));
 
-  // Data pro horizontální bar (Pracovní zatížení)
+  // --- DATA PRO BAR GRAF (Pracovní zatížení) ---
   const workloadData = [
     { 
       name: 'Hodinová zátěž', 
@@ -70,57 +86,76 @@ const revenueDataWithPercent = revenueData.map(item => ({
   ];
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+    <div className="calculator-grid" style={{ marginBottom: '30px' }}>
       
-      {/* Koláč: Kam tečou peníze */}
-      <div className="glass-card" style={{ padding: '25px', minHeight: '320px', display: 'flex', flexDirection: 'column' }}>
-        <h3 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px' }}>Distribuce měsíčního příjmu</h3>
-        <ResponsiveContainer width="100%" height={230}>
-          <PieChart>
-            <Pie
-              data={revenueDataWithPercent}
-              innerRadius={60}
-              outerRadius={85}
-              paddingAngle={8}
-              dataKey="value"
-			  label={(entry) => `${entry.percent}%`}
-			  labelLine={false}
-			  labelPosition="inside"
-            >
-              {revenueDataWithPercent.map((entry, index) => (
-                <Cell key={entry.name} fill={entry.color} stroke="none" />
-              ))}
-            </Pie>
-            <Tooltip 
-              contentStyle={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-              itemStyle={{ fontSize: '0.8rem' }}
-              formatter={(value: number, name: string, props: any) => {
-				  const percent = props?.payload?.percent ?? "0";
-				  return [`${formatCZK(value)} (${percent}%)`, name];
-				}}
-            />
-            <Legend iconType="circle" layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '1rem', paddingTop: '20px' }} />
-          </PieChart>
-        </ResponsiveContainer>
+      {/* --- KOLÁČOVÝ GRAF --- */}
+      <div className="glass-card" style={{ padding: '25px', minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px' }}>
+          Distribuce měsíčního příjmu
+        </h3>
+        <div style={{ flex: 1, minHeight: 0 }}>
+  <ResponsiveContainer width="100%" height={230}>
+            <PieChart>
+              <Pie
+                data={revenueDataWithPercent}
+                innerRadius={60}
+                outerRadius={85}
+                paddingAngle={8}
+                dataKey="value"
+                label={(entry) => `${entry.percent}%`}
+                labelLine={false}
+                labelPosition="inside"
+              >
+                {revenueDataWithPercent.map(entry => (
+                  <Cell key={entry.name} fill={entry.color} stroke="none" />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                itemStyle={{ fontSize: '0.8rem' }}
+                formatter={(value: number, name: string, props: any) => {
+                  const percent = props?.payload?.percent ?? '0';
+                  return [`${formatCZK(value)} (${percent}%)`, name];
+                }}
+              />
+              <Legend 
+                iconType="circle" 
+                layout="vertical" 
+                verticalAlign="middle" 
+                align="right" 
+                wrapperStyle={{ fontSize: '1rem', paddingTop: '20px' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      {/* Bar: Srovnání hodin */}
-      <div className="glass-card" style={{ padding: '25px', minHeight: '320px', display: 'flex', flexDirection: 'column' }}>
-        <h3 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px' }}>Analýza časové investice</h3>
-        <ResponsiveContainer width="100%" height={230}>
-          <BarChart data={workloadData} layout="vertical" margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-            <XAxis type="number" hide domain={[0, Math.max(stats.requiredHours, 160)]} />
-            <YAxis type="category" dataKey="name" hide />
-            <Tooltip 
-              cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-              contentStyle={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-            />
-            <Legend />
-            <Bar dataKey="Bod přežití" fill="#ef4444" barSize={35} radius={[0, 4, 4, 0]} />
-            <Bar dataKey="Cílový počet hodin" fill="#fbbf24" barSize={35} radius={[0, 4, 4, 0]} />
-            <ReferenceLine x={130} stroke="#444" strokeDasharray="3 3" label={{ position: 'top', value: 'Kapacita (130h)', fill: '#666', fontSize: 10 }} />
-          </BarChart>
-        </ResponsiveContainer>
+      {/* --- BAR GRAF --- */}
+      <div className="glass-card" style={{ padding: '25px', minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px' }}>
+          Analýza časové investice
+        </h3>
+        <div style={{ flex: 1, minHeight: 0 }}>
+  <ResponsiveContainer width="100%" height={230}>
+            <BarChart data={workloadData} layout="vertical" margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              <XAxis type="number" hide domain={[0, Math.max(stats.requiredHours, 160)]} />
+              <YAxis type="category" dataKey="name" hide />
+              <Tooltip 
+                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                contentStyle={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+              />
+              <Legend />
+              <Bar dataKey="Bod přežití" fill="#ef4444" barSize={35} radius={[0,4,4,0]} />
+              <Bar dataKey="Cílový počet hodin" fill="#fbbf24" barSize={35} radius={[0,4,4,0]} />
+              <ReferenceLine 
+                x={130} 
+                stroke="#444" 
+                strokeDasharray="3 3" 
+                label={{ position: 'top', value: 'Kapacita (130h)', fill: '#666', fontSize: 10 }} 
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
         <div style={{ marginTop: 'auto', fontSize: '0.8rem', opacity: 0.5, textAlign: 'center' }}>
           {stats.workload > 100 ? '⚠️ Jste nad udržitelnou kapacitou!' : 'Vše v normě udržitelnosti.'}
         </div>
@@ -137,7 +172,29 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [isGuideOpen, setIsGuideOpen] = React.useState(false);
   const stats = useMemo(() => calculateDashboardStats(data), [data]);
+  const handlePdfExport = () => {
+    const filename = `Report_${data.companyName || 'OSVC'}_2026`;
+    const title = `OSVČ Navigátor: ${data.companyName || 'Finanční report'}`;
+    
+    // Definujeme hlavičky tabulky pro tvůj exportér
+    const tableHead = ["Ukazatel", "Hodnota"];
+    
+    // Připravíme data do řádků
+    const tableRows = [
+      ["Název subjektu", data.companyName || "Neuvedeno"],
+      ["Roční obrat (odhad)", formatCZK(stats.targetRevenue)],
+      ["Čistý měsíční zisk", formatCZK(stats.disposableNet)],
+      ["Daňová zátěž", formatCZK(stats.taxLiability)],
+      ["Hodinová sazba", formatCZK(data.hourlyRate)],
+      ["Zdraví podnikání", `${Math.round(stats.healthScore)}%`],
+      ["Finanční rezerva", `${Math.floor(stats.runway)} měsíců`],
+      ["Pracovní vytížení", `${stats.workload}%`]
+    ];
 
+    // Zavoláme tvůj exportér se 4 parametry
+    exportToPDF(filename, title, tableRows, tableHead);
+  };
+  // ----------------------------------
   const getHealthColor = () => {
     if (stats.healthScore > 80) return '#22c55e';
     if (stats.healthScore > 50) return '#eab308';
@@ -145,18 +202,18 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-wrapper" style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto', color: 'white' }}>
+    <div className="fade-in app-container">
       
       {/* 1. HEADER */}
-      <header style={{ 
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-        marginBottom: '30px', background: 'rgba(255,255,255,0.03)', 
-        padding: '20px 30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' 
-      }}>
+<header style={{ 
+  display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', 
+  gap: '20px', marginBottom: '30px', background: 'rgba(255,255,255,0.03)', 
+  padding: 'clamp(15px, 4vw, 24px)', borderRadius: '24px', border: '1px solid var(--glass-border)' 
+}}>
         <div style={{ width: '420px' }}>
           <input 
             type="text"
-			placeholder="Vaše jméno"
+			placeholder="Vaše jméno/firma"
             value={data.companyName ?? ""}
             onChange={(e) => updateData({ companyName: e.target.value })}
             style={{ 
@@ -182,21 +239,21 @@ export const Dashboard: React.FC = () => {
       color: '#60a5fa'
     }}
   >
-    <HelpCircle size={18} /> Nápověda
+    <HelpCircle size={18} />
   </button>
 
-  {/* Tisk - Skleněná zelená */}
-  <button 
-    onClick={() => window.print()} 
-    className="util-btn"
-    style={{ 
-      background: 'rgba(34, 197, 94, 0.08)', 
-      border: '1px solid rgba(34, 197, 94, 0.2)',
-      color: '#4ade80' 
-    }}
-  >
-    <Printer size={18} /> Tisk
-  </button>
+{/* Tisk - Skleněná zelená */}
+<button 
+  onClick={handlePdfExport} // Tady voláme tu novou funkci, co jsme vytvořili
+  className="util-btn"
+  style={{ 
+    background: 'rgba(34, 197, 94, 0.08)', 
+    border: '1px solid rgba(34, 197, 94, 0.2)',
+    color: '#4ade80' 
+  }}
+>
+  <Printer size={18} />
+</button>
 
   {/* Sdílet - Skleněná zlatá */}
   <button 
@@ -207,14 +264,14 @@ export const Dashboard: React.FC = () => {
       color: '#fbbf24'
     }}
   >
-    <Share2 size={18} /> Sdílet
+    <Share2 size={18} />
   </button>
 </div>
       </header>
 
       {/* 2. HLAVNÍ METRIKY (Health Score atd.) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '20px' }}>
-        <div className="glass-card" style={{ padding: '30px', textAlign: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '20px', marginBottom: '20px' }}>
+        <div className="glass-card" style={{ padding: 'clamp(15px, 5vw, 30px)', textAlign: 'center' }}>
           <HeartPulse size={48} color={getHealthColor()} style={{ marginBottom: '15px' }} />
           <div style={{ opacity: 0.5, fontSize: '0.8rem', marginBottom: '5px' }}>ZDRAVÍ PODNIKÁNÍ</div>
           <div style={{ fontSize: '3.5rem', fontWeight: '900', color: getHealthColor() }}>{Math.round(stats.healthScore)}%</div>
@@ -254,16 +311,16 @@ export const Dashboard: React.FC = () => {
       <DashboardCharts stats={stats} />
 
       {/* 3. DETAILNÍ TABULKY */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
+      <div className="smart-grid" style={{ marginBottom: '20px' }}>
         <div className="glass-card" style={{ padding: '25px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
             <Target color="#fbbf24" size={20} />
             <h3 style={{ margin: 0 }}>Ekonomické cíle</h3>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <MetricRow label="Cílový obrat (Brutto)" value={formatCZK(stats.targetRevenue)} />
+            <MetricRow label="Celkový příjem" value={formatCZK(stats.targetRevenue)} />
             <MetricRow label="Daňová povinnost" value={formatCZK(stats.taxLiability)} color="#ef4444" />
-            <MetricRow label="Měsíční náklady" value={formatCZK(stats.exp)} link="/planner" />
+            <MetricRow label="Měsíční náklady (upravit)" value={formatCZK(stats.exp)} link="/planner" />
 			<MetricRow label="Čistý měsíční přebytek" value={formatCZK(stats.disposableNet)} color="#22c55e" link="/investice" />
           </div>
         </div>
@@ -275,28 +332,41 @@ export const Dashboard: React.FC = () => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
 			<MetricRow label="Efektivní hod. sazba" value={formatCZK(stats.effectiveRate)} />
-            <MetricRow label="Bod přežití (Break-even)" value={`${stats.survivalHours} h / měs.`} color="#ef4444" />
-            <MetricRow label="Závislost na hl. klientovi" value={`${stats.singleClientRisk} %`} color={stats.singleClientRisk > 50 ? '#ef4444' : '#fbbf24'} link="/audit/rizika" />
-            <MetricRow label="Měsíční investice (ROI)" value={formatCZK(stats.investAmount)} color="#ec4899" link="/investice" />
+            <MetricRow label="Bod přežití" value={`${stats.survivalHours} h / měs.`} color="#ef4444" />
+            <MetricRow label="Závislost na hl. klientovi (upravit)" value={`${stats.singleClientRisk} %`} color={stats.singleClientRisk > 50 ? '#ef4444' : '#fbbf24'} link="/audit/rizika" />
+            <MetricRow label="Bezpečná měs. investice" value={formatCZK(stats.investAmount)} color="#ec4899" link="/investice" />
           </div>
         </div>
       </div>
 
-      {/* 4. SIMULÁTOR */}
-      <div style={{ 
-        marginTop: '30px', padding: '30px', borderRadius: '24px', 
-        background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.1)' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '25px' }}>
-          <Settings2 size={24} color="#fbbf24" />
-          <h3 style={{ margin: 0 }}>Rychlá simulace parametrů</h3>
+{/* 4. SIMULÁTOR */}
+<div style={{ 
+  marginTop: '30px', padding: 'clamp(15px, 5vw, 30px)', borderRadius: '24px', 
+  background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.1)' 
+}}>
+        <div style={{ marginBottom: '25px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Settings2 size={24} color="#fbbf24" />
+            <h3 style={{ margin: 0 }}>Rychlá simulace parametrů</h3>
+          </div>
+          <p style={{ 
+            fontSize: '0.75rem', 
+            opacity: 0.5, 
+            margin: '8px 0 0 34px', 
+            fontStyle: 'italic',
+            lineHeight: '1.4',
+            maxWidth: '600px'
+          }}>
+            Změna parametrů slouží pro plánování. Skutečné výsledky závisí na realizovaných fakturách a nákladech.
+          </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
+
+        <div className="smart-grid" style={{ gap: '30px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.8rem', opacity: 0.6, marginBottom: '10px' }}>Cílový čistý příjem: {formatCZK(data.desiredNetIncome)}</label>
             <input 
               type="range" min="30000" max="300000"
-			  step="5000"
+              step="5000"
               value={data.desiredNetIncome}
               onChange={(e) => updateData({ desiredNetIncome: Number(e.target.value) })}
               style={{ width: '100%', accentColor: '#fbbf24' }}
@@ -315,7 +385,7 @@ export const Dashboard: React.FC = () => {
             <label style={{ display: 'block', fontSize: '0.8rem', opacity: 0.6, marginBottom: '10px' }}>Aktuální rezerva: {formatCZK(data.reserves)}</label>
             <input 
               type="range" min="0" max="3000000"
-			  step="30000"
+              step="30000"
               value={data.reserves}
               onChange={(e) => updateData({ reserves: Number(e.target.value) })}
               style={{ width: '100%', accentColor: '#22c55e' }}

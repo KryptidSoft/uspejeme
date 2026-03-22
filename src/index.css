@@ -1,547 +1,323 @@
 :root {
-  --primary: #2563eb;
-  --primary-hover: #2563eb;
-  --accent: #60a5fa;
-  --bg: #0f172a;
-  --card: #1e293b;
-  --border: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.05);
-  --text: #f8fafc;
-  --text-dim: #94a3b8;
-  --success: #22c55e;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
   --danger: #ef4444;
-  
-  /* Specifické barvy pro typy aktiv */
-  --color-cash: #22c55e;
-  --color-stocks: #3b82f6;
-  --color-crypto: #f59e0b;
-  --color-realestate: #a855f7;
-  --color-commodity: #94a3b8;
+  --bg-dark: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {
   box-sizing: border-box;
-}
-
-body {
   margin: 0;
-  background-color: var(--bg);
-  background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
-  color: var(--text);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
+  padding: 0;
 }
 
-/* --- INTERAKTIVITA (Ručička) --- */
-button, 
-.nav-item, 
-.article-card, 
-.hover-card, 
-input[type="range"], 
-input[type="checkbox"],
-.clickable,
-.social-icon {
-  cursor: pointer !important;
-}
-
-/* --- LAYOUT --- */
-.app-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
-}
-
-/* --- NAVIGACE --- */
+/* NAVIGAČNÍ MENU */
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin: 10px 0;
-  padding: 4px;
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
+  gap: 10px;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  overflow-x: auto; /* Zásadní pro mobil: menu jde posouvat prstem do stran */
+  scrollbar-width: none; /* Skryje ošklivý scrollbar */
+  -webkit-overflow-scrolling: touch;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.nav-item.active {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* --- GLASS CARD --- */
-.glass-card {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  border-radius: 18px;
-  padding: 25px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-  margin-top: 20px;
-  transition: all 0.3s ease-out;
-}
-
-.hover-card:hover {
-  transform: translateY(-5px);
-  background: rgba(30, 41, 59, 0.7);
-}
-
-/* --- GRID SYSTÉM PRO KALKULAČKY --- */
-.calculator-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 30px;
-  margin-top: 20px;
-  align-items: start;
-}
-
-.inputs-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.results-section {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.input-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
-  margin-bottom: 10px;
-}
-
-@media (max-width: 900px) {
-  .calculator-grid { 
-    grid-template-columns: 1fr; 
-  }
-}
-
-/* --- FOOTER FIX --- */
-.social-links {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 15px;
-}
-
-.main-footer {
-  margin-top: 60px;
-  padding: 40px 20px;
-  border-top: 1px solid var(--border);
-  text-align: center;
-}
-
-/* --- OSTATNÍ STYLY --- */
-.input-group { margin-bottom: 15px; }
-.label-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.9rem; }
-.text-input { width: 100%; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; transition: border-color 0.2s; }
-.text-input:focus { border-color: var(--primary); }
-
-.tooltip-container { position: relative; display: inline-flex; align-items: center; margin-left: 8px; }
-.tooltip-box { display: none; position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 240px; background: var(--card); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.8rem; border: 1px solid var(--primary); z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); pointer-events: none; }
-.tooltip-container:hover .tooltip-box { display: block; }
-
-.fade-in { animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* --- ČLÁNKY: RUČIČKA A INTERAKCE --- */
-.articles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
-}
-
-/* Cílíme na GlassCard v sekci článků */
-.articles-grid .glass-card {
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              background-color 0.3s ease, 
-              border-color 0.3s ease;
-}
-
-.articles-grid .glass-card:hover {
-  transform: translateY(-6px);
-  background: rgba(30, 41, 59, 0.85);
-  border-color: var(--primary);
-}
-
-/* Zajištění ručičky i pro vnitřní texty článků */
-.article-card-content, 
-.article-card-content *,
-.read-more {
-  cursor: pointer;
-}
-
-/* --- FOOTER: PROFESIONÁLNÍ ZAROVNÁNÍ --- */
-.main-footer {
-  margin-top: 80px;
-  padding: 50px 20px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px;
-  text-align: center;
-}
-
-.footer-socials {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px; /* Rozestup mezi ikonami */
-}
-
-.social-icon-link {
-  color: var(--text-dim);
-  transition: color 0.2s ease, transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.social-icon-link:hover {
-  color: var(--primary);
-  transform: translateY(-3px);
-}
-
-.footer-actions {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.text-link {
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
   gap: 8px;
-  cursor: pointer;
-  padding: 5px 10px;
-  transition: color 0.2s;
-}
-
-.text-link:hover {
-  color: var(--text);
-}
-
-.text-link.danger:hover {
-  color: var(--danger);
-}
-
-.build-info {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-}
-
-.copy {
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  opacity: 0.7;
-  margin: 0;
-}
-
-/* Oprava bílé čáry u energií */
-input[type="range"] {
-  width: 100% !important;
-  cursor: pointer;
-}
-
-/* Globální reset pro všechna akční tlačítka */
-.calculate-btn, 
-.action-btn, 
-.primary-btn, 
-button[class*="btn"] {
-  width: 100%;
-  min-height: 48px;
-  cursor: pointer !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-/* Hover efekt, aby bylo vidět, že tlačítko žije */
-.calculate-btn:hover, 
-button[class*="btn"]:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-
-/* Oprava bílé čáry - roztáhne posuvník na maximum */
-.input-group input[type="range"],
-input[type="range"] {
-  width: 100% !important;
-  margin: 15px 0;
-  cursor: pointer;
-  display: block;
-}
-
-/* Zajištění, že obal (wrapper) neblokuje šířku */
-.input-wrapper, .input-group {
-  width: 100%;
-  display: block;
-}
-
-/* Globální oprava pro selecty v tmavém režimu */
-select {
-  appearance: none; /* Odstraní nativní šipku systému, pokud chceš vlastní */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-  padding-right: 40px !important;
-}
-
-select option {
-  background-color: #1e293b; /* Barva pozadí v seznamu */
-  color: white;
-}
-
-@media print {
-  /* Skryje navigaci, postranní panely a všechna tlačítka */
-  nav, .nav-item, button, .calculate-btn, .no-print {
-    display: none !important;
-  }
-
-  /* Upraví GlassCard pro tisk (odstraní průhlednost a stíny pro lepší čitelnost) */
-  .glass-card {
-    background: white !important;
-    color: black !important;
-    border: 1px solid #ddd !important;
-    box-shadow: none !important;
-    break-inside: avoid; /* Zabrání roztržení karty mezi dvě stránky */
-  }
-
-  body {
-    background: white !important;
-    color: black !important;
-  }
-
-  /* Roztáhne grid na celou šířku */
-  .calculator-grid {
-    display: block !important;
-  }
-}
-
-/* Layout Plánovače */
-.planner-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 24px;
-  align-items: start;
-}
-
-.planner-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.subtitle {
-  color: var(--text-dim);
-  font-size: 0.9rem;
-}
-
-/* Sekce vstupů */
-.sections-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-top: 20px;
-}
-
-.section-label {
-  font-size: 1rem;
-  color: var(--primary);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Hero karta s hodinovkou */
-.hero-card {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  padding: 32px;
-  border-radius: 24px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.5);
-  margin-bottom: 24px;
-}
-
-.hero-value {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin: 12px 0;
-  letter-spacing: -1px;
-}
-
-.hero-badge {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 6px 12px;
-  border-radius: 99px;
-  font-size: 0.8rem;
-  display: inline-block;
-}
-
-/* Tisková pravidla */
-@media print {
-  body { background: white; color: black; }
-  .no-print { display: none !important; }
-  .planner-grid { grid-template-columns: 1fr; }
-  .GlassCard { border: 1px solid #eee; box-shadow: none; }
-  .hero-card { background: #f0f4ff; color: #1d4ed8; box-shadow: none; border: 2px solid #1d4ed8; }
-  .planner-container { padding: 0; }
-}
-
-/* Select styling */
-.select-wrapper label {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
-
-select {
-  width: 100%;
-  padding: 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: white;
-  margin-bottom: 20px;
-}
-
-/* Tlačítka */
-.btn-connect {
-  width: 100%;
-  padding: 16px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: transform 0.2s;
-}
-
-.btn-connect:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-.hover-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-card:hover {
-  transform: translateY(-4px); /* Karta se lehce nadzvedne */
-  border-color: var(--primary) !important; /* Okraj se rozsvítí modře */
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-@media print {
-  /* Zabraní roztržení řádku tabulky mezi dvě stránky */
-  tr {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-
-  /* Zabraní tomu, aby nadpis tabulky zůstal sám na konci stránky */
-  thead {
-    display: table-header-group;
-  }
-
-  /* Pokud je faktura příliš dlouhá, zajistí, aby patička nebyla uprostřed textu */
-  .print-only {
-    position: running(footer);
-  }
-}
-
-/* --- DOPLNĚK PRO SESKUPENÉ MENU --- */
-.nav-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  padding: 10px 16px;
   background: rgba(255, 255, 255, 0.03);
-  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  border: 1px solid var(--glass-border);
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap; /* Text se nikdy nezalomí */
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.nav-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .nav-separator {
   width: 1px;
-  height: 24px;
-  background: var(--border);
-  margin: 0 8px;
+  height: 24px !important; /* Oprava: svislá čára místo vodorovné v menu */
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 5px !important;
+}
+/* ZDE KONČÍ NAVIGAČNÍ MENU */
+/* FOOTER */
+.main-footer {
+  margin-top: 80px;
+  padding: 40px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 32px 32px 0 0;
 }
 
-/* Na mobilu se menu poskládá pod sebe */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.footer-col h4 {
+  color: white;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-item {
+  display: block;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: left;
+}
+
+.footer-item:hover { color: #3b82f6; }
+
+.footer-item.danger { color: #ef4444; } /* Sytá korálová červená */
+.footer-item.danger:hover { color: #ff4747; } /* Jasná červená při najetí */
+
+.footer-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.social-link {
+  color: #64748b;
+  transition: 0.2s;
+}
+
+.social-link:hover { color: white; transform: translateY(-2px); }
+
+.footer-bottom {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  text-align: center;
+  font-size: 0.75rem;
+  color: #475569;
+}
+/* ZDE KONČÍ FOOTER */
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Automatická responzivita pro nadpisy */
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); }
+h3 { font-size: clamp(1.1rem, 3vw, 1.5rem); }
+
+/* Globální animace pro plynulý přechod stránek */
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responzivní kontejnery */
+section {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Úprava detailů pro mobil */
 @media (max-width: 768px) {
-  .main-nav {
-    flex-wrap: wrap;
-    justify-content: flex-start;
+  section {
+    padding-top: 40px !important;
+    padding-bottom: 20px !important;
   }
-  .nav-group {
-    background: none;
-    border: none;
+  
+  /* Na mobilu skryjeme zbytečně velké mezery */
+  .grid-mobile-1col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- ZÁKLADNÍ KONTEJNERY --- */
+.app-container, .nav-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* --- CHYTRÁ MŘÍŽKA (pro malá políčka v kartách) --- */
+/* Funguje automaticky: na monitoru vedle sebe, na mobilu se složí jen když musí */
+.smart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* --- HLAVNÍ ROZLOŽENÍ KALKULAČEK (Grid vs Flex) --- */
+
+/* 1. Pro velké monitory: 2 sloupce */
+@media (min-width: 1025px) {
+  .calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 25px;
+    align-items: start;
+  }
+}
+
+/* 2. Pro mobily a tablety: sloupce pod sebou + padding 5px */
+@media (max-width: 1024px) {
+  .calculator-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .app-container, .nav-container, .fade-in {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+}
+
+/* UNIVERZÁLNÍ A BEZPEČNÉ - toto nic nerozbije */
+.layout-grid {
+  display: flex;
+  flex-direction: column; /* Základ pro mobil: vše pod sebou */
+  gap: 25px;
+}
+
+/* Pouze na velkém monitoru to přepneme na 2 sloupce */
+@media (min-width: 1025px) {
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    align-items: start;
+  }
+}
+
+/* ZDE JSOU TOOLTIPY */
+
+/* Univerzální styl pro Tooltipy */
+.custom-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.custom-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 250px; /* Fixní šířka pro monitor */
+  background: rgba(15, 15, 15, 0.95);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  
+  /* Umístění */
+  position: absolute;
+  z-index: 1000;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Šipka pod tooltipem */
+.custom-tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(15, 15, 15, 0.95) transparent transparent transparent;
+}
+
+.custom-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* RESPONSIVITA PRO MOBILY */
+@media (max-width: 600px) {
+  .custom-tooltip .tooltip-text {
+    width: 200px; /* Na mobilu užší */
+    position: fixed; /* Fixní pozice, aby neutekl z obrazovky */
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .custom-tooltip .tooltip-text::after {
+    display: none; /* Na mobilu šipku schováme, tooltip bude dole uprostřed */
+  }
+}
+
+  /* TOHLE JE PRO TISKNUTÍ NA PAPÍR V BÍLÉ BARVĚ */
+
+@media print {
+  /* Skryje interaktivní prvky a simulátor */
+  .util-btn, .settings-section, input[type="range"], .GuideModal {
+    display: none !important;
+  }
+
+  /* Vynutí bílé pozadí a černý text pro papír */
+  body, .app-container {
+    background: white !important;
+    color: black !important;
+    margin: 0;
     padding: 0;
   }
-}
 
-a {
-    color: #FF6600;       /* nová barva odkazů */
-    text-decoration: none; /* odstraní podtržení */
-}
+  .glass-card {
+    background: white !important;
+    border: 1px solid #eee !important;
+    box-shadow: none !important;
+    color: black !important;
+    break-inside: avoid; /* Zabrání rozseknutí karty mezi dvě stránky */
+  }
 
-a:hover {
-    color: #FF3300;       /* barva při přejetí myší */
+  /* Oprava viditelnosti textů v MetricRow */
+  span { color: black !important; opacity: 1 !important; }
+
+  /* Zajištění, aby grafy nebyly černé */
+  svg { filter: invert(0) !important; }
 }

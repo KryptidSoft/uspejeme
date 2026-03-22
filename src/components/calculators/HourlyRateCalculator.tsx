@@ -17,7 +17,11 @@ import { calculateHourlyRate } from '../../utils/calculations/hourly';
 import { formatCZK } from '../../utils/calculations/mathHelpers';
 import { useBusinessData } from '../../hooks/useBusinessData';
 
-// ... předchozí kód (importy, useState)
+const safeParse = (val, max = Infinity) => {
+  const num = parseFloat(val);
+  if (isNaN(num) || num < 0) return 0;
+  return num > max ? max : num;
+};
 
 export const HourlyRateCalculator: React.FC = () => {
   const { data: globalData, updateData } = useBusinessData();
@@ -53,7 +57,7 @@ export const HourlyRateCalculator: React.FC = () => {
   };
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
       
       {/* --- STRATEGICKÝ ÚVOD --- */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
@@ -77,29 +81,29 @@ export const HourlyRateCalculator: React.FC = () => {
           </p>
         </div>
 
-        <div className="calculator-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+        <div className="calculator-grid">
           <div className="inputs">
             <InputGroup
               label="Požadovaný čistý příjem"
               unit="Kč"
               value={inputs.grossIncome}
-              onChange={(val) => setInputs({...inputs, grossIncome: parseFloat(val) || 0})}
+              onChange={(val) => setInputs({...inputs, grossIncome: safeParse(val)})}
               tooltip="Částka, kterou si chcete reálně vyplatit 'do kapsy' po zdanění a zaplacení všech nákladů."
             />
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px', marginBottom: '15px' }}>
               <InputGroup
                 label="Dovolená"
                 unit="týdny/rok"
                 value={inputs.vacationWeeks}
-                onChange={(val) => setInputs({...inputs, vacationWeeks: parseFloat(val) || 0})}
+                onChange={(val) => setInputs({...inputs, vacationWeeks: safeParse(val, 52)})}
                 tooltip="Počet týdnů volna. Kalkulačka zvýší vaši hodinovku tak, aby vám zaplatila i tyto dny odpočinku."
               />
               <InputGroup
                 label="Nemoc / Rezerva"
                 unit="dny/rok"
                 value={inputs.bufferDays}
-                onChange={(val) => setInputs({...inputs, bufferDays: parseFloat(val) || 0})}
+                onChange={(val) => setInputs({...inputs, bufferDays: safeParse(val, 365)})}
                 tooltip="Dny v roce, kdy nebudete pracovat kvůli nemoci nebo úřadům. Počítejte raději alespoň s 10 dny."
               />
             </div>
@@ -108,13 +112,13 @@ export const HourlyRateCalculator: React.FC = () => {
               label="Fakturovatelné hodiny"
               unit="hod/měs"
               value={inputs.billableHours}
-              onChange={(val) => setInputs({...inputs, billableHours: parseFloat(val) || 0})}
+              onChange={(val) => setInputs({...inputs, billableHours: safeParse(val, 744)})}
               tooltip="Kolik hodin měsíčně reálně naúčtujete klientům. Průměr u OSVČ bývá kolem 100-120 hodin měsíčně."
             />
 
             <div style={{ padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '15px', marginBottom: '20px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '1px' }}>Měsíční náklady a daně</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
                 <InputGroup 
                   label="Daně a odvody"
                   unit="Kč"
@@ -139,12 +143,12 @@ export const HourlyRateCalculator: React.FC = () => {
 
           <div className="results" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             {results ? (
-              <div className="results-box fade-in" style={{ textAlign: 'center', padding: '40px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '30px', border: '1px solid rgba(59, 130, 246, 0.2)', position: 'relative', overflow: 'hidden' }}>
+              <div className="results-box fade-in" style={{ textAlign: 'center', padding: 'var(--card-padding)', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '30px', border: '1px solid rgba(59, 130, 246, 0.2)', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: 0, right: 0, padding: '10px' }}>
                   <CheckCircle2 color="#10b981" size={24} />
                 </div>
                 <span style={{ color: 'var(--text-dim)', fontSize: '1rem', fontWeight: '500' }}>Vaše minimální udržitelná sazba:</span>
-                <div style={{ fontSize: '4.5rem', fontWeight: '900', color: 'white', margin: '15px 0', textShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
+                <div style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: '900', color: 'white', margin: '15px 0', textShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
                   {formatCZK(results.rate)}
                 </div>
 				<div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
@@ -173,13 +177,13 @@ export const HourlyRateCalculator: React.FC = () => {
 
       {/* --- EDUKATIVNÍ SEKCE: HLOUBKOVÝ ROZBOR --- */}
       <div className="no-print">
-        <GlassCard style={{ padding: '40px' }}>
+        <GlassCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
             <BookOpen size={32} color="var(--primary)" />
             <h2 style={{ margin: 0 }}>Jak správně nacenit svou práci?</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px' }}>
+          <div className="smart-grid">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '15px' }}>
                 <h4 style={{ color: 'white', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>

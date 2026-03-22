@@ -59,14 +59,14 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
   };
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto", display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="fade-in app-container" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <GlassCard>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
           <TrendingDown color="#ef4444" size={28} />
           <h2 style={{ margin: 0 }}>Kalkulačka znehodnocení úspor</h2>
         </div>
 
-        <div className="calculator-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "25px" }}>
+        <div className="calculator-grid">
           {/* --- Inputy --- */}
           <div>
             <InputGroup label="Úspory" unit="Kč" value={amount} onChange={(v) => setAmount(parseFloat(v) || 0)} />
@@ -99,9 +99,9 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
           </div>
 
           {/* --- Výsledek --- */}
-          <div style={{ textAlign: "center", padding: "30px", background: "rgba(0,0,0,0.2)", borderRadius: "16px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ fontSize: "0.9rem", color: "var(--text-dim)" }}>Reálná hodnota za {years} let</div>
-            <div style={{ fontSize: "2.6rem", fontWeight: "bold", color: "#ef4444", marginTop: "10px" }}>
+          <div style={{ textAlign: "center", padding: "var(--card-padding)", background: "rgba(0,0,0,0.2)", borderRadius: "16px", display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '200px' }}>
+  <div style={{ fontSize: "0.9rem", color: "var(--text-dim)" }}>Reálná hodnota za {years} let</div>
+  <div style={{ fontSize: "clamp(1.8rem, 5vw, 2.6rem)", fontWeight: "bold", color: "#ef4444", marginTop: "10px" }}>
               {realValue.toLocaleString()} Kč
             </div>
             <div style={{ marginTop: "12px", fontSize: "0.95rem", color: "#f87171" }}>
@@ -111,7 +111,7 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
         </div>
 
         {/* --- GRAF --- */}
-        <div style={{ marginTop: "40px", height: "350px" }}>
+        <div style={{ marginTop: "40px", height: "350px", width: "100%", overflowX: 'auto', overflowY: 'hidden' }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={series}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
@@ -141,12 +141,12 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
       </GlassCard>
 
       {/* --- INFORMAČNÍ SEKCE POD ČAROU --- */}
-      <GlassCard style={{ padding: '25px', border: '1px solid rgba(255,255,255,0.05)' }}>
+      <GlassCard>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
           <Info size={20} color="var(--primary)" />
           <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Metodika predikce a vztah k inflaci</h3>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: '1.6' }}>
+        <div className="smart-grid" style={{ fontSize: '0.85rem' }}>
           <div>
             <strong style={{ color: '#eab308' }}>Zlato a Stříbro:</strong> Vycházíme z teze, že drahé kovy jsou reálná aktiva. Jejich cena dlouhodobě koriguje inflaci (náklady na těžbu rostou s cenou energií), čímž si udržují konstantní kupní sílu.
           </div>
@@ -158,7 +158,8 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
           </div>
         </div>
         <p style={{ marginTop: '20px', fontSize: '0.75rem', fontStyle: 'italic', opacity: 0.7, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '10px' }}>
-          Poznámka: Výpočty v grafu jsou simulací dlouhodobých ekonomických trendů. Zatímco znehodnocení hotovosti je při zadané inflaci matematickou jistotou, budoucí výkonnost aktiv je ovlivněna tržními riziky.
+          Poznámka: Výpočty v grafu jsou simulací dlouhodobých ekonomických trendů, nikoliv zaručeným budoucím výnosem. Nástroj slouží pouze pro vzdělávací účely a simulaci historických trendů.
+		  <strong> Nejedná se o investiční poradenství</strong>. Před jakýmkoliv investičním rozhodnutím se poraďte s licencovaným odborníkem.
         </p>
       </GlassCard>
     </div>

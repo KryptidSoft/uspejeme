@@ -2,15 +2,18 @@ import React from 'react';
 
 export interface GlassCardProps {
   children: React.ReactNode;
-  className: string;
+  className?: string;
+  style?: React.CSSProperties; // Tohle tam vrátíme
   onClick?: () => void;
-  style?: React.CSSProperties; // Přidáno pro podporu inline stylů
 }
 
-export const GlassCard: React.FC<GlassCardProps> = ({ children, className, onClick, style }) => {
+export const GlassCard: React.FC<GlassCardProps> = ({ children, className = "", style, onClick }) => {
   return (
-    // Použijeme šablonový řetězec pro spojení tříd
-    <div className={`glass-card ${className}`} onClick={onClick} style={style}>
+    <div 
+      className={`glass-card ${className}`} 
+      style={style} 
+      onClick={onClick}
+    >
       {children}
     </div>
   );

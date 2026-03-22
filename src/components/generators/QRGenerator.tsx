@@ -18,10 +18,24 @@ export const QRGenerator: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [isValidAccount, setIsValidAccount] = useState(false);
 
+useEffect(() => {
+    const savedAccount = localStorage.getItem('user_account_number');
+    if (savedAccount) {
+      setData(prev => ({ ...prev, account: savedAccount }));
+    }
+  }, []);
+
   useEffect(() => {
     const accountRegex = /^(\d{0,6}-)?\d{1,10}\/\d{4}$/;
     setIsValidAccount(accountRegex.test(data.account));
   }, [data.account]);
+  
+  useEffect(() => {
+    if (data.account) {
+      localStorage.setItem('user_account_number', data.account);
+    }
+  }, [data.account]);
+  
 
   const addTax = (percentage: number) => {
     // Pokud originalAmount ještě není nastaven, vezmeme aktuální hodnotu
@@ -45,7 +59,14 @@ export const QRGenerator: React.FC = () => {
 
   const cleanAmount = data.amount.replace(',', '.').replace(/\s/g, '');
   const cleanAccount = data.account.replace(/\s/g, '');
-  const qrValue = `SPD*1.0*ACC:${cleanAccount}*AM:${cleanAmount}*CUR:CZK*VS:${data.variableSymbol}*MSG:${data.message.substring(0, 60)}`.replace(/\*+$/, "");
+  const qrValue = [
+  'SPD*1.0',
+  `ACC:${cleanAccount}`,
+  `AM:${cleanAmount}`,
+  'CUR:CZK',
+  data.variableSymbol && `VS:${data.variableSymbol}`,
+  data.message && `MSG:${data.message.replace(/\*/g, ' ')}` // Nahradí hvězdičky ve zprávě mezerou, aby nerozbily formát
+].filter(Boolean).join('*');
 
   const handleCopy = () => {
     navigator.clipboard.writeText(qrValue);

@@ -32,10 +32,12 @@ export const InputGroup: React.FC<InputGroupProps> = ({
       <div className="label-wrapper" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
         <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem', fontWeight: 500 }}>
           {label}
+          
+          {/* BEZPEČNÁ ÚPRAVA TOOLTIPU */}
           {tooltip && (
-            <span className="tooltip-container" style={{ position: 'relative', display: 'inline-block', cursor: 'help' }}>
+            <span className="custom-tooltip">
               <Info size={14} style={{ opacity: 0.6 }} />
-              <span className="tooltip-box">{tooltip}</span>
+              <span className="tooltip-text">{tooltip}</span>
             </span>
           )}
         </label>

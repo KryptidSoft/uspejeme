@@ -2,10 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { QRCodeSVG } from 'qrcode.react';
+import { exportToPDF } from "../../utils/exportHelper";
 import { 
   Plus, Trash2, Printer, Settings2, ShieldCheck, Info
 } from 'lucide-react';
+const handlePdfExport = () => {
+  const filename = `Faktura_${invoice.number}`;
+  const title = isVatPayer ? (isForeign ? 'TAX INVOICE' : 'FAKTURA - DAŇOVÝ DOKLAD') : (isForeign ? 'INVOICE' : 'FAKTURA');
+  
+  // Definujeme hlavičky podle jazyka
+  const tableHead = isForeign 
+    ? ["Description", "Qty", "Unit", "Price/Unit", "Total"]
+    : ["Popis položky", "Mn.", "Jedn.", "Cena/j.", "Celkem"];
 
+  // Převedeme položky faktury na řádky tabulky
+  const tableRows = invoice.items.map(item => [
+    item.description,
+    item.quantity.toString(),
+    item.unit,
+    `${item.pricePerUnit.toLocaleString()} ${currency}`,
+    `${(item.quantity * item.pricePerUnit).toLocaleString()} ${currency}`
+  ]);
+
+  // Přidáme patičku se součtem přímo do tabulky (volitelné)
+  tableRows.push([
+    "", "", "", 
+    isForeign ? "TOTAL:" : "CELKEM:", 
+    `${total.toLocaleString()} ${currency}`
+  ]);
+
+  // VOLÁME TVŮJ STROJ!
+  exportToPDF(filename, `${title} #${invoice.number}`, tableRows, tableHead);
+};
 interface InvoiceItem {
   id: string;
   description: string;
@@ -14,38 +42,59 @@ interface InvoiceItem {
   pricePerUnit: number;
 }
 
-export const EliteInvoice: React.FC = () => {
+// ZAČÁTEK KOMPONENTY
+export const EliteInvoice = () => {
+  // --- CHYBĚJÍCÍ STAVY, KTERÉ KÓD POUŽÍVÁ ---
   const [isVatPayer, setIsVatPayer] = useState(false);
   const [isForeign, setIsForeign] = useState(false);
   const [vatRate, setVatRate] = useState(21);
   const [currency, setCurrency] = useState('Kč');
   const [dueDays, setDueDays] = useState(14);
-  
-  const [invoice, setInvoice] = useState({
-    number: '20260001',
-    variableSymbol: '20260001', // Přidána výchozí hodnota
-    issueDate: new Date().toISOString().split('T')[0],
-    dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    duzp: new Date().toISOString().split('T')[0],
-supplier: { 
+
+const [invoice, setInvoice] = useState(() => {
+    // 1. Pokus o načtení uloženého dodavatele
+    const savedSupplier = localStorage.getItem('elite_invoice_supplier');
+    // 2. Pokus o načtení čísla účtu ze Smart QR Pay
+    const sharedAccount = localStorage.getItem('user_account_number');
+
+    const defaultSupplier = savedSupplier ? JSON.parse(savedSupplier) : {
       name: '', 
       street: '', 
       city: '', 
       zip: '', 
       ico: '', 
       dic: '', 
-      account: '', 
+      account: sharedAccount || '', // Předvyplní účet, pokud ho zná z QR generátoru
       iban: '', 
       swift: '', 
-      registration: 'Fyzická osoba zapsaná v živnostenském rejstříku', 
-      email: '', // Přidáno
-      phone: ''  // Přidáno
-    }, // Tady musí být čárka, aby mohl následovat "client"
-    client: { name: '', street: '', city: '', zip: '', ico: '', dic: '' },
-    items: [
-      { id: '1', description: 'Konzultace / Služby', quantity: 1, unit: 'hod', pricePerUnit: 0 }
-    ] as InvoiceItem[]
+      registration: 'Fyzická osoba zapsaná v živnostenském rejstříku',
+      email: '', 
+      phone: ''
+    };
+
+    return {
+      number: '20260001',
+      variableSymbol: '20260001',
+      issueDate: new Date().toISOString().split('T')[0],
+      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      duzp: new Date().toISOString().split('T')[0],
+      supplier: defaultSupplier,
+      client: { name: '', street: '', city: '', zip: '', ico: '', dic: '' },
+      items: [
+        { id: '1', description: 'Konzultace / Služby', quantity: 1, unit: 'hod', pricePerUnit: 0 }
+      ] as InvoiceItem[]
+    };
   });
+ 
+ useEffect(() => {
+    // Uloží údaje dodavatele do prohlížeče
+    localStorage.setItem('elite_invoice_supplier', JSON.stringify(invoice.supplier));
+    
+    // Synchronizuje číslo účtu pro Smart QR Pay
+    if (invoice.supplier.account) {
+      localStorage.setItem('user_account_number', invoice.supplier.account);
+    }
+  }, [invoice.supplier]);
 
   // Automatické nastavení VS podle čísla faktury
   useEffect(() => {
@@ -119,7 +168,7 @@ const subtotal = round(invoice.items.reduce((sum, item) => sum + (item.quantity 
         <select value={currency} onChange={e => setCurrency(e.target.value)} style={{ background: '#333', color: 'white', border: '1px solid #555' }}>
           <option value="Kč">CZK (Kč)</option><option value="€">EUR (€)</option><option value="$">USD ($)</option>
         </select>
-        <button onClick={() => window.print()} className="calculate-btn" style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button onClick={handlePdfExport} className="calculate-btn" style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Printer size={18} /> Tisk / PDF
         </button>
       </GlassCard>
@@ -131,7 +180,7 @@ const subtotal = round(invoice.items.reduce((sum, item) => sum + (item.quantity 
           
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid #eee', paddingBottom: '20px', marginBottom: '30px' }}>
             <div>
-              <h1 style={{ fontSize: '24px', margin: 0, fontWeight: 900, color: '#2563eb' }}>
+              <h1 style={{ fontSize: '24px', margin: 0, fontWeight: 700, color: '#2563eb' }}>
                 {isVatPayer ? (isForeign ? 'TAX INVOICE' : 'FAKTURA - DAŇOVÝ DOKLAD') : (isForeign ? 'INVOICE' : 'FAKTURA')}
               </h1>
               <p style={{ margin: '5px 0', fontSize: '14px', color: '#666' }}>#{invoice.number}</p>
@@ -256,7 +305,7 @@ const subtotal = round(invoice.items.reduce((sum, item) => sum + (item.quantity 
     )
   )}
 </div>
-</div> {/*
+</div>
 
         {/* EDITOR PANEL */}
         <div className="no-print">

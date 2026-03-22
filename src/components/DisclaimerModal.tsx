@@ -67,7 +67,7 @@ export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({
         </p>
 
         <div style={{ textAlign: "right", marginTop: "20px" }}>
-          <button onClick={onClose}>Zavřít</button>
+          <button onClick={onClose}>Rozumím a chci pokračovat.</button>
         </div>
       </GlassCard>
     </div>

@@ -40,14 +40,14 @@ export const ReservesCalculator: React.FC = () => {
   }, [data.monthlyExpenses]);
 
   // Automatický výpočet a aktualizace globálního stavu
-  useEffect(() => {
-    if (results) {
-      updateData({
-        reserves: results.totalTarget,
-        safetyBufferMonths: inputs.targetMonths
-      });
-    }
-  }, [results?.totalTarget, inputs.targetMonths]);
+useEffect(() => {
+  if (results && (data.reserves !== results.totalTarget || data.safetyBufferMonths !== inputs.targetMonths)) {
+    updateData({
+      reserves: results.totalTarget,
+      safetyBufferMonths: inputs.targetMonths
+    });
+  }
+}, [results?.totalTarget, inputs.targetMonths, data.reserves, data.safetyBufferMonths]);
 
   const handleCalculate = () => {
     const res = calculateReserves(inputs);
@@ -86,9 +86,18 @@ export const ReservesCalculator: React.FC = () => {
       }],
     };
   }, [results, inputs]);
+  
+  const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false, // Umožní grafu přizpůsobit se velikosti karty
+  cutout: '78%',
+  plugins: {
+    legend: { display: false },
+  },
+};
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '25px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="fade-in app-container">
       
       {/* --- STRATEGICKÝ ÚVOD --- */}
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
@@ -110,7 +119,7 @@ export const ReservesCalculator: React.FC = () => {
           </button>
         </div>
 
-        <div className="calculator-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+        <div className="calculator-grid" style={{ gap: '40px' }}>
           <div className="inputs-section">
             <div style={{ marginBottom: '20px', padding: '15px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px', borderLeft: '4px solid var(--primary)', fontSize: '0.9rem', color: 'var(--text)' }}>
                <Target size={16} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'middle' }} color="var(--primary)" />
@@ -153,7 +162,7 @@ export const ReservesCalculator: React.FC = () => {
                 <Doughnut data={chartData} options={{ plugins: { legend: { display: false } }, cutout: '78%' }} />
                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', width: '100%' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '1px' }}>Cílová rezerva</div>
-                  <div style={{ fontSize: '1.6rem', fontWeight: 'bold', color: 'white' }}>{formatCZK(results.totalTarget)}</div>
+                  <div style={{ fontSize: 'clamp(1.2rem, 5vw, 1.8rem)', fontWeight: 'bold', color: 'white' }}>{formatCZK(results.totalTarget)}</div>
                 </div>
                 
                 <div style={{ marginTop: '35px', textAlign: 'center', padding: '20px', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
@@ -186,7 +195,7 @@ export const ReservesCalculator: React.FC = () => {
             <h2 style={{ margin: 0 }}>Strategie budování rezervy</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '25px' }}>
+          <div className="smart-grid">
             <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '20px', border: '1px solid var(--border)' }}>
               <h3 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <ShieldCheck size={22} color="#3b82f6" /> Úrovně bezpečí
