@@ -1,8 +1,6 @@
 import React from 'react';
 import { ALL_DEADLINES } from '../data/deadlines';
-import { Bell, AlertTriangle, Info, Calendar } from 'lucide-react';
-
-type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse';
+import type { BusinessType } from '../types/index';
 
 interface DeadlineWidgetProps {
   userType: BusinessType;
@@ -27,8 +25,7 @@ export const DeadlineWidget: React.FC<DeadlineWidgetProps> = ({ userType, limit 
 
 const upcoming = ALL_DEADLINES
   .filter(d => {
-    // Akceptujeme 'all' i 'vse' jako zobrazení všeho
-    if (userType === 'all' || userType === 'vse') return true;
+    if (userType === 'vse') return true;
     return d.for.includes(userType) || d.for.includes('vse');
   })
   .filter(d => new Date(d.date).getTime() >= today.getTime())

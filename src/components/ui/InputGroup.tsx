@@ -11,6 +11,8 @@ interface InputGroupProps {
   step?: number;
   min?: number;
   max?: number;
+  placeholder?: string;
+  className?: string;
 }
 
 export const InputGroup: React.FC<InputGroupProps> = ({

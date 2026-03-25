@@ -106,17 +106,45 @@ export const EnergyCalculator: React.FC = () => {
       </div>
 
       <GlassCard className="">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ color: currentProfile.color }}>
-              {React.cloneElement(currentProfile.icon as React.ReactElement, { size: 28 })}
-            </div>
-            <h2 style={{ margin: 0 }}>Detailní bilance ({currentProfile.label})</h2>
-          </div>
-          <button onClick={() => window.print()} className="nav-item no-print" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', padding: '8px 15px', color: '#10b981', borderRadius: '8px' }}>
-            <Printer size={14} /> EXPORT PRO DODAVATELE
-          </button>
-        </div>
+<div
+  style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',       // <-- Přidáno: tlačítko se zalomí
+    gap: '10px',            // <-- Přidáno: mezera mezi řádky
+    marginBottom: '25px'
+  }}
+>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <div style={{ color: currentProfile.color }}>
+      {React.cloneElement(
+  currentProfile.icon as React.ReactElement<{ size?: number }>,
+  { size: 28 }
+)}
+    </div>
+    <h2 style={{ margin: 0 }}>Detailní bilance ({currentProfile.label})</h2>
+  </div>
+
+  <button
+    onClick={() => window.print()}
+    className="nav-item no-print"
+    style={{
+      background: 'rgba(16, 185, 129, 0.1)',
+      border: '1px solid #10b981',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      fontSize: '0.8rem',
+      padding: '8px 15px',
+      color: '#10b981',
+      borderRadius: '8px'
+    }}
+  >
+    <Printer size={14} /> EXPORT PRO DODAVATELE
+  </button>
+</div>
 
         <div className="calculator-grid">
           <div className="inputs-section">

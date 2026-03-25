@@ -1,13 +1,4 @@
-export type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse';
-
-export interface Deadline {
-  id: string;
-  date: Date;
-  title: string;
-  description: string;
-  type: 'dan' | 'pojistne' | 'ostatni' | 'svatek' | 'strategie';
-  for: BusinessType[];
-}
+import type { Deadline } from '../types/index';
 
 export const ALL_DEADLINES: Deadline[] = [
   // --- ROK 2026 ---
@@ -156,4 +147,4 @@ export const ALL_DEADLINES: Deadline[] = [
   { id: '27-12-27', date: new Date(2027, 11, 27), title: 'DPH a hlášení', description: 'Splatnost za 11/2027 (25.12. byla sobota).', type: 'dan', for: ['sro'] },
   { id: '27-12-31-s', date: new Date(2027, 11, 31), title: 'Sociální pojištění', description: 'Splatnost za 12/2027.', type: 'pojistne', for: ['osvc_hlavni'] },
   { id: '27-12-31-i', date: new Date(2027, 11, 31), title: 'Inventarizace', description: 'Povinná inventarizace majetku.', type: 'ostatni', for: ['sro'] },
-].sort((a, b) => a.date.getTime() - b.date.getTime());
+].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) as Deadline[];

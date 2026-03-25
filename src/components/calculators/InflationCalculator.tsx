@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { TrendingDown, CheckSquare, Square, Info } from "lucide-react";
 import { GlassCard } from "../ui/GlassCard";
 import { InputGroup } from "../ui/InputGroup";
@@ -69,31 +69,40 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
         <div className="calculator-grid">
           {/* --- Inputy --- */}
           <div>
-            <InputGroup label="Úspory" unit="Kč" value={amount} onChange={(v) => setAmount(parseFloat(v) || 0)} />
-            <InputGroup label="Inflace" unit="%" value={inflation} onChange={(v) => setInflation(parseFloat(v) || 0)} />
-            <InputGroup label="Horizont" unit="let" value={years} onChange={(v) => setYears(parseFloat(v) || 0)} />
+            <InputGroup label="Úspory" unit="Kč" value={amount} onChange={(v) => setAmount(parseFloat(v) || 0)} 
+			tooltip="Celková částka, kterou máte dnes k dispozici k investování či uložení. Zahrnuje hotovost, úspory a volné prostředky."
+			/>
+            <InputGroup label="Inflace" unit="%" value={inflation} onChange={(v) => setInflation(parseFloat(v) || 0)} 
+			tooltip="Odhad roční inflace. Zohledňuje nárůst cen zboží a služeb, který snižuje kupní sílu vašich peněz."
+			/>
+            <InputGroup label="Horizont" unit="let" value={years} onChange={(v) => setYears(parseFloat(v) || 0)} 
+			tooltip="Počet let, po které sledujete reálnou hodnotu vašich úspor. Delší horizont = přesnější odhad."
+			/>
             
             <div style={{ marginTop: "20px" }}>
               <span style={{ fontSize: "0.85rem", color: "var(--text-dim)", display: "block", marginBottom: "10px" }}>
                 Srovnat s ochranou aktiv:
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {assetConfigs.map(asset => (
-                  <button
-                    key={asset.id}
-                    onClick={() => toggleAsset(asset.id)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: "6px",
-                      padding: "6px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)",
-                      background: selectedAssets.includes(asset.id) ? "rgba(255,255,255,0.1)" : "transparent",
-                      color: selectedAssets.includes(asset.id) ? asset.color : "#aaa",
-                      cursor: "pointer", fontSize: "0.85rem", transition: "0.2s"
-                    }}
-                  >
-                    {selectedAssets.includes(asset.id) ? <CheckSquare size={14} /> : <Square size={14} />}
-                    {asset.label}
-                  </button>
-                ))}
+{assetConfigs.map(asset => (
+  <button
+    key={asset.id}
+    onClick={() => toggleAsset(asset.id)}
+    style={{
+      display: "flex", alignItems: "center", gap: "6px",
+      padding: "6px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)",
+      background: selectedAssets.includes(asset.id) ? "rgba(255,255,255,0.1)" : "transparent",
+      color: selectedAssets.includes(asset.id) ? asset.color : "#aaa",
+      cursor: "pointer", fontSize: "0.85rem", transition: "0.2s"
+    }}
+  >
+    <span className="custom-tooltip">
+      {selectedAssets.includes(asset.id) ? <CheckSquare size={14} /> : <Square size={14} />}
+      <span className="tooltip-text">{asset.desc}</span>
+    </span>
+    {asset.label}
+  </button>
+))}
               </div>
             </div>
           </div>
@@ -119,7 +128,7 @@ const realValue = Math.round(calculateInflationValue(amount, inflation, years));
               <YAxis stroke="#aaa" tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip 
                 contentStyle={{ background: "#111", border: "1px solid #333", borderRadius: "8px" }}
-                formatter={(v: number) => `${v.toLocaleString()} Kč`} 
+                formatter={(v: any) => v !== undefined ? `${Number(v).toLocaleString()} Kč` : ''} 
               />
               <Legend verticalAlign="top" height={36}/>
               <Line name="Hotovost (CZK)" type="monotone" dataKey="value" stroke="#ef4444" strokeWidth={3} dot={false} />

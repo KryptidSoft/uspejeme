@@ -89,6 +89,7 @@
   color: #64748b;
   text-decoration: none;
   font-size: 0.85rem;
+  font: inherit;
   margin-bottom: 8px;
   background: none;
   border: none;
@@ -260,6 +261,18 @@ section {
   transition: opacity 0.3s;
 }
 
+.tooltip-icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+  cursor: help;
+  transition: 0.2s;
+}
+
+.custom-tooltip:hover .tooltip-icon {
+  opacity: 1;
+}
+
 /* Šipka pod tooltipem */
 .custom-tooltip .tooltip-text::after {
   content: "";
@@ -320,4 +333,131 @@ section {
 
   /* Zajištění, aby grafy nebyly černé */
   svg { filter: invert(0) !important; }
+}
+
+/* --- UNIVERZÁLNÍ TLAČÍTKA NA STRÁNKY--- */
+/* --- ZÁKLADNÍ TLAČÍTKO --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  color: var(--text-main);
+  background: linear-gradient(135deg, #3b82f6, #2563eb); /* jemný gradient */
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8); /* tmavší gradient při hover */
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* --- ÚSPĚŠNÉ KOPÍROVÁNÍ --- */
+.btn-success {
+  background-color: #10b981;
+  color: white;
+  animation: flashGreen 0.4s ease-in-out;
+}
+
+@keyframes flashGreen {
+  0% { transform: scale(1); background-color: #059669; }
+  50% { transform: scale(1.05); background-color: #10b981; }
+  100% { transform: scale(1); background-color: #10b981; }
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
+/* --- NEAKTIVNÍ TLAČÍTKO --- */
+.btn-inactive {
+  background-color: #444; /* tmavě šedá */
+  color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  transition: none; /* žádný hover efekt */
+}
+
+/* --- MEDIA QUERY --- */
+@media (max-width: 600px) {
+  .btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 14px 20px;
+  }
+}
+
+/* --- TADY KONČÍ UNIVERZÁLNÍ TLAČÍTKA --- */
+
+/* --- JAKÁSI AKCENTOVÁ BARVA VYTVOŘENÁ PŘI OPRAVÁCH, POUŽITA DO STABILITY KALKULAČKY --- */
+.input-accent input {
+  accent-color: #3498db; /* default barva, můžeš měnit přes JS/CSS-in-JS */
+}
+
+/* --- STYLY PRO DASHBOARD. DASHBOARD SPECIFIC STYLES --- */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.util-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: 0.2s;
+}
+
+.util-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+}
+
+.metric-row {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 10px; 
+  border-radius: 12px; 
+  transition: 0.2s;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Tisková verze už v index.css je, ale pro jistotu ji sjednoťme */
+@media print {
+  .util-btn, .simulator-section { display: none !important; }
+  .glass-card { 
+    background: white !important; 
+    color: black !important; 
+    border: 1px solid #ddd !important;
+  }
 }

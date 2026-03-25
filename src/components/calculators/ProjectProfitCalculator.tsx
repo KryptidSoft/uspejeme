@@ -11,7 +11,6 @@ import {
   Trash2, 
   ChevronDown, 
   ChevronUp, 
-  Lightbulb, 
   Target, 
   TrendingDown, 
   Briefcase,
@@ -202,14 +201,23 @@ export const ProjectProfitCalculator: React.FC = () => {
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: '15px', marginTop: '30px', flexWrap: 'wrap' }}>
-          <button onClick={addProject} className="calculate-btn" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', flex: 1 }}>
-            <Plus size={18} /> PŘIDAT DALŠÍ PROJEKT
-          </button>
-          <button onClick={handleCalculate} className="calculate-btn" style={{ flex: 2, fontWeight: 'bold' }}>
-            <Calculator size={18} /> ANALYZOVAT ZISKOVOST
-          </button>
-        </div>
+<div style={{ display: 'flex', gap: '15px', marginTop: '30px', flexWrap: 'wrap' }}>
+  <button
+    onClick={addProject}
+    className="btn btn-glass"
+    style={{ flex: 1 }}
+  >
+    <Plus size={18} /> PŘIDAT DALŠÍ PROJEKT
+  </button>
+
+  <button
+    onClick={handleCalculate}
+    className="btn"
+    style={{ flex: 2, fontWeight: 'bold' }}
+  >
+    <Calculator size={18} /> ANALYZOVAT ZISKOVOST
+  </button>
+</div>
 
         {results && chartData && (
           <div className="fade-in" style={{ marginTop: '50px', paddingTop: '40px', borderTop: '2px solid var(--border)' }}>

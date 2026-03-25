@@ -1,47 +1,47 @@
 import { safeNumber } from './mathHelpers';
 
-/**
- * Rozšířená definice vstupů o dovolenou a rezervní dny.
- */
-export interface HourlyInputs {
+// Přidali jsme 'type' pro jistotu, že to kompilátor oddělí
+export type HourlyInputs = {
   grossIncome: number;
   billableHours: number;
   nonBillableHours: number; 
-  vacationWeeks: number; // NOVÉ: Týdny dovolené/rok
-  bufferDays: number;    // NOVÉ: Nemoc, školení, rezerva v dnech/rok
+  vacationWeeks: number;
+  bufferDays: number;
   costs: {
     taxes: number;
     overhead: number;
-    material: number;
     reserves: number;
   };
 }
 
 export const calculateHourlyRate = (data: HourlyInputs) => {
+  // Náklady
   const taxes = safeNumber(data.costs.taxes);
   const overhead = safeNumber(data.costs.overhead);
-  const material = safeNumber(data.costs.material);
   const reserves = safeNumber(data.costs.reserves);
-  
-  const totalCosts = taxes + overhead + material + reserves;
+  const totalCosts = taxes + overhead + reserves;
+
+  // Cílový hrubý příjem (včetně nákladů)
   const targetGross = safeNumber(data.grossIncome);
   const monthlyNeed = targetGross + totalCosts;
 
+  // Efektivní pracovní dny
   const workWeeksPerYear = 52 - safeNumber(data.vacationWeeks);
   const workDaysPerYear = (workWeeksPerYear * 5) - safeNumber(data.bufferDays);
   const realWorkDaysPerMonth = workDaysPerYear / 12;
-  
+
+  // Multiplier pro průměrný měsíc (21 dní) vs vaše dostupné dny
   const availabilityMultiplier = 21 / (realWorkDaysPerMonth > 0 ? realWorkDaysPerMonth : 1);
-  const billableHours = safeNumber(data.billableHours);
-  
-  // Výpočet čisté sazby
-  const rawRate = billableHours > 0 ? (monthlyNeed / billableHours) * availabilityMultiplier : 0;
+
+  // Fakturovatelné + ne-fakturovatelné hodiny
+  const effectiveHours = safeNumber(data.billableHours) + safeNumber(data.nonBillableHours);
+
+  // Výpočet hodinové sazby
+  const rawRate = effectiveHours > 0 ? (monthlyNeed / effectiveHours) * availabilityMultiplier : 0;
 
   return {
-    // VYLEPŠENÍ: Zaokrouhlení nahoru na nejbližší desítku (např. 843 -> 850)
-    rate: Math.ceil(rawRate / 10) * 10, 
+    rate: Math.ceil(rawRate / 10) * 10, // Zaokrouhlení na nejbližší desítku
     totalCosts,
-    // Potřebný obrat včetně "vydělání si na dovolenou"
     totalRequired: Math.ceil(monthlyNeed * availabilityMultiplier),
     realWorkDays: realWorkDaysPerMonth.toFixed(1)
   };

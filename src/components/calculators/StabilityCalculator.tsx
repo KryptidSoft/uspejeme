@@ -7,11 +7,9 @@ import {
   AlertCircle, 
   Trophy, 
   Target, 
-  Zap, 
-  FileText,
+  Zap,
   MousePointer2,
   BookOpen,
-  CheckCircle,
   Shield
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
@@ -182,6 +180,7 @@ export const StabilityCalculator: React.FC = () => {
                               </div>
                           </div>
                           <InputGroup
+						      label="Název pole"
                               unit={key === 'reserves' ? "m." : "%"} 
                               type="range" 
                               min={0} 
@@ -189,7 +188,7 @@ export const StabilityCalculator: React.FC = () => {
                               step={key === 'reserves' ? 1 : 10}
                               value={currentVal}
                               onChange={(v) => setInputs({...inputs, [stateKey]: parseFloat(v)})}
-                              style={{ accentColor: info.color }}
+                              className="input-accent"
                           />
                           <div style={{ marginTop: '10px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', display: 'flex', gap: '10px', lineHeight: '1.4' }}>
                               <Info size={16} style={{ flexShrink: 0, color: info.color }} />

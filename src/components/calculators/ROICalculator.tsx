@@ -103,47 +103,93 @@ export const ROICalculator: React.FC = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
-                <InputGroup label="Investice" unit="Kč" value={investment} onChange={v => setInvestment(Number(v))} />
-                <InputGroup label="Počáteční náklady" unit="Kč" value={initialCosts} onChange={v => setInitialCosts(Number(v))} />
+                <InputGroup label="Investice" unit="Kč" value={investment} onChange={v => setInvestment(Number(v))}
+tooltip="Celková částka, kterou investujete na začátku projektu. Zahrňte technologie, marketing i vlastní zdroje."
+				/>
+                <InputGroup label="Počáteční náklady" unit="Kč" value={initialCosts} onChange={v => setInitialCosts(Number(v))}
+tooltip="Dodatečné náklady mimo hlavní investici – např. právní služby, školení nebo implementace."
+				/>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
-                <InputGroup label="Měsíční přínos" unit="Kč" value={monthlyBenefit} onChange={v => setMonthlyBenefit(Number(v))} />
-                <InputGroup label="Diskontní sazba" unit="%" value={discountRate} onChange={v => setDiscountRate(Number(v))} />
+                <InputGroup label="Měsíční přínos" unit="Kč" value={monthlyBenefit} onChange={v => setMonthlyBenefit(Number(v))}
+tooltip="Odhadovaný čistý měsíční zisk nebo úspora. Buďte raději konzervativní než optimističtí."
+				/>
+                <InputGroup label="Diskontní sazba" unit="%" value={discountRate} onChange={v => setDiscountRate(Number(v))}
+tooltip="Zohledňuje hodnotu peněz v čase a riziko. Obvykle 8–12 % ročně."
+				/>
               </div>
             <div className="no-print" style={{ marginTop: '10px' }}>
-              <InputGroup label={`Doba sledování: ${months} měsíců`} type="range" min={1} max={60} value={months} onChange={v => setMonths(Number(v))} />
+              <InputGroup 
+  label={`Doba sledování (${months} měsíců)`}
+  type="range"
+  min={1}
+  max={60}
+  value={months}
+  onChange={v => setMonths(Number(v))}
+  tooltip="Počet měsíců, po které sledujete návratnost. Delší období = realističtější výsledek."
+/>
             </div>
           </div>
 		</div>
+	</div>
 
 <div className="results-section" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
-                <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Čistá hodnota (NPV):</span>
-                <span style={{ fontWeight: '800', fontSize: 'clamp(1rem, 4vw, 1.2rem)', color: (result?.npv ?? 0) >= 0 ? '#10b981' : '#ef4444', textAlign: 'right' }}>
-                  {Math.round(result?.npv ?? 0).toLocaleString()} Kč
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', borderBottom: '1px solid var(--border)', gap: '10px' }}>
-                <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Návratnost (ROI):</span>
-                <span style={{ fontWeight: '800', fontSize: 'clamp(1.4rem, 6vw, 1.8rem)', color: 'white' }}>{(result?.roiPercent ?? 0).toFixed(1)} %</span>
-              </div>
+  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '25px', borderRadius: '24px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
+      
+      {/* ✅ NPV LABEL */}
+      <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        Čistá hodnota (NPV)
+        <span className="custom-tooltip">
+          <Info className="tooltip-icon" />
+          <span className="tooltip-text">
+            Čistá současná hodnota budoucích příjmů mínus náklady. Kladná = investice vydělává.
+          </span>
+        </span>
+        :
+      </span>
 
-              <div style={{ marginTop: '15px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', textAlign: 'left', border: '1px dashed var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent)' }}>
-                  <Lightbulb size={18} />
-                  <strong style={{ fontSize: '0.9rem' }}>Rada pro investici</strong>
-                </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: 0, lineHeight: '1.4' }}>
-                  {(result?.roiPercent ?? 0) < 15 
-                    ? "Pokud je ROI pod 15 % ročně, investici raději přehodnoťte. Počítejte s realistickou diskontní sazbou (kolem 8–10 %), aby vás nepřekvapila časová ztráta hodnoty peněz."
-                    : "Čísla vypadají slibně! Nezapomeňte ale, že měsíční přínos by měl být spíše opatrný odhad než optimistický sen. Jen tak získáte skutečnou jistotu."
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <span style={{ fontWeight: '800', fontSize: 'clamp(1rem, 4vw, 1.2rem)', color: (result?.npv ?? 0) >= 0 ? '#10b981' : '#ef4444', textAlign: 'right' }}>
+        {Math.round(result?.npv ?? 0).toLocaleString()} Kč
+      </span>
+    </div>
+
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', borderBottom: '1px solid var(--border)', gap: '10px' }}>
+      
+      {/* ✅ ROI LABEL */}
+      <span style={{ color: 'var(--text-dim)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        Návratnost (ROI)
+        <span className="custom-tooltip">
+          <Info className="tooltip-icon" />
+          <span className="tooltip-text">
+            Procentuální zhodnocení investice. Vyšší číslo znamená lepší výnos.
+          </span>
+        </span>
+        :
+      </span>
+
+      <span style={{ fontWeight: '800', fontSize: 'clamp(1.4rem, 6vw, 1.8rem)', color: 'white' }}>
+        {(result?.roiPercent ?? 0).toFixed(1)} %
+      </span>
+    </div>
+
+    <div style={{ marginTop: '15px', padding: '15px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', textAlign: 'left', border: '1px dashed var(--border)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent)' }}>
+        <Lightbulb size={18} />
+        <strong style={{ fontSize: '0.9rem' }}>Rada pro investici</strong>
+      </div>
+
+      <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', margin: 0, lineHeight: '1.4' }}>
+        {(result?.roiPercent ?? 0) < 15 
+          ? "Pokud je ROI pod 15 % ročně, investici raději přehodnoťte. Počítejte s realistickou diskontní sazbou (kolem 8–10 %), aby vás nepřekvapila časová ztráta hodnoty peněz."
+          : "Čísla vypadají slibně! Nezapomeňte ale, že měsíční přínos by měl být spíše opatrný odhad než optimistický sen. Jen tak získáte skutečnou jistotu."
+        }
+      </p>
+    </div>
+
+  </div>
+</div>
       </GlassCard>
 
       <GlassCard>

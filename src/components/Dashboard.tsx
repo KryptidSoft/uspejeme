@@ -12,7 +12,6 @@ import {
 import { useBusinessData } from '../hooks/useBusinessData';
 import { formatCZK } from '../utils/calculations/mathHelpers';
 import { calculateDashboardStats } from '../utils/calculations/businessLogic';
-import { GuideModal } from './GuideModal';
 import { exportToPDF } from '../utils/exportHelper';
 
 const useMounted = () => {
@@ -60,8 +59,17 @@ interface DashboardChartsProps {
 
 export const DashboardCharts: React.FC<DashboardChartsProps> = ({ stats }) => {
   const mounted = useMounted();
+  // Detekce mobilu přímo v JS, aby se grafy nehádaly s CSS
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (!mounted) return null;
+
   // --- DATA PRO KOLÁČOVÝ GRAF ---
   const revenueData = [
     { name: 'Čistý zisk', value: stats.disposableNet, color: '#22c55e' },
@@ -70,16 +78,15 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({ stats }) => {
   ];
 
   const totalRevenue = revenueData.reduce((sum, item) => sum + item.value, 0);
-
   const revenueDataWithPercent = revenueData.map(item => ({
     ...item,
-    percent: totalRevenue > 0 ? ((item.value / totalRevenue) * 100).toFixed(1) : '0'
+    percent: totalRevenue > 0 ? (item.value / totalRevenue) : 0
   }));
 
-  // --- DATA PRO BAR GRAF (Pracovní zatížení) ---
+  // --- DATA PRO BAR GRAF ---
   const workloadData = [
     { 
-      name: 'Hodinová zátěž', 
+      name: 'Zátěž', 
       'Bod přežití': stats.survivalHours, 
       'Cílový počet hodin': stats.requiredHours 
     }
@@ -89,41 +96,43 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({ stats }) => {
     <div className="calculator-grid" style={{ marginBottom: '30px' }}>
       
       {/* --- KOLÁČOVÝ GRAF --- */}
-      <div className="glass-card" style={{ padding: '25px', minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+      <div className="glass-card" style={{ padding: '25px', minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
         <h3 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px' }}>
           Distribuce měsíčního příjmu
         </h3>
         <div style={{ flex: 1, minHeight: 0 }}>
-  <ResponsiveContainer width="100%" height={230}>
+          <ResponsiveContainer width="100%" height={isMobile ? 300 : 250}>
             <PieChart>
               <Pie
                 data={revenueDataWithPercent}
-                innerRadius={60}
-                outerRadius={85}
+                innerRadius={isMobile ? 50 : 60}
+                outerRadius={isMobile ? 70 : 85}
                 paddingAngle={8}
                 dataKey="value"
-                label={(entry) => `${entry.percent}%`}
+                cx="50%"
+                cy={isMobile ? "40%" : "50%"} // Na mobilu výš, pod ním je legenda
+                label={({ percent }) => {
+  const val = percent ? Math.round(percent * 100) : 0;
+  return `${val}%`;
+}}
                 labelLine={false}
-                labelPosition="inside"
               >
                 {revenueDataWithPercent.map(entry => (
                   <Cell key={entry.name} fill={entry.color} stroke="none" />
                 ))}
               </Pie>
               <Tooltip 
+                trigger="click"
                 contentStyle={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                 itemStyle={{ fontSize: '0.8rem' }}
-                formatter={(value: number, name: string, props: any) => {
-                  const percent = props?.payload?.percent ?? '0';
-                  return [`${formatCZK(value)} (${percent}%)`, name];
-                }}
+                formatter={(value: any) => [`${Number(value).toLocaleString()} Kč`, "Částka"]}
               />
               <Legend 
                 iconType="circle" 
-                layout="vertical" 
-                verticalAlign="middle" 
-                align="right" 
-                wrapperStyle={{ fontSize: '1rem', paddingTop: '20px' }}
+                layout={isMobile ? "horizontal" : "vertical"} 
+                verticalAlign={isMobile ? "bottom" : "middle"} 
+                align={isMobile ? "center" : "right"}
+                wrapperStyle={isMobile ? { paddingTop: '20px' } : { paddingLeft: '20px' }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -131,20 +140,20 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({ stats }) => {
       </div>
 
       {/* --- BAR GRAF --- */}
-      <div className="glass-card" style={{ padding: '25px', minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+      <div className="glass-card" style={{ padding: '25px', minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
         <h3 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px' }}>
           Analýza časové investice
         </h3>
         <div style={{ flex: 1, minHeight: 0 }}>
-  <ResponsiveContainer width="100%" height={230}>
-            <BarChart data={workloadData} layout="vertical" margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={workloadData} layout="vertical" margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
               <XAxis type="number" hide domain={[0, Math.max(stats.requiredHours, 160)]} />
               <YAxis type="category" dataKey="name" hide />
               <Tooltip 
                 cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                 contentStyle={{ background: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
               />
-              <Legend />
+              <Legend verticalAlign="bottom" align="center" />
               <Bar dataKey="Bod přežití" fill="#ef4444" barSize={35} radius={[0,4,4,0]} />
               <Bar dataKey="Cílový počet hodin" fill="#fbbf24" barSize={35} radius={[0,4,4,0]} />
               <ReferenceLine 
@@ -169,8 +178,7 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({ stats }) => {
 
 export const Dashboard: React.FC = () => {
   const { data, updateData } = useBusinessData();
-  const navigate = useNavigate();
-  const [isGuideOpen, setIsGuideOpen] = React.useState(false);
+  const [_, setIsGuideOpen] = React.useState(false);
   const stats = useMemo(() => calculateDashboardStats(data), [data]);
   const handlePdfExport = () => {
     const filename = `Report_${data.companyName || 'OSVC'}_2026`;
@@ -302,7 +310,7 @@ export const Dashboard: React.FC = () => {
           <div style={{ marginTop: '15px' }}>
             <div style={{ opacity: 0.5, fontSize: '0.8rem' }}>PRACOVNÍ VYTÍŽENÍ</div>
             <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: stats.workload > 110 ? '#ef4444' : 'white' }}>{stats.workload}%</div>
-            <div style={{ opacity: 0.5, fontSize: '0.85rem' }}>K dosažení cíle musíte odpracovat {stats.requiredHours}h / měsíc</div>
+            <div style={{ opacity: 0.5, fontSize: '0.85rem' }}>K dosažení cíle stačí odpracovat {stats.requiredHours}hodin měsíčně</div>
           </div>
         </div>
       </div>
@@ -333,7 +341,7 @@ export const Dashboard: React.FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
 			<MetricRow label="Efektivní hod. sazba" value={formatCZK(stats.effectiveRate)} />
             <MetricRow label="Bod přežití" value={`${stats.survivalHours} h / měs.`} color="#ef4444" />
-            <MetricRow label="Závislost na hl. klientovi (upravit)" value={`${stats.singleClientRisk} %`} color={stats.singleClientRisk > 50 ? '#ef4444' : '#fbbf24'} link="/audit/rizika" />
+            <MetricRow label="Riziko hl. klienta (upravit)" value={`${stats.singleClientRisk} %`} color={stats.singleClientRisk > 50 ? '#ef4444' : '#fbbf24'} link="/audit/rizika" />
             <MetricRow label="Bezpečná měs. investice" value={formatCZK(stats.investAmount)} color="#ec4899" link="/investice" />
           </div>
         </div>
@@ -393,79 +401,6 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-
-<style>{`
-  .glass-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 24px;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .glass-card:hover {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.15);
-    transform: translateY(-2px);
-  }
-
-  .util-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: white;
-    padding: 10px 18px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: 0.2s;
-  }
-
-  .util-btn:hover {
-    background: rgba(255,255,255,0.1);
-    transform: scale(1.02);
-  }
-
-  @media print {
-    /* Skryje všechny interaktivní prvky */
-    .util-btn,
-    .dashboard-wrapper > div:last-child { 
-      display: none !important; 
-    }
-
-    .dashboard-wrapper { 
-      background: white !important; 
-      color: black !important; 
-      padding: 0 !important; 
-      font-size: 12pt; /* vhodná velikost pro tisk */
-    }
-
-    .glass-card { 
-      border: 1px solid #ddd !important; 
-      color: black !important; 
-      box-shadow: none !important; 
-      background: transparent !important; 
-      page-break-inside: avoid; /* nedělá rozpad karet přes stránky */
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-      color: black !important;
-    }
-
-    p, span, label, div {
-      color: black !important;
-    }
-  }
-`}</style>
-{/* ... tady končí váš simulátor a styly ... */}
-      
-      {/* VLOŽIT MODÁL PŘESNĚ SEM: */}
-      <GuideModal 
-        isOpen={isGuideOpen} 
-        onClose={() => setIsGuideOpen(false)} 
-      />
     </div>
   );
 };

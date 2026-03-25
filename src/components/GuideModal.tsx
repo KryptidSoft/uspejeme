@@ -1,6 +1,6 @@
 import React from "react";
 import { GlassCard } from "./ui/GlassCard"; // Opraveno podle stromu
-import { HeartPulse, Shield, Settings2, Info, Activity, X } from 'lucide-react';
+import { HeartPulse, Shield, Settings2, Info, Activity } from 'lucide-react';
 
 interface GuideModalProps {
   isOpen: boolean;
@@ -26,12 +26,13 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
         zIndex: 1100, // Vyšší než zbytek webu
         padding: "20px",
         backdropFilter: "blur(5px)", // Rozmaže pozadí dashboardu
+		overflowY: "auto", // 🔹 umožní scrollovat overlay, pokud se nevejde
       }}
     >
       <GlassCard
         className="fade-in"
-        style={{ maxWidth: "700px", width: "100%", margin: "auto", padding: '30px' }}
-        onClick={(e) => e.stopPropagation()} // Zabrání zavření při kliknutí dovnitř
+        style={{ maxWidth: "700px", width: "100%", margin: "auto", padding: '30px', maxHeight: "90vh", overflowY: "auto", }}
+        onClick={() => {}}
       >
         <h2 style={{ color: '#fbbf24', marginTop: 0 }}>OSVČ Navigátor – Jak to funguje?</h2>
 
@@ -107,7 +108,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose }) => {
       <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.8 }}>
         <strong>Efektivní hodinová sazba:</strong> Kolik reálně vyděláte za hodinu po odečtení všech nákladů a daní. <br />
         <strong>Bod přežití:</strong> Minimální počet hodin, které musíte odpracovat k pokrytí všech nákladů. <br />
-        <strong>Závislost na hl. klientovi:</strong> Kolik procent vašeho měsíčního příjmu pochází od jednoho klienta. <br />
+        <strong>Riziko hl. klienta:</strong> Kolik procent vašeho měsíčního příjmu pochází od jednoho klienta. Čím více, tím hůře.<br />
         <strong>Bezpečná měs. investice:</strong> Kolik si můžete měsíčně dovolit investovat bez ohrožení své stability.
       </p>
     </div>

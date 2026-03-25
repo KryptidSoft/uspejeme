@@ -2,9 +2,7 @@ import React, { useMemo } from 'react';
 import { 
   ShieldAlert, 
   ShieldCheck, 
-  AlertTriangle, 
-  Lightbulb, 
-  CheckCircle2, 
+  AlertTriangle,
   Lock, 
   Zap, 
   Users, 

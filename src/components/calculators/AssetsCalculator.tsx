@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Coins, 
   Info, 
-  ShieldCheck, 
   TrendingDown, 
   Anchor, 
   Briefcase, 

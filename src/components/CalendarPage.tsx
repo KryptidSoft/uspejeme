@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ALL_DEADLINES } from '../data/deadlines';
 import { GlassCard } from './ui/GlassCard';
-import { ArrowLeft, ChevronRight, CheckCircle2, Clock, Calendar as CalendarIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Calendar as CalendarIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse';
@@ -9,12 +9,11 @@ type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse';
 interface CalendarPageProps {
   userType: 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse';
 }
-export const CalendarPage: React.FC<CalendarPageProps> = ({ userType }) => {
+export const CalendarPage: React.FC<CalendarPageProps> = () => {
   const [activeYear, setActiveYear] = useState(2026);
   const navigate = useNavigate();
   const [filter, setFilter] = useState<BusinessType | 'all'>('all');
   
-  const today = new Date();
   const months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'];
   const days = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];
 

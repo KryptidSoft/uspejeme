@@ -4,36 +4,9 @@ import { InputGroup } from '../ui/InputGroup';
 import { QRCodeSVG } from 'qrcode.react';
 import { exportToPDF } from "../../utils/exportHelper";
 import { 
-  Plus, Trash2, Printer, Settings2, ShieldCheck, Info
+  Trash2, Printer, Settings2
 } from 'lucide-react';
-const handlePdfExport = () => {
-  const filename = `Faktura_${invoice.number}`;
-  const title = isVatPayer ? (isForeign ? 'TAX INVOICE' : 'FAKTURA - DAŇOVÝ DOKLAD') : (isForeign ? 'INVOICE' : 'FAKTURA');
-  
-  // Definujeme hlavičky podle jazyka
-  const tableHead = isForeign 
-    ? ["Description", "Qty", "Unit", "Price/Unit", "Total"]
-    : ["Popis položky", "Mn.", "Jedn.", "Cena/j.", "Celkem"];
-
-  // Převedeme položky faktury na řádky tabulky
-  const tableRows = invoice.items.map(item => [
-    item.description,
-    item.quantity.toString(),
-    item.unit,
-    `${item.pricePerUnit.toLocaleString()} ${currency}`,
-    `${(item.quantity * item.pricePerUnit).toLocaleString()} ${currency}`
-  ]);
-
-  // Přidáme patičku se součtem přímo do tabulky (volitelné)
-  tableRows.push([
-    "", "", "", 
-    isForeign ? "TOTAL:" : "CELKEM:", 
-    `${total.toLocaleString()} ${currency}`
-  ]);
-
-  // VOLÁME TVŮJ STROJ!
-  exportToPDF(filename, `${title} #${invoice.number}`, tableRows, tableHead);
-};
+ 
 interface InvoiceItem {
   id: string;
   description: string;
@@ -42,8 +15,43 @@ interface InvoiceItem {
   pricePerUnit: number;
 }
 
+interface Supplier {
+  name: string;
+  street: string;
+  city: string;
+  zip: string;
+  ico: string;
+  dic: string;
+  account: string;
+  iban: string;
+  swift: string;
+  registration: string;
+  email: string;
+  phone: string;
+}
+
+interface Client {
+  name: string;
+  street: string;
+  city: string;
+  zip: string;
+  ico: string;
+  dic: string;
+}
+
+interface InvoiceData {
+  number: string;
+  variableSymbol: string;
+  issueDate: string;
+  dueDate: string;
+  duzp: string;
+  supplier: Supplier;
+  client: Client;
+  items: InvoiceItem[];
+}
+
 // ZAČÁTEK KOMPONENTY
-export const EliteInvoice = () => {
+export const EliteInvoice: React.FC = () => {
   // --- CHYBĚJÍCÍ STAVY, KTERÉ KÓD POUŽÍVÁ ---
   const [isVatPayer, setIsVatPayer] = useState(false);
   const [isForeign, setIsForeign] = useState(false);
@@ -51,7 +59,7 @@ export const EliteInvoice = () => {
   const [currency, setCurrency] = useState('Kč');
   const [dueDays, setDueDays] = useState(14);
 
-const [invoice, setInvoice] = useState(() => {
+const [invoice, setInvoice] = useState<InvoiceData>(() => {
     // 1. Pokus o načtení uloženého dodavatele
     const savedSupplier = localStorage.getItem('elite_invoice_supplier');
     // 2. Pokus o načtení čísla účtu ze Smart QR Pay
@@ -127,6 +135,36 @@ const [invoice, setInvoice] = useState(() => {
 const subtotal = round(invoice.items.reduce((sum, item) => sum + (item.quantity * item.pricePerUnit), 0));
   const vatAmount = isVatPayer ? round((subtotal * vatRate) / 100) : 0;
   const total = round(subtotal + vatAmount);
+  
+ const handlePdfExport = () => {
+    // Teď už funkce vidí 'invoice', 'isVatPayer' i 'total', protože je uvnitř komponenty
+    const filename = `Faktura_${invoice.number}`;
+    const title = isVatPayer ? (isForeign ? 'TAX INVOICE' : 'FAKTURA - DAŇOVÝ DOKLAD') : (isForeign ? 'INVOICE' : 'FAKTURA');
+	
+  // Definujeme hlavičky podle jazyka
+  const tableHead = isForeign 
+    ? ["Description", "Qty", "Unit", "Price/Unit", "Total"]
+    : ["Popis položky", "Mn.", "Jedn.", "Cena/j.", "Celkem"];
+
+  // Převedeme položky faktury na řádky tabulky
+  const tableRows = invoice.items.map(item => [
+    item.description,
+    item.quantity.toString(),
+    item.unit,
+    `${item.pricePerUnit.toLocaleString()} ${currency}`,
+    `${(item.quantity * item.pricePerUnit).toLocaleString()} ${currency}`
+  ]);
+
+  // Přidáme patičku se součtem přímo do tabulky (volitelné)
+  tableRows.push([
+    "", "", "", 
+    isForeign ? "TOTAL:" : "CELKEM:", 
+    `${total.toLocaleString()} ${currency}`
+  ]);
+
+  // VOLÁME TVŮJ STROJ!
+  exportToPDF(filename, `${title} #${invoice.number}`, tableRows, tableHead);
+};
 
 // --- VÝPOČET QR KÓDU ---
   const cleanAcc = invoice.supplier.account.replace(/\s/g, '').replace('/', '');
@@ -146,32 +184,89 @@ const subtotal = round(invoice.items.reduce((sum, item) => sum + (item.quantity 
   }
 };
 
-  return (
-    <div className="fade-in" style={{ maxWidth: '1100px', margin: '0 auto', padding: '20px' }}>
-      
-      {/* OVLÁDACÍ LIŠTA */}
-      <GlassCard className="p-4 mb-6" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
-          <input type="checkbox" checked={isVatPayer} onChange={e => setIsVatPayer(e.target.checked)} />
-          <label>Jsem plátce DPH</label>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
-          <input type="checkbox" checked={isForeign} onChange={e => setIsForeign(e.target.checked)} />
-          <label>Anglická verze (EN)</label>
-        </div>
-        {isVatPayer && (
-          <select value={vatRate} onChange={e => setVatRate(Number(e.target.value))} style={{ background: '#333', color: 'white', border: '1px solid #555' }}>
-            <option value={21}>21%</option>
-            <option value={12}>12%</option>
-          </select>
-        )}
-        <select value={currency} onChange={e => setCurrency(e.target.value)} style={{ background: '#333', color: 'white', border: '1px solid #555' }}>
-          <option value="Kč">CZK (Kč)</option><option value="€">EUR (€)</option><option value="$">USD ($)</option>
+return (
+  <div className="fade-in" style={{ maxWidth: '1100px', margin: '0 auto', padding: '20px' }}>
+
+    {/* OVLÁDACÍ LIŠTA */}
+    <GlassCard className="p-4 mb-6" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+
+      {/* Jsem plátce DPH */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
+        <input 
+          type="checkbox" 
+          checked={isVatPayer} 
+          onChange={e => setIsVatPayer(e.target.checked)} 
+          style={{ width: '20px', height: '20px' }}
+        />
+        <label style={{ fontSize: '14px' }}>Jsem plátce DPH</label>
+      </div>
+
+      {/* Anglická verze */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
+        <input 
+          type="checkbox" 
+          checked={isForeign} 
+          onChange={e => setIsForeign(e.target.checked)} 
+          style={{ width: '20px', height: '20px' }}
+        />
+        <label style={{ fontSize: '14px' }}>Anglická verze (EN)</label>
+      </div>
+
+      {/* Select pro DPH sazbu, viditelné jen pro plátce */}
+      {isVatPayer && (
+        <select 
+          value={vatRate} 
+          onChange={e => setVatRate(Number(e.target.value))} 
+          style={{
+            background: '#333', 
+            color: 'white', 
+            border: '1px solid #555', 
+            padding: '8px', 
+            fontSize: '14px', 
+            borderRadius: '8px',
+          }}
+        >
+          <option value={21}>21%</option>
+          <option value={12}>12%</option>
         </select>
-        <button onClick={handlePdfExport} className="calculate-btn" style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Printer size={18} /> Tisk / PDF
-        </button>
-      </GlassCard>
+      )}
+
+      {/* Select pro měnu */}
+      <select 
+        value={currency} 
+        onChange={e => setCurrency(e.target.value)} 
+        style={{
+          background: '#333', 
+          color: 'white', 
+          border: '1px solid #555', 
+          padding: '8px', 
+          fontSize: '14px', 
+          borderRadius: '8px',
+        }}
+      >
+        <option value="Kč">CZK (Kč)</option>
+        <option value="€">EUR (€)</option>
+        <option value="$">USD ($)</option>
+      </select>
+
+      {/* Tlačítko pro tisk / PDF */}
+      <button 
+        onClick={handlePdfExport} 
+        className="calculate-btn" 
+        style={{
+          padding: '8px 20px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          backgroundColor: '#2563eb', 
+          borderRadius: '8px', 
+          color: 'white',
+        }}
+      >
+        <Printer size={18} /> Tisk / PDF
+      </button>
+
+    </GlassCard>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '30px' }} className="invoice-layout">
         

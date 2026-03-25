@@ -2,7 +2,6 @@ import React from 'react';
 import { BookOpen, ArrowLeft, Clock } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import { articles } from '../data/articles';
-import type { Article } from '../data/articles';
 import { useParams, useNavigate } from "react-router-dom";
 
 export const ArticleSection: React.FC = () => {

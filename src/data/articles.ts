@@ -13,8 +13,8 @@ export const articles: Article[] = [
 id: '1',
   title: 'Vítejte na Uspějeme.cz!',
   excerpt: 'OSVČ tvoří páteř ekonomiky, přesto většina z nás riskuje svou budoucnost špatným naceňováním.',
-  category: 'strategie',
   readTime: '1 min',
+  category: 'finance',
   date: '26. 02. 2026',
   content: `
       <p>V České republice jsou statisíce OSVČ. Vykonáváte řemesla, programujete, jste kreativní, vyjednáváte... Jako svobodní podnikatelé nesete veškerou zodpovědnost sami za sebe, ale přesto držíte ekonomiku státu nad vodou. Přesto jste to vy, kdo je nejčastěji vystaven nejistotě, administrativnímu chaosu a nově i tlaku ze světa, kde AI mění pravidla hry.</p>
@@ -32,8 +32,8 @@ id: '1',
   id: '2',
   title: 'OSVČ Navigátor 2026 – Váš finanční rentgen.',
   excerpt: 'Jak funguje váš nový panel na Uspějeme.cz? Naučte se číst data, která rozhodují o vaší svobodě.',
-  category: 'Strategie',
   readTime: '5 min',
+  category: 'finance',
   date: '17. 03. 2026',
   content: `
     <p>Podnikání na volné noze není jen o tom, kolik si vyfakturujete. Je o tom, kolik vám zůstane, jak dlouho dokážete odpočívat a zda vaše tempo není cestou k vyhoření. Hlavní panel je „finanční rentgen“, který vám ukáže pravdu v reálném čase.</p>
@@ -82,8 +82,8 @@ id: '1',
   id: '3',
   title: 'Moderní nástroje pro OSVČ: Uspějeme.cz jako váš denní asistent',
   excerpt: 'Rychlé QR platby, správa faktur a upomínek – to všechno na jednom místě pro OSVČ v ČR.',
-  category: 'produktivita',
   readTime: '4 min',
+  category: 'strategy',
   date: '18. 03. 2026',
   content: `
     <p>Jste OSVČ, freelancer nebo samostatný podnikatel? Pak víte, že každá minuta a každá koruna jsou důležité. <strong>Uspejeme.cz</strong> je platforma, která vám pomáhá zvládnout finance jednoduše, rychle a bezpečně.</p>
@@ -115,8 +115,8 @@ id: '1',
   id: '4',
   title: 'Smart nástroje pro OSVČ: Platby, kontrola a klid na duši',
   excerpt: 'Získejte přehled, bezpečné platby a snadné upomínky – Uspějeme.cz vám pomůže mít podnikání pod kontrolou.',
-  category: 'produktivita',
   readTime: '4 min',
+  category: 'strategy',
   date: '19. 03. 2026',
   content: `
     <p>Jako OSVČ každý den řešíte stovky věcí: klienti, faktury, DPH, rezervy, termíny. Stres a nejistota často ukrajují z vaší energie a času, který by mohl jít do růstu podnikání.</p>

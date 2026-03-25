@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
-import { Calendar, FileWarning, Copy, Download, Clock, ShieldAlert, BellRing, CheckCircle2 } from 'lucide-react';
+import { Copy, Download, Clock, ShieldAlert, BellRing, CheckCircle2 } from 'lucide-react';
 
 type Tone = 'friendly' | 'formal' | 'urgent';
 
@@ -77,7 +77,7 @@ React.useEffect(() => {
   };
 
   return (
-    <div className="fade-in" style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
+    <div className="fade-in app-container" style={{ padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <h1 style={{ color: 'white', fontSize: '2.5rem', fontWeight: '900', marginBottom: '10px' }}>
           Hlídač <span style={{ color: 'var(--primary)' }}>Plateb</span>
@@ -85,7 +85,7 @@ React.useEffect(() => {
         <p style={{ color: 'var(--text-dim)' }}>Profesionální správa splatnosti a upomínek. Zadejte údaje o faktuře a vyberte tón upomínky. Text můžete okamžitě zkopírovat a poslat klientovi nebo použít jako připomenutí ve své evidenci. Nenechte své peníze čekat!</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+      <div className="layout-grid">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <GlassCard className="p-6">
             <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
@@ -123,7 +123,7 @@ React.useEffect(() => {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div className="layout-grid" style={{ gap: '30px' }}>
               {/* OPRAVA 1: type="text" */}
               <InputGroup label="Částka (Kč)" type="text" value={invoice.amount} onChange={(val) => setInvoice({...invoice, amount: val})} />
               {/* OPRAVA 2: type="text" */}
@@ -184,14 +184,14 @@ React.useEffect(() => {
               style={{ width: '100%', height: '200px', background: 'rgba(0,0,0,0.2)', color: 'white', border: '1px solid var(--border)', borderRadius: '10px', padding: '15px', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '15px', resize: 'none' }}
             />
 
-            <button 
-              className="calculate-btn" 
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }} 
-              onClick={handleCopy}
-            >
-              {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
-              {copied ? 'Zkopírováno do schránky' : 'Kopírovat text upomínky'}
-            </button>
+<button 
+  className="btn btn-glass" 
+  onClick={handleCopy} 
+  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+>
+  {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
+  {copied ? 'Zkopírováno do schránky' : 'Kopírovat text upomínky'}
+</button>
           </GlassCard>
 
           <GlassCard className="p-5" style={{ borderLeft: '4px solid #ef4444', background: 'rgba(239, 68, 68, 0.05)' }}>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { LandingPage } from './LandingPage';
 import { Dashboard } from './Dashboard'; // Předpokládám, že Dashboard.tsx je ve stejné složce, jinak upravte cestu
@@ -20,7 +19,7 @@ import { MiniCard } from './MiniCard';
 import { InflationCalculator } from "./calculators/InflationCalculator";
 import { PrivacyPolicy } from './PrivacyPolicy';
 import { TermsOfService } from './TermsOfService';
-import { Sitemap } from './Sitemap'; // Předpokládám, že ho máš v /components/
+import { Sitemap } from './SiteMap'; // Předpokládám, že ho máš v /components/
 import { AboutUs } from './AboutUs'; // Přidat
 import { Contact } from './Contact'; // Přidat
 import { SafeBuyCalculator } from './calculators/SafeBuyCalculator';

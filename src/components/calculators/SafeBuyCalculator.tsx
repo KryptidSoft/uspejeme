@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ShoppingCart, Clock, ShieldCheck, AlertCircle, ArrowRight, Zap, Info } from 'lucide-react';
+import { ShoppingCart, ArrowRight, Zap, Info } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { useBusinessData } from '../../hooks/useBusinessData';
 import { calculateDashboardStats } from '../../utils/calculations/businessLogic';
@@ -151,11 +151,11 @@ return {
           {/* SROVNÁNÍ PŘED A PO */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
             <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '24px', textAlign: 'center' }}>
-              <div style={{ opacity: 0.5, fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '5px' }}>Runway Předtím</div>
+              <div style={{ opacity: 0.5, fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '5px' }}>Rezerva Předtím</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>{simulation.currentRunway.toFixed(1)} <span style={{ fontSize: '0.8rem' }}>měs.</span></div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '24px', textAlign: 'center', border: `1px solid ${simulation.color}` }}>
-              <div style={{ opacity: 0.5, fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '5px' }}>Runway Potom</div>
+              <div style={{ opacity: 0.5, fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '5px' }}>Rezerva Potom</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: simulation.color }}>{simulation.newRunway.toFixed(1)} <span style={{ fontSize: '0.8rem' }}>měs.</span></div>
             </div>
           </div>
@@ -192,7 +192,7 @@ return {
   </div>
 
   <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>
-    Aby ti zůstaly alespoň 3 měsíce runway
+    Aby ti zůstaly alespoň 3 měsíce rezervy
   </div>
 
   {simulation.isOverSafeLimit && (
@@ -205,7 +205,7 @@ return {
           <div style={{ padding: '15px', borderRadius: '15px', background: 'rgba(59,130,246,0.1)', display: 'flex', gap: '10px', alignItems: 'center' }}>
             <Info size={18} color="#60a5fa" />
             <span style={{ fontSize: '0.8rem', color: '#93c5fd' }}>
-              Tento výpočet vychází z tvých měsíčních nákladů ({formatCZK(stats.exp)}) nastavených v Navigátoru.
+              Tento výpočet vychází z tvých měsíčních nákladů ({formatCZK(stats.exp)}) nastavených v tvém panelu. Částku můžeš upravovat v sekci Strategie & růst - Plánovač.
             </span>
           </div>
         </div>

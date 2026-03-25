@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  Target, ShieldAlert, PiggyBank, ArrowRight, Zap, 
-  LineChart, Quote, Lightbulb, Calendar, FileText, 
-  Activity, TrendingUp, ChevronRight 
-} from 'lucide-react';
+import { Zap, Quote, Lightbulb, Calendar, FileText, Activity, ChevronRight } from 'lucide-react';
 import { GlassCard } from './ui/GlassCard';
 import { DeadlineWidget } from './DeadlineWidget';
 import { articles } from '../data/articles';
 import { useNavigate } from "react-router-dom";
 import { useBusinessData } from '../hooks/useBusinessData';
 import { formatCZK } from '../utils/calculations/mathHelpers';
-
-type BusinessType = 'osvc_pausal' | 'osvc_hlavni' | 'sro' | 'vse' | 'platec_dph';
+import type { BusinessType } from '../types/index';
 
 interface LandingPageProps {
   onNavigate: (view: string, param?: string) => void;
@@ -55,7 +50,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           <Zap size={14} /> VAŠE DATA, VAŠE SVOBODA
         </div>
         
-        <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '20px', lineHeight: '1.2' }}>
+        <h1 style={{ fontSize: 'clamp(2rem, 8vw, 3rem)', fontWeight: '800', marginBottom: '20px', lineHeight: '1.2' }}>
           Podnikejte s klidnou hlavou.<br />
           <span style={{ color: 'var(--primary)' }}>Zbytek spočítáme my.</span>
         </h1>
@@ -98,7 +93,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           <h2 style={{ fontSize: '1.6rem', marginBottom: '12px' }}>Váš finanční panel je připraven</h2>
           <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
             Aktuálně pracujete se sazbou <strong>{formatCZK(globalData.hourlyRate)}/h</strong>. 
-            Podívejte se na celkový přehled vašeho podnikání a stabilitu v reálném čase. Panel můžete průběžně upravovat a sledovat...
+            Podívejte se na celkový přehled vašeho podnikání a stabilitu v reálném čase. Výsledky můžete průběžně spravovat v sekci Můj panel nebo ostatních kalkulačkách.
           </p>
         </>
       ) : (

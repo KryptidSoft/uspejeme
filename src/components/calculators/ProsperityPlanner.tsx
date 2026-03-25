@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'; 
 import { 
-  Target, Save, AlertCircle, Share2, FileText, Lightbulb, 
-  TrendingUp, Check, Zap, BookOpen, ShieldCheck, PieChart, 
+  Target, Save, AlertCircle, FileText, 
+  TrendingUp, Check, Zap, BookOpen, ShieldCheck, 
   Clock, DollarSign 
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
@@ -87,20 +87,6 @@ export const ProsperityPlanner: React.FC = () => {
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
-  };
-
-  const handleShare = () => {
-    const params = new URLSearchParams({
-      exp: data.monthlyExpenses.toString(),
-      sav: data.desiredSavings.toString(),
-      hrs: data.billableHours.toString(),
-      buf: data.safetyBufferMonths.toString(),
-      tax: data.taxMode,
-      rate: data.customTaxRate.toString(),
-      pamt: data.pausalAmount.toString(),
-    });
-    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    navigator.clipboard.writeText(shareUrl).then(() => alert("Odkaz zkopírován!"));
   };
 
   return (

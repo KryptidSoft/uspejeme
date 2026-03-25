@@ -1,5 +1,7 @@
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
+import { createContext, useContext, type ReactNode, useEffect } from 'react';
 import { usePersistentState } from './usePersistentState';
+
+export type BusinessType = 'hlavni' | 'vedlejsi' | 'vse' | 'all' | 'platec_dph';
 
 export interface BusinessData {
   // Finanční základy
@@ -35,6 +37,15 @@ export interface BusinessData {
 
   // Rezerva na daň
   taxReservePercent: number;
+  
+    // Přidej tuto vlastnost
+  safetyBufferMonths: number;
+  
+  billableHours?: number;
+  vacationWeeks?: number;
+  bufferDays?: number;
+  nonBillableHours?: number;
+  companyName?: string;
 }
 
 interface BusinessContextType {
@@ -81,7 +92,8 @@ const [data, setData] = usePersistentState<BusinessData>('uspejeme_global_data',
   taxReservePercent: 25,
   hasContracts: false,
   hasDeposits: false,
-  hasBackup: false
+  hasBackup: false,
+  safetyBufferMonths: 6
 });
 
 useEffect(() => {

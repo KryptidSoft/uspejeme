@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Clock, 
   ShieldAlert, 
   TrendingUp, 
   AlertCircle, 
-  Info, 
   Zap, 
   BookOpen, 
   CheckCircle2, 
@@ -14,47 +13,48 @@ import {
 import { GlassCard } from '../ui/GlassCard';
 import { InputGroup } from '../ui/InputGroup';
 import { calculateHourlyRate } from '../../utils/calculations/hourly';
+import type { HourlyInputs } from '../../utils/calculations/hourly';
 import { formatCZK } from '../../utils/calculations/mathHelpers';
 import { useBusinessData } from '../../hooks/useBusinessData';
 
-const safeParse = (val, max = Infinity) => {
-  const num = parseFloat(val);
+const safeParse = (val: string | number, max: number = Infinity) => {
+  const num = parseFloat(String(val));
   if (isNaN(num) || num < 0) return 0;
   return num > max ? max : num;
 };
 
 export const HourlyRateCalculator: React.FC = () => {
   const { data: globalData, updateData } = useBusinessData();
-  
-  const [inputs, setInputs] = useState({
-    // Přidáme || s výchozí hodnotou, aby políčko nebylo prázdné/NaN
-    grossIncome: globalData.desiredNetIncome || 60000, 
-    billableHours: globalData.billableHours || 100,
-    vacationWeeks: globalData.vacationWeeks || 4,
-    bufferDays: globalData.bufferDays || 10,
-    costs: {
-      // Tady to máte logicky správně, jen přidáme fallback pro overhead
-      taxes: globalData.taxMode === 'pausal_dan' ? (globalData.pausalAmount || 9984) : 15000,
-      overhead: globalData.monthlyExpenses || 30000
-    }
+ 
+const [inputs, setInputs] = useState<HourlyInputs>({
+  grossIncome: globalData.desiredNetIncome ?? 60000, 
+  billableHours: globalData.billableHours ?? 100,
+  vacationWeeks: globalData.vacationWeeks ?? 4,
+  bufferDays: globalData.bufferDays ?? 10,
+  nonBillableHours: globalData.nonBillableHours ?? 20,
+  costs: {
+    taxes: globalData.taxMode === 'pausal_dan' ? (globalData.pausalAmount ?? 9984) : 15000,
+    overhead: globalData.monthlyExpenses ?? 30000,
+    reserves: globalData.reserves ?? 0
+  }
+});
+
+  const [results, setResults] = useState<ReturnType<typeof calculateHourlyRate> | null>(null);
+
+
+const handleCalculate = () => {
+  const res = calculateHourlyRate(inputs); 
+  setResults(res);
+
+  updateData({
+    hourlyRate: res.rate,
+    desiredNetIncome: inputs.grossIncome,
+    billableHours: inputs.billableHours,
+    vacationWeeks: inputs.vacationWeeks,
+    bufferDays: inputs.bufferDays,
+    monthlyExpenses: inputs.costs.overhead 
   });
-
-  const [results, setResults] = useState<any>(null);
-
-
-  const handleCalculate = () => {
-    const res = calculateHourlyRate(inputs); 
-    setResults(res);
-
-    updateData({
-      hourlyRate: res.rate,
-      desiredNetIncome: inputs.grossIncome,
-      billableHours: inputs.billableHours,
-      vacationWeeks: inputs.vacationWeeks,
-      bufferDays: inputs.bufferDays,
-      monthlyExpenses: inputs.costs.overhead 
-    });
-  };
+};
 
   return (
     <div className="fade-in app-container" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
@@ -94,14 +94,14 @@ export const HourlyRateCalculator: React.FC = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px', marginBottom: '15px' }}>
               <InputGroup
                 label="Dovolená"
-                unit="týdny/rok"
+                unit="týdny"
                 value={inputs.vacationWeeks}
                 onChange={(val) => setInputs({...inputs, vacationWeeks: safeParse(val, 52)})}
                 tooltip="Počet týdnů volna. Kalkulačka zvýší vaši hodinovku tak, aby vám zaplatila i tyto dny odpočinku."
               />
               <InputGroup
-                label="Nemoc / Rezerva"
-                unit="dny/rok"
+                label="Nemoc"
+                unit="dny"
                 value={inputs.bufferDays}
                 onChange={(val) => setInputs({...inputs, bufferDays: safeParse(val, 365)})}
                 tooltip="Dny v roce, kdy nebudete pracovat kvůli nemoci nebo úřadům. Počítejte raději alespoň s 10 dny."
@@ -116,29 +116,38 @@ export const HourlyRateCalculator: React.FC = () => {
               tooltip="Kolik hodin měsíčně reálně naúčtujete klientům. Průměr u OSVČ bývá kolem 100-120 hodin měsíčně."
             />
 
-            <div style={{ padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '15px', marginBottom: '20px', border: '1px solid var(--border)' }}>
-              <h4 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '1px' }}>Měsíční náklady a daně</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
-                <InputGroup 
-                  label="Daně a odvody"
-                  unit="Kč"
-                  value={inputs.costs.taxes}
-                  onChange={(val) => setInputs({...inputs, costs: {...inputs.costs, taxes: parseFloat(val) || 0}})}
-                  tooltip="Sociální, zdravotní pojištění a daň z příjmu (např. částka vaší paušální daně)."
-                />
-                <InputGroup 
-                  label="Provozní režie"
-                  unit="Kč"
-                  value={inputs.costs.overhead}
-                  onChange={(val) => setInputs({...inputs, costs: {...inputs.costs, overhead: parseFloat(val) || 0}})}
-                  tooltip="Pravidelné náklady: SW, telefon, účetní, nájem kanceláře nebo marketing."
-                />
-              </div>
-            </div>
+<div style={{ padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '15px', marginBottom: '20px', border: '1px solid var(--border)' }}>
+  <h4 style={{ margin: '0 0 15px 0', fontSize: '0.9rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+    Měsíční náklady a daně
+  </h4>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
+    <InputGroup 
+      label="Daně a odvody"
+      unit="Kč"
+      value={inputs.costs.taxes}
+      onChange={(val) => setInputs({...inputs, costs: {...inputs.costs, taxes: safeParse(val)}})}
+      tooltip="Sociální, zdravotní pojištění a daň z příjmu (např. částka vaší paušální daně)."
+    />
+    <InputGroup 
+      label="Provozní režie"
+      unit="Kč"
+      value={inputs.costs.overhead}
+      onChange={(val) => setInputs({...inputs, costs: {...inputs.costs, overhead: safeParse(val)}})}
+      tooltip="Pravidelné náklady: SW, telefon, účetní, nájem kanceláře nebo marketing."
+    />
+    <InputGroup 
+      label="Rezervy a pohotovost"
+      unit="Kč"
+      value={inputs.costs.reserves}
+      onChange={(val) => setInputs({...inputs, costs: {...inputs.costs, reserves: safeParse(val)}})}
+      tooltip="Rezervy na nečekané výdaje, materiál, opravy, nebo období s nižším příjmem."
+    />
+  </div>
+</div>
 
-            <button className="calculate-btn" onClick={handleCalculate} style={{ width: '100%', padding: '15px', fontWeight: '800', fontSize: '1rem', cursor: 'pointer' }}>
-              VYPOČÍTAT A PROPOJIT SYSTÉM
-            </button>
+<button className="btn" onClick={handleCalculate}>
+  VYPOČÍTAT A PROPOJIT SYSTÉM
+</button>
           </div>
 
           <div className="results" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -148,9 +157,12 @@ export const HourlyRateCalculator: React.FC = () => {
                   <CheckCircle2 color="#10b981" size={24} />
                 </div>
                 <span style={{ color: 'var(--text-dim)', fontSize: '1rem', fontWeight: '500' }}>Vaše minimální udržitelná sazba:</span>
-                <div style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: '900', color: 'white', margin: '15px 0', textShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
-                  {formatCZK(results.rate)}
-                </div>
+<div style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: '900', color: 'white', margin: '15px 0', textShadow: '0 0 30px rgba(59, 130, 246, 0.4)' }}>
+  {formatCZK(results.rate)}
+</div>
+<p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', margin: '0' }}>
+  Z toho ne-fakturovatelné hodiny: {inputs.nonBillableHours} hod/měs
+</p>
 				<div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
                   <p style={{ fontSize: '1rem', color: 'var(--text)', margin: 0 }}>
                     Měsíční obrat: <strong>{formatCZK(results.totalRequired)}</strong>

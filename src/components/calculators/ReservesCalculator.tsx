@@ -86,15 +86,6 @@ useEffect(() => {
       }],
     };
   }, [results, inputs]);
-  
-  const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false, // Umožní grafu přizpůsobit se velikosti karty
-  cutout: '78%',
-  plugins: {
-    legend: { display: false },
-  },
-};
 
   return (
     <div className="fade-in app-container">

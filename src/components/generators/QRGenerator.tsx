@@ -75,7 +75,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="fade-in" style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
+    <div className="fade-in app-container" style={{ padding: '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <h1 style={{ color: 'white', fontSize: '2.5rem', fontWeight: '900', marginBottom: '10px' }}>
           Smart <span style={{ color: 'var(--primary)' }}>QR Pay</span> (CZ)
@@ -87,7 +87,7 @@ useEffect(() => {
   </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '25px' }}>
+      <div className="layout-grid">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <GlassCard className="p-6">
             <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
@@ -109,7 +109,7 @@ useEffect(() => {
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '15px', marginTop: '10px' }}>
+            <div className="smart-grid" style={{ marginTop: '10px' }}>
               <div>
                 <InputGroup 
                   label="Částka (CZK)" 
@@ -160,15 +160,14 @@ useEffect(() => {
             )}
           </GlassCard>
 
-          <button 
-            onClick={handleCopy} 
-            className="calculate-btn" 
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: isValidAccount ? 'var(--primary)' : '#444' }}
-            disabled={!isValidAccount}
-          >
-            {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
-            {copied ? 'Zkopírováno' : 'Kopírovat kód'}
-          </button>
+<button
+  onClick={handleCopy}
+  className={`btn ${copied ? 'btn-success' : !isValidAccount ? 'btn-inactive' : ''}`}
+  disabled={!isValidAccount}
+>
+  {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
+  {copied ? 'Zkopírováno' : 'Kopírovat kód'}
+</button>
         </div>
       </div>
     </div>

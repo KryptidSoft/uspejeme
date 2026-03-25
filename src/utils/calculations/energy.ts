@@ -8,46 +8,46 @@ export const calculateEnergy = (data: any) => {
   } = data;
 
   // Výpočet dní
-  const start = new Date(lastReadingDate);
+const start = new Date(lastReadingDate);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - start.getTime());
   const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
 
-  // Spotřeba a náklady
   const consumedUnits = currentReadingValue - lastReadingValue;
-  const monthsPassed = daysPassed / 30.42; // Průměrný měsíc
+  const monthsPassed = daysPassed / 30.42;
   const costToDate = (consumedUnits * pricePerUnit) + (monthsPassed * data.fixedMonthlyFee);
 
-  // Zálohy (tady byla ta chyba - chyběla definice nebo byl překlep)
+  // 2. Zálohy
   const monthlyRate = monthlyDeposit;
   const dailyDepositRate = (monthlyRate * 12) / 365;
   const depositsPaidSoFar = dailyDepositRate * daysPassed;
-
-  // Predikce na rok (365 dní)
-  const predictedYearlyUnits = avgUnitsPerDay * 365;
-  const predictedYearlyCost = (predictedYearlyUnits * pricePerUnit) + (12 * data.fixedMonthlyFee);
   const totalYearlyDeposits = monthlyDeposit * 12;
 
-  // Bilance
-  const finalBalance = totalYearlyDeposits - predictedYearlyCost;
-  const currentBalance = depositsPaidSoFar - costToDate;
-
-  // Doporučený limit pro zbytek roku, aby se skončilo na nule
+  // 3. Bilance a doporučený limit (TOTO MUSÍ BÝT PŘED PREDIKCÍ)
   const remainingDays = 365 - daysPassed;
   const remainingBudget = totalYearlyDeposits - costToDate;
+  
+  // Definujeme targetUnitsPerDay
   const targetUnitsPerDay = remainingBudget > 0 
     ? (remainingBudget / pricePerUnit) / (remainingDays || 1) 
     : 0;
 
+  // 4. Predikce na rok (teď už můžeme použít targetUnitsPerDay)
+  const predictedYearlyUnits = targetUnitsPerDay * 365;
+  const predictedYearlyCost = (predictedYearlyUnits * pricePerUnit) + (12 * data.fixedMonthlyFee);
+
+  // 5. Finální výsledky
+  const finalBalance = totalYearlyDeposits - predictedYearlyCost;
+  const currentBalance = depositsPaidSoFar - costToDate;
+
   return {
     consumedUnits,
-    avgUnitsPerDay,
+    targetUnitsPerDay,
     predictedYearlyCost,
     balance: finalBalance,
     currentBalance,
     costToDate,
     depositsPaidSoFar, // Tato proměnná musí existovat
-    targetUnitsPerDay,
     daysPassed
   };
 };
