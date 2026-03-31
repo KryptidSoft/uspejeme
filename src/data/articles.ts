@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export interface Article {
   id: string;
   title: string;
@@ -70,9 +72,9 @@ id: '1',
     <p>Tento nástroj tu není od toho, aby vám sčítal účtenky. Je tu od toho, aby vám dal strategický nadhled a odvahu říct si o férovou odměnu za vaši práci.</p>
 
     <div style="margin-top: 40px; padding: 20px; background: rgba(251,191,36,0.1); border-radius: 12px; text-align: center;">
-      <a href="/dashboard" style="color: #fbbf24; font-weight: bold; text-decoration: none; font-size: 1.1rem;">
-       >>> 🚀 Vyzkoušejte si svůj finanční rentgen na hlavním panelu <<<
-      </a>
+      <a href="/dashboard" class="cta-link" style="color: #fbbf24; font-weight: bold; text-decoration: none; font-size: 1.1rem;">
+  >>> 🚀 Vyzkoušejte si svůj finanční rentgen na hlavním panelu <<<
+</a>
     </div>
 
     <p style="margin-top: 30px;">S přáním úspěšného (a zdravého) podnikání,<br>Váš tým Uspějeme.cz</p>
@@ -140,6 +142,47 @@ id: '1',
     </ul>
 
     <p>Nečekejte, až vám práce uteče mezi prsty. Navštivte <a href="https://uspejeme.cz">Uspějeme.cz</a> a začněte mít podnikání pod kontrolou ještě dnes.</p>
+  `
+},
+{
+  id: '5',
+  title: 'Kvíz: Jaký jste typ podnikatele? Odhalte své silné stránky i brzdy',
+  excerpt: 'Pracujete do noci, nebo vše odkládáte na poslední chvíli? Zjistěte, který podnikatelský archetyp sedí na vás, a získejte akční plán na tento týden.',
+  readTime: '3 min',
+  category: 'productivity',
+  date: '30. 03. 2026',
+  content: `
+    <p>Každý OSVČ bojuje s jinými démony. Někdo nedokáže vypnout počítač ani u večeře, jiný bojuje s nekonečným odkládáním fakturace a další se utápí v detailech, které mu nikdo nezaplatí. Poznáváte se v tom?</p>
+
+    <p>Úspěch v podnikání není jen o tvrdé práci, ale především o <strong>sebepoznání</strong>. Když pochopíte, jak funguje váš vnitřní motor, můžete přestat bojovat s vlastní přirozeností a začít ji využívat ve svůj prospěch.</p>
+
+    <h3>Proč si udělat náš kvíz archetypů?</h3>
+    <p>Náš interaktivní kvíz na <a href="https://uspejeme.cz" target="_blank" rel="noopener noreferrer">uspejeme.cz</a> vám během dvou minut ukáže vaši unikátní mapu podnikatelských vlastností. Nejde o suchou teorii, ale o praktický nástroj, který vám pomůže identifikovat:</p>
+
+    <ul>
+      <li><strong>Vaše dominantní nastavení:</strong> Jste strategický hráč, nebo spíše kreativní chaotik?</li>
+      <li><strong>Skryté brzdy:</strong> Co konkrétně vás stojí nejvíce peněz a času (perfekcionismus, prokrastinace, nebo chaos)?</li>
+      <li><strong>Vizuální radarový graf:</strong> Uvidíte černé na bílém, jak vyvážené je vaše podnikání.</li>
+    </ul>
+
+    <p>Součástí výsledku není jen nálepka, ale především <strong>konkrétní akční plán</strong>. Dozvíte se, co máte udělat ještě dnes, zítra a do konce týdne, abyste se posunuli k větší efektivitě a klidu.</p>
+
+    <h3>Který typ jste vy?</h3>
+    <p>Možná jste <em>Noční makáč</em>, který nejlépe tvoří, když svět spí. Nebo <em>Efektivní minimalista</em>, který hledá nejkratší cestu k cíli. Každý typ má své superschopnosti i slabiny. Klíčem je vědět, jak s nimi naložit.</p>
+
+    <blockquote>
+      "Podnikání by nemělo být o neustálém vyhoření, ale o systému, který pracuje pro vás."
+    </blockquote>
+
+    <p>Chcete vědět, jak jste na tom vy? Klikněte na tlačítko níže, vyplňte pár otázek a získejte svůj personalizovaný plán pro lepší výsledky bez zbytečného stresu.</p>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="/archetyp" class="btn" style="text-decoration: none; padding: 15px 30px; background: var(--primary); color: white; border-radius: 8px; font-weight: bold;">
+  Spustit kvíz podnikatele
+</a>
+    </div>
+
+    <p>Po skončení kvízu můžete svůj výsledek rovnou sdílet s kolegy nebo si ho uložit jako PDF, abyste se k němu mohli kdykoliv vrátit a sledovat svůj pokrok.</p>
   `
 }
 ];

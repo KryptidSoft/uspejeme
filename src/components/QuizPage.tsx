@@ -13,7 +13,7 @@ const QuizPage: React.FC = () => {
       {/* HEADER SEKCE - SEO H1 a podtitul */}
       <header style={{ textAlign: 'center', marginBottom: '40px', marginTop: '40px' }}>
         <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.8rem)', marginBottom: '15px', color: 'var(--text-main)' }}>
-          Podnikatelský Archetyp
+          Kvíz: Jaký jsi typ podnikatele?
         </h1>
         <p style={{ color: 'var(--text-dim)', maxWidth: '650px', margin: '0 auto', fontSize: '1.1rem', lineHeight: '1.6' }}>
           Odhalte své silné stránky i skryté brzdy. Tento kvíz analyzuje vaše návyky 

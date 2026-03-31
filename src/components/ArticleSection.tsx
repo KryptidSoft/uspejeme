@@ -49,9 +49,23 @@ export const ArticleSection: React.FC = () => {
             </span>
           </div>
 
-          <div style={{ fontSize: '1rem', color: 'var(--text-light)' }}
-               dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-          />
+          <div
+  style={{ fontSize: '1rem', color: 'var(--text-light)' }}
+  onClick={(e) => {
+    const target = e.target as HTMLElement;
+    const link = target.closest("a");
+
+    if (!link) return;
+
+    const href = link.getAttribute("href");
+
+    if (href && href.startsWith("/")) {
+      e.preventDefault();
+      navigate(href);
+    }
+  }}
+  dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+/>
         </GlassCard>
       </div>
     );
