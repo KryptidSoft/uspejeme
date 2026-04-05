@@ -15,8 +15,7 @@ const start = new Date(lastReadingDate);
   const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
 
   const consumedUnits = currentReadingValue - lastReadingValue;
-  const monthsPassed = daysPassed / 30.42;
-  const costToDate = (consumedUnits * pricePerUnit) + (monthsPassed * data.fixedMonthlyFee);
+  const costToDate = consumedUnits * pricePerUnit;
 
   // 2. Zálohy
   const monthlyRate = monthlyDeposit;
@@ -35,7 +34,7 @@ const start = new Date(lastReadingDate);
 
   // 4. Predikce na rok (teď už můžeme použít targetUnitsPerDay)
   const predictedYearlyUnits = targetUnitsPerDay * 365;
-  const predictedYearlyCost = (predictedYearlyUnits * pricePerUnit) + (12 * data.fixedMonthlyFee);
+  const predictedYearlyCost = predictedYearlyUnits * pricePerUnit;
 
   // 5. Finální výsledky
   const finalBalance = totalYearlyDeposits - predictedYearlyCost;

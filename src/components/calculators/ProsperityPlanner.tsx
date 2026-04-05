@@ -248,8 +248,7 @@ export const ProsperityPlanner: React.FC = () => {
 
                <button 
                 onClick={handleSave} 
-                className="calculate-btn no-print" 
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px', background: saved ? '#10b981' : '' }}
+                className={`btn no-print my-save-btn ${saved ? 'btn-success' : ''}`}
                >
                  {saved ? <><Check size={18} /> Propojeno se systémem</> : <><Save size={18} /> ULOŽIT DO MÉHO PANELU </>}
                </button>

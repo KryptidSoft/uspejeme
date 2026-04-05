@@ -524,16 +524,10 @@ section {
 }
 
 /* --- ÚSPĚŠNÉ KOPÍROVÁNÍ --- */
-.btn-success {
-  background-color: #10b981;
+.my-save-btn.btn-success {
+background: #10b981; /* zelená zůstane po celou dobu */
   color: white;
-  animation: flashGreen 0.4s ease-in-out;
-}
-
-@keyframes flashGreen {
-  0% { transform: scale(1); background-color: #059669; }
-  50% { transform: scale(1.05); background-color: #10b981; }
-  100% { transform: scale(1); background-color: #10b981; }
+  transition: background 0.3s ease-in-out; /* jemný přechod zpět na modrou */
 }
 
 .btn-success:hover {
@@ -613,7 +607,7 @@ section {
 .glass-card:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  transform: none;
 }
 
 /* 2. ÚPRAVA PRO MOBILY (Podmínka pro malý displej) */

@@ -173,9 +173,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
           {item.q}
           <ChevronRight size={18} className="faq-chevron" style={{ color: 'var(--primary)', transition: '0.3s' }} />
         </summary>
-        <div style={{ padding: '0 20px 20px', color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: '1.7' }}>
-          {item.a}
-        </div>
+        <div style={{ padding: '20px 20px 20px', color: 'var(--text-dim)', fontSize: '0.95rem', lineHeight: '1.7' }}>
+  {item.a}
+</div>
       </details>
     ))}
   </div>

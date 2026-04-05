@@ -37,8 +37,7 @@ export const EnergyCalculator: React.FC = () => {
     currentReadingValue: 12850,
     lastReadingDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0],
     monthlyDeposit: 3500,
-    pricePerUnit: 6.5,
-	fixedMonthlyFee: 250 // Průměrný paušál za jistič
+    pricePerUnit: 6.5
   });
 
   const [gasInM3, setGasInM3] = useState(false);
@@ -188,7 +187,6 @@ export const EnergyCalculator: React.FC = () => {
               <InputGroup label="Datum posledního odečtu" type="date" value={inputs.lastReadingDate} onChange={(val) => handleValueChange('lastReadingDate', val)} />
               <InputGroup label="Vaše měsíční záloha" unit="Kč" value={inputs.monthlyDeposit} onChange={(val) => handleValueChange('monthlyDeposit', val)} />
               <InputGroup label="Celková cena za jednotku" unit={`Kč/${displayUnit}`} value={inputs.pricePerUnit} onChange={(val) => handleValueChange('pricePerUnit', val)} />
-			  <InputGroup label="Stálý měsíční plat (jistič/paušál)" unit="Kč/měs" value={inputs.fixedMonthlyFee} onChange={(val) => handleValueChange('fixedMonthlyFee', val)} />
             </div>
 
             <button className="calculate-btn no-print" onClick={handleCalculate} style={{ background: currentProfile.color, color: '#000', width: '100%', marginTop: '20px', cursor: 'pointer', fontWeight: 'bold', padding: '15px', borderRadius: '12px', border: 'none', fontSize: '1rem' }}>

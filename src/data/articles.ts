@@ -175,7 +175,7 @@ id: '1',
     <p>Chcete vědět, jak jste na tom vy? Klikněte na tlačítko níže, vyplňte pár otázek a získejte svůj personalizovaný plán pro lepší výsledky bez zbytečného stresu.</p>
 
     <div style="text-align: center; margin: 30px 0;">
-      <a href="/archetyp" class="btn" style="text-decoration: none; padding: 15px 30px; background: var(--primary); color: white; border-radius: 8px; font-weight: bold;">
+      <a href="/kviz" class="btn" style="text-decoration: none; padding: 15px 30px; background: var(--primary); color: white; border-radius: 8px; font-weight: bold;">
   Spustit kvíz podnikatele
 </a>
     </div>

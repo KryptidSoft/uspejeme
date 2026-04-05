@@ -22,10 +22,10 @@ interface Asset {
 }
 
 const assets: Record<AssetKey, Asset> = {
-  gold:   { label: 'Zlato', price: RATES.GOLD_G, unit: 'g', color: '#eab308', desc: 'Tradiční uchovatel hodnoty v dobách nejistoty.' },
+  gold:   { label: 'Zlato', price: RATES.GOLD_G, unit: 'g', color: '#eab308', desc: 'Tradiční uchovatel hodnoty prověřený časem.' },
   silver: { label: 'Stříbro', price: RATES.SILVER_G, unit: 'g', color: '#94a3b8', desc: 'Industriální kov s vysokým potenciálem.' },
   btc:    { label: 'Bitcoin', price: RATES.BTC, unit: 'BTC', color: '#f97316', desc: 'Digitální zlato a ochrana proti inflaci.' },
-  chf:    { label: 'Švýcarský Frank', price: RATES.CHF, unit: 'CHF', color: '#D52B1E', desc: 'Symbol stability a bezpečný přístav fiat měn.' }
+  chf:    { label: 'Švýcarský Frank', price: RATES.CHF, unit: 'CHF', color: '#D52B1E', desc: 'Stabilita a bezpečný přístav fiat měn.' }
 };
 
 export const AssetsCalculator: React.FC = () => {
@@ -84,13 +84,17 @@ export const AssetsCalculator: React.FC = () => {
         onClick={() => setSelectedAsset(key as AssetKey)}
         className="btn"
         style={{
-          background: isActive ? a.color : 'rgba(255,255,255,0.05)',
-          color: isActive ? (key === 'silver' ? '#000' : 'white') : 'var(--text-dim)',
-          border: isActive ? `2px solid white` : '1px solid rgba(255,255,255,0.1)',
-          boxShadow: isActive ? `0 0 20px ${a.color}44` : 'none',
-          opacity: isActive ? 1 : 0.7,
-          fontSize: '0.9rem'
-        }}
+  background: isActive ? a.color : 'rgba(0,0,0,0.15)',  // tmavé pozadí pro neaktivní
+  color: isActive ? 'white' : '#ccc',                  // text bílý pro aktivní, šedý pro neaktivní
+  border: `1px solid ${isActive ? a.color : 'rgba(255,255,255,0.2)'}`, // okraj zachován, aktivní ladí s barvou tlačítka
+  boxShadow: isActive ? `0 0 20px ${a.color}44` : 'none', // jen aktivní efekt
+  opacity: isActive ? 1 : 0.85,                        // mírně průhledné neaktivní
+  fontSize: '0.9rem',
+  borderRadius: '12px',
+  padding: '10px 15px',
+  transition: 'all 0.2s ease-in-out',
+  cursor: 'pointer'
+}}
       >
         {a.label}
       </button>
@@ -112,7 +116,7 @@ export const AssetsCalculator: React.FC = () => {
               padding: '30px 20px', 
               background: 'rgba(0,0,0,0.2)', 
               borderRadius: '20px', 
-              border: '1px solid var(--border)', 
+              border: 'none', 
               display: 'flex', 
               flexDirection: 'column', 
               justifyContent: 'center',

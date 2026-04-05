@@ -20,7 +20,7 @@ interface ToolItem {
 
 const TOOLS_REGISTRY: ToolItem[] = [
   { id: 'dashboard', label: 'Můj panel', icon: Activity, path: '/panel' },
-  { id: 'finance', label: 'Faktury & platby', icon: FileText, path: '/faktury' },
+  { id: 'finance', label: 'Faktury & platby', icon: FileText, path: '/nastroje' },
   { id: 'stability', label: 'Audit stability', icon: ShieldAlert, path: '/audit' },
   { id: 'strategie', label: 'Strategie & růst', icon: Target, path: '/strategie' },
   { id: 'investice', label: 'Investice & ROI', icon: Coins, path: '/investice' },
@@ -29,31 +29,31 @@ const TOOLS_REGISTRY: ToolItem[] = [
 
 const SUB_ITEMS: Record<string, { label: string, path: string }[]> = {
   finance: [
-    { label: 'Faktura', path: '/faktury/faktura' },
-    { label: 'QR Platba', path: '/faktury/qr' },
-    { label: 'Splatnost', path: '/faktury/upominky' },
+    { label: 'Faktura', path: '/faktura' },
+    { label: 'QR Platba', path: '/qr' },
+    { label: 'Splatnost', path: '/upominky' },
   ],
   stability: [
-    { label: 'Index stability', path: '/audit/stabilita' },
-    { label: 'Rezerva', path: '/audit/rezerva' },
-    { label: 'Rizika', path: '/audit/rizika' },
-    { label: 'Energie', path: '/audit/energie' },
+    { label: 'Index stability', path: '/stabilita' },
+    { label: 'Rezerva', path: '/rezerva' },
+    { label: 'Rizika', path: '/rizika' },
+    { label: 'Energie', path: '/energie' },
   ],
   strategie: [
     { label: 'Plánovač', path: '/planovac' },
-    { label: 'Hodinovka', path: '/strategie/hodinovka' },
-    { label: 'Zakázky', path: '/strategie/projekt' },
+    { label: 'Hodinovka', path: 'hodinovka' },
+    { label: 'Zakázky', path: '/projekt' },
   ],
   investice: [
-    { label: 'Návratnost', path: '/investice/roi' },
-    { label: 'Inflace', path: '/investice/inflace' },
-    { label: 'Aktiva', path: '/investice/aktiva' },
-    { label: 'Nákupy', path: '/investice/nakupy' },
+    { label: 'Návratnost', path: '/roi' },
+    { label: 'Inflace', path: '/inflace' },
+    { label: 'Aktiva', path: '/aktiva' },
+    { label: 'Nákupy', path: '/nakupy' },
   ],
   vzdelavani: [
     { label: 'Články', path: '/clanky' },
     { label: 'Termíny 2026', path: '/kalendar' },
-    { label: 'Poznej se', path: '/archetyp' },
+    { label: 'Poznej se', path: '/kviz' },
   ]
 };
 
