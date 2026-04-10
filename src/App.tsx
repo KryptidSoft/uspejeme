@@ -64,7 +64,7 @@ const AppInner = () => {
   const location = useLocation();
 
   return (
-    <div className="app-container">
+    <div className="container-max">
       <Header 
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
@@ -86,7 +86,7 @@ const AppInner = () => {
 export const App = () => {
   return (
     <BusinessProvider>
-      <Router>
+      <Router basename="/uspejeme">
         <AppInner />
       </Router>
     </BusinessProvider>
