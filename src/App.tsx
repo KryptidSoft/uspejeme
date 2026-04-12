@@ -24,13 +24,14 @@ const TOOLS_REGISTRY: ToolItem[] = [
   { id: 'stability', label: 'Audit stability', icon: ShieldAlert, path: '/audit' },
   { id: 'strategie', label: 'Strategie & růst', icon: Target, path: '/strategie' },
   { id: 'investice', label: 'Investice & ROI', icon: Coins, path: '/investice' },
-  { id: 'vzdelavani', label: 'Vzdělávání', icon: GraduationCap, path: '#' }, 
+  { id: 'vzdelavani', label: 'Vzdělávání', icon: GraduationCap, path: '/vzdelavani' }, // Změna na /vzdelavani 
 ];
 
 const SUB_ITEMS: Record<string, { label: string, path: string }[]> = {
   finance: [
     { label: 'Faktura', path: '/faktura' },
     { label: 'QR Platba', path: '/qr' },
+	{ label: 'Nabídka', path: '/nabidka' },
     { label: 'Splatnost', path: '/upominky' },
   ],
   stability: [
@@ -41,7 +42,7 @@ const SUB_ITEMS: Record<string, { label: string, path: string }[]> = {
   ],
   strategie: [
     { label: 'Plánovač', path: '/planovac' },
-    { label: 'Hodinovka', path: 'hodinovka' },
+    { label: 'Hodinovka', path: '/hodinovka' },
     { label: 'Zakázky', path: '/projekt' },
   ],
   investice: [
@@ -54,6 +55,7 @@ const SUB_ITEMS: Record<string, { label: string, path: string }[]> = {
     { label: 'Články', path: '/clanky' },
     { label: 'Termíny 2026', path: '/kalendar' },
     { label: 'Poznej se', path: '/kviz' },
+	{ label: 'Index zisku', path: '/dane-eu' }, // NOVINKA: Odkaz na tabulku daní
   ]
 };
 

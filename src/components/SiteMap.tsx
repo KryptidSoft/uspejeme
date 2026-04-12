@@ -30,6 +30,7 @@ export const Sitemap: React.FC = () => {
             <li className="link-item"><Link to="/nastroje">Faktury & platby (rozcestník)</Link></li>
             <li className="link-item"><Link to="/faktura">Elite Faktura</Link></li>
             <li className="link-item"><Link to="/qr">QR Generátor</Link></li>
+			<li className="link-item"><Link to="/nabidka">Nabídka</Link></li>
             <li className="link-item"><Link to="/upominky">Hlídač splatnosti</Link></li>
           </ul>
         </section>
@@ -76,6 +77,7 @@ export const Sitemap: React.FC = () => {
 		    <li className="link-item"><Link to="/clanky">Články</Link></li>
             <li className="link-item"><Link to="/kalendar">Kalendář</Link></li>
             <li className="link-item"><Link to="/kviz">Poznej se (Kvíz)</Link></li>
+			<li className="link-item"><Link to="/dane-eu">Index zisku</Link></li>
           </ul>
         </section>
 

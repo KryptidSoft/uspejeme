@@ -8,3 +8,11 @@ export interface Deadline {
   type: 'dan' | 'pojistne' | 'ostatni' | 'svatek' | 'strategie';
   for: BusinessType[];
 }
+
+export interface OfferItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  taxRate: number;
+}

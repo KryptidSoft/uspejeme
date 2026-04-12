@@ -25,10 +25,12 @@ import { Contact } from './Contact'; // Přidat
 import { SafeBuyCalculator } from './calculators/SafeBuyCalculator';
 import { ScrollToTop } from './ScrollToTop'; // Import hooku
 import { NotFound } from './NotFound'; // Import fallbacku
+import { SmartOffer } from './generators/SmartOffer';
 import QuizPage from './QuizPage';
+import { TaxComparison } from './TaxComparison';
 import { 
   FileText, Activity, Zap, ShieldAlert, Briefcase, Coins, QrCode, FileWarning, Target, 
-  TrendingUp, TrendingDown, PiggyBank 
+  TrendingUp, TrendingDown, PiggyBank, Calendar, GraduationCap, Landmark
 } from 'lucide-react';
 
 // --- ROZCESTNÍKY (Musí být definovány mimo hlavní komponentu) ---
@@ -39,6 +41,7 @@ const FakturyNav = () => (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '15px' }}>
       <MiniCard title="Faktura" desc="Vytvořit novou" icon={FileText} to="/faktura" />
       <MiniCard title="QR Platba" desc="Generátor kódu" icon={QrCode} to="/qr" />
+	  <MiniCard title="Nabídka" desc="Cenovka pro klienty" icon={FileText} to="/nabidka" />
       <MiniCard title="Splatnost" desc="Hlídač termínů" icon={FileWarning} to="/upominky" />
     </div>
   </div>
@@ -79,6 +82,18 @@ const InvesticeNav = () => (
   </div>
 );
 
+const VzdelavaniNav = () => (
+  <div className="nav-container">
+    <h2>Vzdělávání & přehledy</h2>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px,1fr))', gap: '15px' }}>
+      <MiniCard title="Akademie" desc="Články a návody" icon={GraduationCap} to="/clanky" />
+	  <MiniCard title="Termíny" desc="Hlídací pes podnikatele" icon={Calendar} to="/kalendar" />
+      <MiniCard title="Kvízy" desc="Poznejte se lépe" icon={Target} to="/kviz" />
+	  <MiniCard title="Index zisku" desc="Srovnání daní v EU" icon={Landmark} to="/dane-eu" />
+    </div>
+  </div>
+);
+
 // --- HLAVNÍ KOMPONENTA ---
 
 export const AppContent = () => {
@@ -96,7 +111,9 @@ export const AppContent = () => {
       nastroje: '/nastroje',
       strategie: '/strategie',
       investice: '/investice',
-	  kviz: '/kviz'
+	  vzdelavani: '/vzdelavani',
+	  kviz: '/kviz',
+	  dane: '/dane-eu'           // Přidáno pro handleNavigate
     };
     const targetPath = routes[view] || view;
     navigate(articleId ? `${targetPath}/${articleId}` : targetPath);
@@ -114,6 +131,7 @@ export const AppContent = () => {
       <Route path="/nastroje" element={<FakturyNav />} />
       <Route path="/faktura" element={<EliteInvoice />} />
       <Route path="/qr" element={<QRGenerator />} />
+	  <Route path="/nabidka" element={<SmartOffer />} />
       <Route path="/upominky" element={<DuesGenerator />} />
 
       {/* 2. Audit stability */}
@@ -137,10 +155,12 @@ export const AppContent = () => {
 	  <Route path="/nakupy" element={<SafeBuyCalculator />} />
 
       {/* Ostatní */}
-      <Route path="/kalendar" element={<CalendarPage userType="vse" />} />
+	  <Route path="/vzdelavani" element={<VzdelavaniNav />} />
       <Route path="/clanky" element={<ArticleSection />} />
       <Route path="/clanky/:id" element={<ArticleSection />} />
+	  <Route path="/kalendar" element={<CalendarPage userType="vse" />} />
 	  <Route path="/kviz" element={<QuizPage />} />
+	  <Route path="/dane-eu" element={<TaxComparison />} />
 	  
 {/* --- Footer & Info --- */}
       <Route path="/o-nas" element={<AboutUs />} />

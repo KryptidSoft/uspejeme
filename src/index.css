@@ -819,12 +819,11 @@ background: #10b981; /* zelená zůstane po celou dobu */
   .article-container { 
     padding: 0; 
     width: 100%; 
-    display: block; /* Ujistíme se, že kontejner je blok */
+    display: block; 
   }
   
   .article-card { 
     padding: 25px 16px; 
-    /* KLÍČOVÁ ZMĚNA: margin auto ji SROVNÁ na střed, width 90% ji ZMENŠÍ */
     margin: 0 auto;       
     width: 92%; 
     box-sizing: border-box; 
@@ -833,9 +832,10 @@ background: #10b981; /* zelená zůstane po celou dobu */
   .article-content p { margin-bottom: 20px; }
   .article-meta { gap: 10px; }
   
-    .article-content table {
-    margin: 0 auto; /* Tímhle jedním řádkem se to vycentruje... */
-    display: table; /* ...ale jen když je to "table" a ne "block"! */
+  .article-content table {
+    margin: 0 auto; 
+    display: table; 
   }
+}
 
 /* ====== ZDE KONČÍ STYLY PRO ČLÁNKY ====== */
