@@ -55,8 +55,8 @@ export const exportToPDF = async (
   const doc = new jsPDF();
   const isEn = data?.isForeign ?? false; // Zjistíme jazyk z dat
 
-  await addFontFromUrl(doc, "./fonts/Roboto-Regular.ttf", "Roboto", "normal");
-  await addFontFromUrl(doc, "./fonts/Roboto-Bold.ttf", "Roboto", "bold");
+  await addFontFromUrl(doc, "/fonts/Roboto-Regular.ttf", "Roboto", "normal");
+  await addFontFromUrl(doc, "/fonts/Roboto-Bold.ttf", "Roboto", "bold");
   doc.setFont("Roboto", "normal");
 
   // --- SCÉNÁŘ A: STARÉ STRÁNKY (Bez dat) ---

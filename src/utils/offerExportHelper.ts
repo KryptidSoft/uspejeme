@@ -54,8 +54,8 @@ export const exportOfferToPDF = async (
   const expiryDate = new Date(data.issueDate);
   expiryDate.setDate(expiryDate.getDate() + (Number(data.validDays) || 14));
 
-  await addFontFromUrl(doc, "./fonts/Roboto-Regular.ttf", "Roboto", "normal");
-  await addFontFromUrl(doc, "./fonts/Roboto-Bold.ttf", "Roboto", "bold");
+  await addFontFromUrl(doc, "/fonts/Roboto-Regular.ttf", "Roboto", "normal");
+  await addFontFromUrl(doc, "/fonts/Roboto-Bold.ttf", "Roboto", "bold");
   doc.setFont("Roboto", "normal");
 
   // Hlavička
