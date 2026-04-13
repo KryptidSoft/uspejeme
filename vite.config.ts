@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/uspejeme/', // nyní React Router najde všechny cesty
+  base: '/', // nyní React Router najde všechny cesty
 })

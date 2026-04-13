@@ -55,7 +55,6 @@ const SUB_ITEMS: Record<string, { label: string, path: string }[]> = {
     { label: 'Články', path: '/clanky' },
     { label: 'Termíny 2026', path: '/kalendar' },
     { label: 'Poznej se', path: '/kviz' },
-	{ label: 'Index zisku', path: '/dane-eu' }, // NOVINKA: Odkaz na tabulku daní
   ]
 };
 

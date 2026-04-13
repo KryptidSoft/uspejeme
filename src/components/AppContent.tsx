@@ -27,10 +27,9 @@ import { ScrollToTop } from './ScrollToTop'; // Import hooku
 import { NotFound } from './NotFound'; // Import fallbacku
 import { SmartOffer } from './generators/SmartOffer';
 import QuizPage from './QuizPage';
-import { TaxComparison } from './TaxComparison';
 import { 
   FileText, Activity, Zap, ShieldAlert, Briefcase, Coins, QrCode, FileWarning, Target, 
-  TrendingUp, TrendingDown, PiggyBank, Calendar, GraduationCap, Landmark
+  TrendingUp, TrendingDown, PiggyBank, Calendar, GraduationCap
 } from 'lucide-react';
 
 // --- ROZCESTNÍKY (Musí být definovány mimo hlavní komponentu) ---
@@ -89,7 +88,6 @@ const VzdelavaniNav = () => (
       <MiniCard title="Akademie" desc="Články a návody" icon={GraduationCap} to="/clanky" />
 	  <MiniCard title="Termíny" desc="Hlídací pes podnikatele" icon={Calendar} to="/kalendar" />
       <MiniCard title="Kvízy" desc="Poznejte se lépe" icon={Target} to="/kviz" />
-	  <MiniCard title="Index zisku" desc="Srovnání daní v EU" icon={Landmark} to="/dane-eu" />
     </div>
   </div>
 );
@@ -112,8 +110,7 @@ export const AppContent = () => {
       strategie: '/strategie',
       investice: '/investice',
 	  vzdelavani: '/vzdelavani',
-	  kviz: '/kviz',
-	  dane: '/dane-eu'           // Přidáno pro handleNavigate
+	  kviz: '/kviz'
     };
     const targetPath = routes[view] || view;
     navigate(articleId ? `${targetPath}/${articleId}` : targetPath);
@@ -160,7 +157,6 @@ export const AppContent = () => {
       <Route path="/clanky/:id" element={<ArticleSection />} />
 	  <Route path="/kalendar" element={<CalendarPage userType="vse" />} />
 	  <Route path="/kviz" element={<QuizPage />} />
-	  <Route path="/dane-eu" element={<TaxComparison />} />
 	  
 {/* --- Footer & Info --- */}
       <Route path="/o-nas" element={<AboutUs />} />

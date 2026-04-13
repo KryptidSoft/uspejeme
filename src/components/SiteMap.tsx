@@ -77,7 +77,6 @@ export const Sitemap: React.FC = () => {
 		    <li className="link-item"><Link to="/clanky">Články</Link></li>
             <li className="link-item"><Link to="/kalendar">Kalendář</Link></li>
             <li className="link-item"><Link to="/kviz">Poznej se (Kvíz)</Link></li>
-			<li className="link-item"><Link to="/dane-eu">Index zisku</Link></li>
           </ul>
         </section>
 
