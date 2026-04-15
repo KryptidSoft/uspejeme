@@ -16,6 +16,7 @@ import { calculateHourlyRate } from '../../utils/calculations/hourly';
 import type { HourlyInputs } from '../../utils/calculations/hourly';
 import { formatCZK } from '../../utils/calculations/mathHelpers';
 import { useBusinessData } from '../../hooks/useBusinessData';
+import AadsBanner from '../AadsBanner'; // Importujeme komponentu reklamy
 
 const safeParse = (val: string | number, max: number = Infinity) => {
   const num = parseFloat(String(val));
@@ -171,15 +172,19 @@ const handleCalculate = () => {
                   </p>
                 </div>
                 
-                <div style={{ marginTop: '30px', padding: '15px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '12px', fontSize: '0.85rem', textAlign: 'left', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', gap: '10px', alignItems: 'center' }}>
+<div style={{ marginTop: '30px', padding: '15px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '12px', fontSize: '0.85rem', textAlign: 'left', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <ShieldAlert size={18} style={{ color: '#10b981', flexShrink: 0 }} />
                   <span style={{ color: '#10b981', fontWeight: '600' }}>Sazba byla úspěšně uložena do globální strategie.</span>
                 </div>
+                <AadsBanner />
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '60px', border: '2px dashed var(--border)', borderRadius: '30px', opacity: 0.5 }}>
-                <TrendingUp size={48} style={{ marginBottom: '15px' }} />
-                <p>Zadejte své cíle vlevo a zjistěte, jaká hodinovka vás dovede k prosperitě.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
+                <div style={{ textAlign: 'center', padding: '60px', border: '2px dashed var(--border)', borderRadius: '30px', opacity: 0.5 }}>
+                  <TrendingUp size={48} style={{ marginBottom: '15px' }} />
+                  <p>Zadejte své cíle vlevo a zjistěte, jaká hodinovka vás dovede k prosperitě.</p>
+                </div>
+                <AadsBanner />
               </div>
             )}
           </div>
