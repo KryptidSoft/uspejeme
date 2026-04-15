@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Hlavní stránka -->
+  <url>
+    <loc>https://uspejeme.cz/</loc>
+    <priority>1.0</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- Panel -->
+  <url>
+    <loc>https://uspejeme.cz/panel</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Nástroje -->
+  <url>
+    <loc>https://uspejeme.cz/nastroje</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/faktura</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/qr</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/nabidka</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/upominky</loc>
+  </url>
+
+  <!-- Audit -->
+  <url>
+    <loc>https://uspejeme.cz/audit</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/stabilita</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/rezerva</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/rizika</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/energie</loc>
+  </url>
+
+  <!-- Strategie -->
+  <url>
+    <loc>https://uspejeme.cz/strategie</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/planovac</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/hodinovka</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/projekt</loc>
+  </url>
+
+  <!-- Investice -->
+  <url>
+    <loc>https://uspejeme.cz/investice</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/roi</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/inflace</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/aktiva</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/nakupy</loc>
+  </url>
+
+  <!-- Vzdělávání -->
+  <url>
+    <loc>https://uspejeme.cz/vzdelavani</loc>
+  </url>
+    <url>
+    <loc>https://uspejeme.cz/clanky</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/kalendar</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/kviz</loc>
+  </url>
+
+  <!-- Info -->
+  <url>
+    <loc>https://uspejeme.cz/o-nas</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/kontakt</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/privacy</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/terms</loc>
+  </url>
+  <url>
+    <loc>https://uspejeme.cz/mapa-stranek</loc>
+  </url>
+
+</urlset>
